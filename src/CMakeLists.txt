@@ -24,19 +24,19 @@ file(GLOB SOURCES_H "*.h")
 set(SOURCES ${SOURCES_C} ${SOURCES_CPP} ${SOURCES_H} ${SOURCES_HPP})
 
 # add the executable target
-add_executable(gui.exe)
+add_executable(gui)
 
-target_sources(gui.exe PUBLIC ${SOURCES})
-target_include_directories(gui.exe PUBLIC .)
-target_include_directories(gui.exe PUBLIC src)
+target_sources(gui PUBLIC ${SOURCES})
+target_include_directories(gui PUBLIC .)
+target_include_directories(gui PUBLIC src)
 
 
 
 
 # get a lot of warnings
 if(MSVC)
-    target_compile_options(gui.exe PRIVATE -std=c++20 /Wall)
+    target_compile_options(gui PRIVATE -std=c++20 /Wall)
 else()
     # gcc and clang
-    target_compile_options(gui.exe PRIVATE -std=c++20 -Wall -Wextra -pedantic -Wno-missing-field-initializers)
+    target_compile_options(gui PRIVATE -std=c++20 -Wall -Wextra -pedantic -Wno-missing-field-initializers)
 endif()

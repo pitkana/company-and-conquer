@@ -57,5 +57,8 @@
         "istream": "cpp",
         "numbers": "cpp",
         "ostream": "cpp"
-    }
+    },
+    "makefile.makefilePath": "",
+    "cmake.sourceDirectory": "C:/Users/bilcu/OneDrive/yliopistoon/Ohjelmointi/object_oriented_programming_in_c++/project/src",
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
 }
