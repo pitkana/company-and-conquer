@@ -21,6 +21,8 @@
 
 # Shared objects (inc. Windows DLLs)
 
+# Vscode shit
+.vscode/
 
 # Executables
 *.exe
