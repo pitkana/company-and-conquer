@@ -118,7 +118,8 @@ struct coordinates
 
 
 template<typename T, typename D>
-constexpr inline coordinates<T> square_to_pos( const coordinates<T>& coords, D screen_width, D screen_height, bool use_clamp )
+constexpr inline coordinates<T> square_to_pos( const coordinates<T>& coords, const D screen_width, const D screen_height, 
+                                                bool use_clamp, const size_t amount_of_squares )
 {
     T x = coords.x;
     T y = coords.y;
@@ -146,7 +147,7 @@ class RGBA
          The following hex values we'll use in bitwise operations to modify the RGBA values into a integer and vice-versa,
          the compiler should replace calling these variables with just their values.
 
-         By making them static we use the same values for every RGB_t class, so we save alot of memory
+         By making them static we use the same values for every RGBA_t class, so we save alot of memory
         */
         static const uint32_t red_hex_ = 0xff000000;
         static const uint32_t green_hex_ = 0x00ff0000;
@@ -157,8 +158,6 @@ class RGBA
         
 
     public:
-
-
 
         // define some constructors
         constexpr RGBA( ) noexcept { }
@@ -250,51 +249,7 @@ inline bool same_direction(coordinates<T> a, coordinates<T> b)
 {   
     //Two vectors are parallel (= multiple of the other) if their cross product is 0 (a.x * b.y - a.y * b.x == 0)
     return a.x * b.y == a.y * b.x;
-
-
-//     // with this if-statement we check the y-axis for possible moves
-//     if ( b.y == 0 && a.y == 0 ) {
-//         if ( b.x > 0 && a.x > 0 ) {
-//             return b.x >= a.x;
-//         }
-//         
-//         else if ( b.x < 0 && a.x < 0 ) {
-//             return b.x <= a.x;
-//         }
-//     }
-//
-//
-//     // we check the x-axis for possible moves
-//     if ( b.x == 0 && a.x == 0 ) {
-//         if ( b.y > 0 && a.y > 0 ) {
-//             return b.y >= a.y;
-//         }
-//         
-//         else if ( b.y < 0 && a.y < 0 ) {
-//             return b.y <= a.y;
-//         }
-//
-//     }
-//
-//     // in these if-statements we check the diagonals for possible moves.
-//     if ( b.y > 0 && a.y > 0 && b.x > 0 && a.x > 0) {
-//         return ( b.y >= a.y ) && (b.x >= a.x);
-//     }
-//
-//     else if ( b.y < 0 && a.y < 0 && b.x < 0 && a.x < 0) {
-//         return ( b.y <= a.y ) && (b.x <= a.x);
-//     }
-//     else if ( b.y > 0 && a.y > 0 && b.x < 0 && a.x < 0) {
-//         return ( b.y >= a.y ) && (b.x <= a.x);
-//     }
-//     else if ( b.y < 0 && a.y < 0 && b.x > 0 && a.x > 0) {
-//         return ( b.y <= a.y ) && (b.x >= a.x);
-//     }
-//
-//
-//     return false;
-// }
-
+}
 }
 
 #endif
