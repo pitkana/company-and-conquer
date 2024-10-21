@@ -118,7 +118,7 @@ struct coordinates
 
 
 template<typename T, typename D>
-constexpr inline coordinates<T> square_to_pos( const coordinates<T>& coords, const D& screen_width, const D& screen_height, const bool& use_clamp )
+constexpr inline coordinates<T> square_to_pos( const coordinates<T>& coords, D screen_width, D screen_height, bool use_clamp )
 {
     T x = coords.x;
     T y = coords.y;
@@ -139,167 +139,161 @@ constexpr inline coordinates<T> square_to_pos( const coordinates<T>& coords, con
 }
 
 
-class RGB
+class RGBA
 {   
     private:
         /*
-         The following hex values we'll use in bitwise operations to modify the RGB values into a integer and vise-versa,
+         The following hex values we'll use in bitwise operations to modify the RGBA values into a integer and vice-versa,
          the compiler should replace calling these variables with just their values.
 
          By making them static we use the same values for every RGB_t class, so we save alot of memory
         */
-        static const uint32_t red_hex = 0xff0000;
-        static const uint32_t green_hex = 0x00ff00;
-        static const uint32_t blue_hex = 0x0000ff;
+        static const uint32_t red_hex_ = 0xff000000;
+        static const uint32_t green_hex_ = 0x00ff0000;
+        static const uint32_t blue_hex_ = 0x0000ff00;
+        static const uint32_t alpha_hex_ = 0x000000ff;
+
+        uint32_t color_ = 0;
         
 
     public:
 
-        uint32_t color = 0;
 
 
         // define some constructors
-        constexpr RGB( ) noexcept { }
+        constexpr RGBA( ) noexcept { }
 
-        constexpr RGB( uint32_t red, uint32_t green, uint32_t blue ) noexcept : color( ( red << 16 ) + ( green << 8 ) + blue ) { } 
+        constexpr RGBA( uint32_t red, uint32_t green, uint32_t blue , uint32_t alpha = 255) noexcept : 
+            color_( ( (red & 0xff) << 24 ) + ( (green & 0xff) << 16 ) + ((blue & 0xff) << 8) + (alpha & 0xff) ) { } 
 
-        constexpr RGB( const uint32_t& hex) noexcept
-        { 
-            color = hex;
-        } 
-
+        constexpr RGBA( uint32_t hex) noexcept :
+            color_(hex) {}
         
-        inline uint32_t get_int() noexcept
+        inline uint32_t get_color() noexcept
         {
-            return color;
+            return color_;
         }
 
-        inline uint32_t red() noexcept
+        inline uint32_t get_red() noexcept
         {
-            return  ( color & red_hex ) >> 16;
+            return  ( color_ & red_hex_ ) >> 24;
         }
 
-        inline uint32_t green() noexcept
+        inline uint32_t get_green() noexcept
         {
-            return  ( color & green_hex ) >> 8;
+            return  ( color_ & green_hex_ ) >> 16;
         }
 
-        inline uint32_t blue() noexcept
+        inline uint32_t get_blue() noexcept
         {
-            return  ( color & blue_hex );
+            return  ( color_ & blue_hex_ ) >> 8;
         }
 
         // assign certain color values
         // assign the red value
-        inline bool red( uint32_t num ) noexcept
+        inline void set_red( uint32_t num ) noexcept
         {
-            color = ( color & ~red_hex ) | ( ( num << 16 ) & red_hex );
-
-            return true;
+            color_ = ( color_ & ~red_hex_ ) | ( ( num << 24 ) & red_hex_ );
         }
 
         // assign the green value
-        inline bool green( uint32_t num ) noexcept
+        inline void set_green( uint32_t num ) noexcept
         {
-            color = ( color & ~green_hex ) | ( ( num << 8 ) & green_hex );
-
-            return true;
+            color_ = ( color_ & ~green_hex_ ) | ( ( num << 16 ) & green_hex_ );
         }
 
         // assign the blue value
-        inline bool blue( uint32_t num ) noexcept
+        inline void set_blue( uint32_t num ) noexcept
         {
-            color = ( color & ~blue_hex ) | ( num & blue_hex );
+            color_ = ( color_ & ~blue_hex_ ) | ( (num << 8) & blue_hex_ );
+        }
 
-            return true;
+        // assign the alpha value
+        inline void set_alpha ( uint32_t num ) noexcept
+        {
+            color_ = (color_ & ~alpha_hex_) | (num & alpha_hex_);
         }
 
 
-        inline RGB operator + ( RGB a_color ) noexcept 
+        inline RGBA operator + ( RGBA a_color ) noexcept 
         {
-            return { this->red() + a_color.red(), this->green() + a_color.green(), this->blue() + a_color.blue() };
+            return { this->get_red() + a_color.get_red(), this->get_green() + a_color.get_green(), this->get_blue() + a_color.get_blue() };
         }
 
-        inline RGB operator - ( RGB a_color ) noexcept
+        inline RGBA operator - ( RGBA a_color ) noexcept
         {
-            return { this->red() - a_color.red(), this->green() - a_color.green(), this->blue() - a_color.blue() };
+            return { this->get_red() - a_color.get_red(), this->get_green() - a_color.get_green(), this->get_blue() - a_color.get_blue() };
         }
 
-        inline RGB operator = ( const uint32_t& num ) noexcept
+        inline RGBA operator = ( uint32_t num ) noexcept
         {
             return { this->to_rgb(num) };
         }
 
 
-        inline RGB to_rgb( const uint32_t& hex ) noexcept
+        inline RGBA to_rgb( uint32_t hex ) noexcept
         {
-            return { this->color = hex };
+            return { this->color_ = hex };
         }
-
-
 
         template<typename T>
-        inline bool operator < ( const T& value )
+        inline bool operator < ( T value )
         {
-            return { this->get_int() < value };
+            return { this->get_color() < value };
         }
-
-
 };
-
-
-
-
 
 
 // here we calculate if any of the given 2 vectors is a multiple of the other vector.
 template<typename T>
 inline bool same_direction(coordinates<T> a, coordinates<T> b)
 {   
+    //Two vectors are parallel (= multiple of the other) if their cross product is 0 (a.x * b.y - a.y * b.x == 0)
+    return a.x * b.y == a.y * b.x;
 
 
-    // with this if-statement we check the y-axis for possible moves
-    if ( b.y == 0 && a.y == 0 ) {
-        if ( b.x > 0 && a.x > 0 ) {
-            return b.x >= a.x;
-        }
-        
-        else if ( b.x < 0 && a.x < 0 ) {
-            return b.x <= a.x;
-        }
-    }
-
-
-    // we check the x-axis for possible moves
-    if ( b.x == 0 && a.x == 0 ) {
-        if ( b.y > 0 && a.y > 0 ) {
-            return b.y >= a.y;
-        }
-        
-        else if ( b.y < 0 && a.y < 0 ) {
-            return b.y <= a.y;
-        }
-
-    }
-
-    // in these if-statements we check the diagonals for possible moves.
-    if ( b.y > 0 && a.y > 0 && b.x > 0 && a.x > 0) {
-        return ( b.y >= a.y ) && (b.x >= a.x);
-    }
-
-    else if ( b.y < 0 && a.y < 0 && b.x < 0 && a.x < 0) {
-        return ( b.y <= a.y ) && (b.x <= a.x);
-    }
-    else if ( b.y > 0 && a.y > 0 && b.x < 0 && a.x < 0) {
-        return ( b.y >= a.y ) && (b.x <= a.x);
-    }
-    else if ( b.y < 0 && a.y < 0 && b.x > 0 && a.x > 0) {
-        return ( b.y <= a.y ) && (b.x >= a.x);
-    }
-
-
-    return false;
-}
+//     // with this if-statement we check the y-axis for possible moves
+//     if ( b.y == 0 && a.y == 0 ) {
+//         if ( b.x > 0 && a.x > 0 ) {
+//             return b.x >= a.x;
+//         }
+//         
+//         else if ( b.x < 0 && a.x < 0 ) {
+//             return b.x <= a.x;
+//         }
+//     }
+//
+//
+//     // we check the x-axis for possible moves
+//     if ( b.x == 0 && a.x == 0 ) {
+//         if ( b.y > 0 && a.y > 0 ) {
+//             return b.y >= a.y;
+//         }
+//         
+//         else if ( b.y < 0 && a.y < 0 ) {
+//             return b.y <= a.y;
+//         }
+//
+//     }
+//
+//     // in these if-statements we check the diagonals for possible moves.
+//     if ( b.y > 0 && a.y > 0 && b.x > 0 && a.x > 0) {
+//         return ( b.y >= a.y ) && (b.x >= a.x);
+//     }
+//
+//     else if ( b.y < 0 && a.y < 0 && b.x < 0 && a.x < 0) {
+//         return ( b.y <= a.y ) && (b.x <= a.x);
+//     }
+//     else if ( b.y > 0 && a.y > 0 && b.x < 0 && a.x < 0) {
+//         return ( b.y >= a.y ) && (b.x <= a.x);
+//     }
+//     else if ( b.y < 0 && a.y < 0 && b.x > 0 && a.x > 0) {
+//         return ( b.y <= a.y ) && (b.x >= a.x);
+//     }
+//
+//
+//     return false;
+// }
 
 }
 

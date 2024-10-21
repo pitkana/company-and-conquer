@@ -1,6 +1,12 @@
 # Prerequisites
 *.d
 
+# Executable
+*.exe
+
+# ccls
+.ccls-cache/
+
 # Object files
 *.o
 *.ko
