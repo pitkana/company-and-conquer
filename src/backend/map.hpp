@@ -24,7 +24,7 @@ class Map
         * The size_t in the Square template is used to define the template type for helper::coordinates,
         * so basically the maximum coordinate value. 
         */
-        std::vector< std::vector< std::shared_ptr< Square<size_t> > > > all_squares;
+        std::vector< std::vector< std::shared_ptr< Square<size_t> >>> all_squares;
 
         
         // we define the directions from the helper tools that we'll use in wave function collapse
@@ -73,39 +73,63 @@ class Map
          * 
          * @param location location of whose adjacent square to return
          * @param direction given direction
+         * @return std::shared_ptr<Square<size_t> >
+         */
+        std::shared_ptr<Square<size_t>> get_neighbor(helper::coordinates<size_t>& location, helper::Directions direction)
+        {
+            helper::coordinates<int64_t> new_location;
+
+            std::shared_ptr<Square<size_t> > possible_location = nullptr;
+
+            switch ( direction ) {
+                case helper::Directions::North:
+                    if ( location.y > 0 ) {
+                        possible_location = all_squares[location.x][location.y - 1];
+                    }
+
+                case helper::Directions::East:
+                    if ( location.x < this->all_squares.size() - 1) {
+                        possible_location = this->all_squares[location.x + 1][location.y];
+                    }
+
+                case helper::Directions::South:
+                    if ( location.y < this->all_squares.size() - 1 ) {
+                        possible_location = this->all_squares[location.x][location.y + 1];
+                    }
+
+                case helper::Directions::West:
+                    if ( location.x > 0 ) {
+                        possible_location = this->all_squares[location.x - 1][location.y];
+                    }
+            }
+
+            return possible_location;
+        }
+
+
+        /**
+         * @brief Get the neighbors of a given location from all the main directions
+         * 
+         * @param location location of whose adjacent squares to return
          * @return std::vector< std::shared_ptr<Square<size_t> >> 
          */
-        std::vector< std::shared_ptr<Square<size_t> >> get_neighbor(helper::coordinates<size_t>& location, helper::Directions direction)
+        std::vector< std::shared_ptr<Square<size_t> >> get_neighbors(helper::coordinates<size_t>& location)
         {
             helper::coordinates<int64_t> new_location;
 
             std::vector< std::shared_ptr<Square<size_t> >> possible_locations;
 
-            switch ( direction ) {
-                case helper::Directions::North:
-                    if ( location.y > 0 ) {
-                        possible_locations.push_back( this->all_squares[location.x][location.y - 1] );
-                    }
+            std::shared_ptr<Square<size_t>> a_neighbor;
 
-                case helper::Directions::East:
-                    if ( location.x < this->all_squares.size() - 1) {
-                        possible_locations.push_back( this->all_squares[location.x + 1][location.y] );
-                    }
-
-                case helper::Directions::South:
-                    if ( location.y < this->all_squares.size() - 1 ) {
-                        possible_locations.push_back( this->all_squares[location.x][location.y + 1] );
-                    }
-
-                case helper::Directions::West:
-                    if ( location.x > 0 ) {
-                        possible_locations.push_back( this->all_squares[location.x - 1][location.y] );
-                    }
+            for ( helper::Directions a_direction : directions ) {
+                a_neighbor = get_neighbor( location, a_direction );
+                if ( a_neighbor ) {
+                    possible_locations.push_back( a_neighbor );
+                }
             }
 
             return possible_locations;
         }
-
 };
 
 

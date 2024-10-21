@@ -226,11 +226,11 @@ class RGBA
 
         inline RGBA operator = ( uint32_t num ) noexcept
         {
-            return { this->to_rgb(num) };
+            return { this->to_rgba(num) };
         }
 
 
-        inline RGBA to_rgb( uint32_t hex ) noexcept
+        inline RGBA to_rgba( uint32_t hex ) noexcept
         {
             return { this->color_ = hex };
         }
