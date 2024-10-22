@@ -16,7 +16,7 @@ template<typename T>
 class Square
 {
     private:
-        helper::coordinates<T> position;
+        helper::coordinates<T> position_;
 
 
     public:
@@ -27,9 +27,8 @@ class Square
          * @brief Construct a new Square object
          * 
          * @param coordinate The coordinates of the square
-         * @param all_tiles all the possible starting tiles that we'll filter to find the right one
          */
-        Square( const helper::coordinates<T>& coordinate ) : position( coordinate ) { }
+        Square( const helper::coordinates<T>& coordinate ) : position_( coordinate ) { }
         
 
         /**
@@ -37,9 +36,8 @@ class Square
          * coordinate values in the constructor, while the other one uses helper::coordinates<T>
          * @param x the x -coordinate
          * @param y the y -coordinates
-         * @param all_tiles all the possible starting tiles that we'll filter to find the right one
          */
-        Square( const T& x, const T& y ) : position(x, y) { }
+        Square( const T& x, const T& y ) : position_(x, y) { }
 
 };
 
