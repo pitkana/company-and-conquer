@@ -303,7 +303,13 @@ class Matrix
 
 
         // works the same way as accessing with [i][j] as std::vector<std::vector<T>>
-        constexpr inline T& operator () ( const size_t i, const size_t j ) const noexcept
+        constexpr T& operator () ( const size_t i, const size_t j ) noexcept
+        {
+            return data_[ i * width_ + j ];
+        }
+
+        // works the same way as accessing with [i][j] as std::vector<std::vector<T>>
+        constexpr const T& operator () ( const size_t i, const size_t j ) const noexcept
         {
             return data_[ i * width_ + j ];
         }

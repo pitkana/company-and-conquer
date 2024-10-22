@@ -60,7 +60,7 @@ class Map
                     // here we use normal initialisation because if we use std::make_shared the objects
                     // wont be deleted until all the weak pointers go out of scope.
                     // Because I use std::weak_ptr's in square, I cannot use std::make_shared
-                    all_squares(i, j) = std::shared_ptr< Square<size_t> >( new Square<size_t>({0, 0}) );
+                    all_squares(i, j) = std::shared_ptr< Square<size_t> >( new Square<size_t>(helper::coordinates<size_t>{0, 0}) );
 
                 }
             }

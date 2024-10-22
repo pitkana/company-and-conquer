@@ -41,6 +41,22 @@ class Square
          */
         Square( const T& x, const T& y ) : position(x, y) { }
 
+
+        // returns true if this square contains a piece, and false if the square's empty
+        inline bool has_piece() noexcept
+        {
+            // we call the bool() operator of std::shared_ptr
+            return (this->container) ? true : false;
+
+        }
+
+        // check whether 2 given Squares have the same helper::coordinates<int64_t>,
+        // if they have, then this operator considers them the same Square
+        inline bool operator == ( Square a_square ) noexcept
+        {
+            return { this->position.x == a_square.coordinates().x && this->position.y == a_square.coordinates().y };
+        }
+
 };
 
 #endif
