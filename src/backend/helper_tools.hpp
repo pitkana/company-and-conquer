@@ -106,20 +106,6 @@ struct coordinates
         return std::to_string(x) + " " + std::to_string(y);
     }
 
-
-    // increment() is a method which only 
-    // raises or lowers the value if its not 0.
-    // If the value is < 0, it lowers it,
-    // if its > 0, it raises it.
-    void increment()
-    {   
-        // basically here we calculate:  x = x + (-1)^(1 + 0 or 1), which will give us x+1 or x-1,
-        if ( x != 0 ) x = x + pow(-1, 1 + (x > 0));
-        if ( y != 0 ) y = y + pow(-1, 1 + (y > 0));
-    }
-
-
-
 };
 
 

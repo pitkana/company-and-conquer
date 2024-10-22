@@ -24,11 +24,11 @@ class Map
         * The size_t in the Square template is used to define the template type for helper::coordinates,
         * so basically the maximum coordinate value. 
         */
-        helper::Matrix< std::shared_ptr< Square<size_t> >> all_squares;
+        helper::Matrix< std::shared_ptr< Square<size_t> >> all_squares_;
 
         
         // we define the directions from the helper tools that we'll use in directions handling
-        std::vector< helper::Directions > directions = { 
+        std::vector< helper::Directions > directions_ = { 
             helper::Directions::North, 
             helper::Directions::East, 
             helper::Directions::South, 
@@ -42,7 +42,7 @@ class Map
          * 
          * @param size amount of squares
          */
-        Map( const size_t size ) : all_squares(size)
+        Map( const size_t size ) : all_squares_(size)
         {
             this->create_board();
         }
@@ -54,13 +54,13 @@ class Map
         {
 
             // with this nested loop we create all the squares
-            for ( size_t i = 0; i < this->all_squares.width(); i++ ) {
-                for ( size_t j = 0; j < this->all_squares.height(); j++ ) {
+            for ( size_t i = 0; i < this->all_squares_.width(); i++ ) {
+                for ( size_t j = 0; j < this->all_squares_.height(); j++ ) {
 
                     // here we use normal initialisation because if we use std::make_shared the objects
                     // wont be deleted until all the weak pointers go out of scope.
                     // Because I use std::weak_ptr's in square, I cannot use std::make_shared
-                    all_squares(i, j) = std::shared_ptr< Square<size_t> >( new Square<size_t>(helper::coordinates<size_t>{0, 0}) );
+                    all_squares_(i, j) = std::shared_ptr< Square<size_t> >( new Square<size_t>(helper::coordinates<size_t>{0, 0}) );
 
                 }
             }
@@ -84,22 +84,22 @@ class Map
             switch ( direction ) {
                 case helper::Directions::North:
                     if ( location.y > 0 ) {
-                        possible_location = all_squares( location.x, location.y - 1 );
+                        possible_location = all_squares_( location.x, location.y - 1 );
                     }
 
                 case helper::Directions::East:
-                    if ( location.x < this->all_squares.width() - 1) {
-                        possible_location = this->all_squares( location.x + 1, location.y );
+                    if ( location.x < this->all_squares_.width() - 1) {
+                        possible_location = this->all_squares_( location.x + 1, location.y );
                     }
 
                 case helper::Directions::South:
-                    if ( location.y < this->all_squares.width() - 1 ) {
-                        possible_location = this->all_squares( location.x, location.y + 1 );
+                    if ( location.y < this->all_squares_.width() - 1 ) {
+                        possible_location = this->all_squares_( location.x, location.y + 1 );
                     }
 
                 case helper::Directions::West:
                     if ( location.x > 0 ) {
-                        possible_location = this->all_squares( location.x - 1, location.y );
+                        possible_location = this->all_squares_( location.x - 1, location.y );
                     }
             }
 
@@ -120,7 +120,7 @@ class Map
 
             std::shared_ptr<Square<size_t>> a_neighbor;
 
-            for ( helper::Directions a_direction : directions ) {
+            for ( helper::Directions a_direction : directions_ ) {
                 a_neighbor = get_neighbor( location, a_direction );
                 if ( a_neighbor ) {
                     possible_locations.push_back( a_neighbor );
@@ -135,15 +135,15 @@ class Map
         // to get the corresponding square
         helper::coordinates<int64_t> convert_pos( const int& x, const int& y, const int64_t& screen_width, const int64_t& screen_height, bool use_clamp = true ) noexcept
         {
-            int square_width = screen_width/this->all_squares.width();
-            int square_height = screen_height/this->all_squares.height();
+            int square_width = screen_width/this->all_squares_.width();
+            int square_height = screen_height/this->all_squares_.height();
 
             int x1 = x/square_width;
             int y1 = y/square_height;
 
             if ( use_clamp ) {
-                x1 = helper::clamp<int32_t>(x1, 0, this->all_squares.width());
-                y1 = helper::clamp<int32_t>(y1, 0, this->all_squares.height());
+                x1 = helper::clamp<int32_t>(x1, 0, this->all_squares_.width());
+                y1 = helper::clamp<int32_t>(y1, 0, this->all_squares_.height());
             }
 
             
