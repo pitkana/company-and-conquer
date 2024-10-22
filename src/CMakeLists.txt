@@ -23,6 +23,7 @@ file(GLOB SOURCES_HPP "*.hpp")
 file(GLOB SOURCES_H "*.h")
 set(SOURCES ${SOURCES_C} ${SOURCES_CPP} ${SOURCES_H} ${SOURCES_HPP})
 
+
 # add the executable target
 add_executable(gui)
 

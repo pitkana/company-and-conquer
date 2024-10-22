@@ -3,5 +3,6 @@
 
 int main() 
 {
+    std:: cout << helper::clamp<int>(5, 0, 6) << "\n";
     return 0;
 }
