@@ -1,6 +1,13 @@
 #ifndef HELPERTOOLS
 #define HELPERTOOLS
 
+#if DEBUG >= 1
+#define CHECK_MATRIX_BOUND(y, x) if (x >= width_ || y >= height_) throw std::out_of_range("Accessed matrix index out of bounds")
+#else
+#define CHECK_MATRIX_BOUND(y, x)
+#endif
+
+#include <stdexcept>
 #include <algorithm>
 #include <cstdint>
 #include <memory>
@@ -8,7 +15,6 @@
 #include <cmath>
 #include <string>
 #include <array>
-
 
 
 // create a namespace to stop any namespace errors
@@ -286,39 +292,42 @@ class Matrix
         Matrix( size_t n, size_t m, D value ) noexcept : data_(n * m, value), width_(n), height_(m) { }
 
 
-        constexpr size_t size() noexcept
+        constexpr size_t size() const noexcept
         {
             return width_ * height_;
         }
 
-        constexpr size_t width() noexcept
+        constexpr size_t width() const noexcept
         {
             return width_;
         }
 
-        constexpr size_t height() noexcept
+        constexpr size_t height() const noexcept
         {
-            return width_ * height_;
+            return height_;
         }
 
 
         // works the same way as accessing with [i][j] as std::vector<std::vector<T>>
-        constexpr T& operator () ( const size_t i, const size_t j ) noexcept
+        constexpr T& operator () ( const size_t i, const size_t j )
         {
+            CHECK_MATRIX_BOUND(i, j);
             return data_[ i * width_ + j ];
         }
 
         // works the same way as accessing with [i][j] as std::vector<std::vector<T>>
-        constexpr const T& operator () ( const size_t i, const size_t j ) const noexcept
+        constexpr const T& operator () ( const size_t i, const size_t j ) const
         {
+            CHECK_MATRIX_BOUND(i, j);
             return data_[ i * width_ + j ];
         }
 
-        // this is a simpler way of accessing [x][y] by using a set of coordinates
+        // this is a simpler way of accessing [y][x] by using a set of coordinates
         template<typename D>
-        constexpr inline T& operator [] ( const coordinates<D>& a_coordinates ) const noexcept
+        constexpr inline T& operator [] ( const coordinates<D>& a_coordinates )
         {
-            return data_[ a_coordinates.x * width_ + a_coordinates.y ];
+            CHECK_MATRIX_BOUND(a_coordinates.y, a_coordinates.x);
+            return data_[ a_coordinates.y * width_ + a_coordinates.x ];
         }
 
 
