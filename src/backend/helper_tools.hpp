@@ -125,13 +125,13 @@ constexpr inline coordinates<T> square_to_pos( const coordinates<T>& coords, con
     T y = coords.y;
     
     if ( use_clamp ) {
-        x = clamp<T>(x, 0, 7);
-        y = clamp<T>(y, 0, 7);
+        x = clamp<T>(x, 0, amount_of_squares);
+        y = clamp<T>(y, 0, amount_of_squares);
     }
     
 
-    D square_width = screen_width/8;
-    D square_height = screen_height/8;
+    D square_width = screen_width/amount_of_squares;
+    D square_height = screen_height/amount_of_squares;
 
     T x1 = x*square_width;
     T y1 = y*square_height;
@@ -168,22 +168,22 @@ class RGBA
         constexpr RGBA( uint32_t hex) noexcept :
             color_(hex) {}
         
-        inline uint32_t get_color() noexcept
+        inline uint32_t get_color() const noexcept
         {
             return color_;
         }
 
-        inline uint32_t get_red() noexcept
+        inline uint32_t get_red() const noexcept
         {
             return  ( color_ & red_hex_ ) >> 24;
         }
 
-        inline uint32_t get_green() noexcept
+        inline uint32_t get_green() const noexcept
         {
             return  ( color_ & green_hex_ ) >> 16;
         }
 
-        inline uint32_t get_blue() noexcept
+        inline uint32_t get_blue() const noexcept
         {
             return  ( color_ & blue_hex_ ) >> 8;
         }
@@ -236,13 +236,87 @@ class RGBA
         }
 
         template<typename T>
-        inline bool operator < ( T value )
+        inline bool operator < ( T value ) const noexcept
         {
             return { this->get_color() < value };
         }
+
+        template<typename T>
+        inline bool operator > ( T value ) const noexcept
+        {
+            return { this->get_color() > value };
+        }
+        
+        template<typename T>
+        inline bool operator == ( T value ) const noexcept
+        {
+            return { this->get_color() == value };
+        }
 };
 
+/**
+ * @brief class definition for a Matrix class that contains a std::vector
+ * as the underlying container. The class is more used as a grid based container 
+ * and not used to make mathematical matrix operations on its data.
+ */
+template<typename T>
+class Matrix
+{
+    private: 
+        std::vector<T> data_;
+        size_t width_ = 0;
+        size_t height_ = 0;
 
+
+    public:
+        // initialise a n x n matrix
+        Matrix( size_t n ) noexcept : data_(n * n), width_(n), height_(n) { }
+
+        // initialise a n x m matrix
+        Matrix( size_t n, size_t m ) noexcept : data_(n * m), width_(n), height_(m) { }
+
+
+        // initialise a n x n matrix with the <value> at every cell
+        template<typename D>
+        Matrix( size_t n, D value ) noexcept : data_(n * n, value), width_(n), height_(n) { }
+
+
+        // initialise a n x m matrix with the <value> initialised at every cell
+        template<typename D>
+        Matrix( size_t n, size_t m, D value ) noexcept : data_(n * m, value), width_(n), height_(m) { }
+
+
+        constexpr size_t size() noexcept
+        {
+            return width_ * height_;
+        }
+
+        constexpr size_t width() noexcept
+        {
+            return width_;
+        }
+
+        constexpr size_t height() noexcept
+        {
+            return width_ * height_;
+        }
+
+
+        // works the same way as accessing with [i][j] as std::vector<std::vector<T>>
+        constexpr inline T& operator () ( const size_t i, const size_t j ) const noexcept
+        {
+            return data_[ i * width_ + j ];
+        }
+
+        // this is a simpler way of accessing [x][y] by using a set of coordinates
+        template<typename D>
+        constexpr inline T& operator [] ( const coordinates<D>& a_coordinates ) const noexcept
+        {
+            return data_[ a_coordinates.x * width_ + a_coordinates.y ];
+        }
+
+
+};
 // here we calculate if any of the given 2 vectors is a multiple of the other vector.
 template<typename T>
 inline bool same_direction(coordinates<T> a, coordinates<T> b)
