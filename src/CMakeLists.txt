@@ -8,6 +8,9 @@ set(CMAKE_CXX_STANDARD 20)
 # produce non-optimized code with debug symbols
 set(CMAKE_BUILD_TYPE Debug)
 
+# Generate compile_commands.json file for LSP
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 
 include(FetchContent)
