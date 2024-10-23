@@ -3,8 +3,10 @@
 
 #if DEBUG >= 1
 #define CHECK_MATRIX_BOUND(y, x) if (x >= width_ || y >= height_) throw std::out_of_range("Accessed matrix index out of bounds")
+#define NOEXCEPT_IF_NO_DEBUG
 #else
 #define CHECK_MATRIX_BOUND(y, x)
+#define NOEXCEPT_IF_NO_DEBUG noexcept
 #endif
 
 #include <stdexcept>
@@ -295,16 +297,14 @@ class Matrix
 
 
         // works the same way as accessing with [i][j] as std::vector<std::vector<T>>
-        constexpr T& operator () ( const size_t i, const size_t j )
+        constexpr T& operator () ( const size_t i, const size_t j ) NOEXCEPT_IF_NO_DEBUG
         {
-            CHECK_MATRIX_BOUND(i, j);
             return data_[ i * width_ + j ];
         }
 
         // works the same way as accessing with [i][j] as std::vector<std::vector<T>>
-        constexpr const T& operator () ( const size_t i, const size_t j ) const
+        constexpr const T& operator () ( const size_t i, const size_t j ) const NOEXCEPT_IF_NO_DEBUG
         {
-            CHECK_MATRIX_BOUND(i, j);
             return data_[ i * width_ + j ];
         }
 
@@ -312,7 +312,6 @@ class Matrix
         template<typename D>
         constexpr inline T& operator [] ( const coordinates<D>& a_coordinates )
         {
-            CHECK_MATRIX_BOUND(a_coordinates.y, a_coordinates.x);
             return data_[ a_coordinates.y * width_ + a_coordinates.x ];
         }
 
