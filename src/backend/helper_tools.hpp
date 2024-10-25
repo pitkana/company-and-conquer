@@ -86,23 +86,27 @@ struct coordinates
     }
 
     
+    [[nodiscard]]
     inline bool operator ==  ( const coordinates<T>& a ) noexcept
     {
         return { x == a.x && y == a.y };
     }
 
 
+    [[nodiscard]]
     inline bool operator != ( const coordinates<T>& a ) noexcept
     {
         return { x != a.x || y != a.y };
     }
 
     template<typename D>
+    [[nodiscard]]
     inline coordinates operator * ( const D& a ) noexcept
     {
         return { x*a, y*a };
     }
 
+    [[nodiscard]]
     inline std::string toString()
     {
         return std::to_string(x) + " " + std::to_string(y);
@@ -162,21 +166,25 @@ class RGBA
         constexpr RGBA( uint32_t hex) noexcept :
             color_(hex) {}
         
+        [[nodiscard]]
         inline uint32_t get_color() const noexcept
         {
             return color_;
         }
 
+        [[nodiscard]]
         inline uint32_t get_red() const noexcept
         {
             return  ( color_ & red_hex_ ) >> 24;
         }
 
+        [[nodiscard]]
         inline uint32_t get_green() const noexcept
         {
             return  ( color_ & green_hex_ ) >> 16;
         }
 
+        [[nodiscard]]
         inline uint32_t get_blue() const noexcept
         {
             return  ( color_ & blue_hex_ ) >> 8;
@@ -208,40 +216,47 @@ class RGBA
         }
 
 
+        [[nodiscard]]
         inline RGBA operator + ( RGBA a_color ) noexcept 
         {
             return { this->get_red() + a_color.get_red(), this->get_green() + a_color.get_green(), this->get_blue() + a_color.get_blue() };
         }
 
+        [[nodiscard]]
         inline RGBA operator - ( RGBA a_color ) noexcept
         {
             return { this->get_red() - a_color.get_red(), this->get_green() - a_color.get_green(), this->get_blue() - a_color.get_blue() };
         }
 
+        [[nodiscard]]
         inline RGBA operator = ( uint32_t num ) noexcept
         {
             return { this->to_rgba(num) };
         }
 
 
+        [[nodiscard]]
         inline RGBA to_rgba( uint32_t hex ) noexcept
         {
             return { this->color_ = hex };
         }
 
         template<typename T>
+        [[nodiscard]]
         inline bool operator < ( T value ) const noexcept
         {
             return { this->get_color() < value };
         }
 
         template<typename T>
+        [[nodiscard]]
         inline bool operator > ( T value ) const noexcept
         {
             return { this->get_color() > value };
         }
         
         template<typename T>
+        [[nodiscard]]
         inline bool operator == ( T value ) const noexcept
         {
             return { this->get_color() == value };
@@ -279,17 +294,19 @@ class Matrix
         template<typename D>
         Matrix( size_t n, size_t m, D value ) noexcept : data_(n * m, value), width_(n), height_(m) { }
 
-
+        [[nodiscard]]
         constexpr size_t size() const noexcept
         {
             return width_ * height_;
         }
 
+        [[nodiscard]]
         constexpr size_t width() const noexcept
         {
             return width_;
         }
 
+        [[nodiscard]]
         constexpr size_t height() const noexcept
         {
             return height_;
@@ -297,21 +314,27 @@ class Matrix
 
 
         // works the same way as accessing with [i][j] as std::vector<std::vector<T>>
+        [[nodiscard]]
         constexpr T& operator () ( const size_t i, const size_t j ) NOEXCEPT_IF_NO_DEBUG
         {
+            CHECK_MATRIX_BOUND(i, j);
             return data_[ i * width_ + j ];
         }
 
         // works the same way as accessing with [i][j] as std::vector<std::vector<T>>
+        [[nodiscard]]
         constexpr const T& operator () ( const size_t i, const size_t j ) const NOEXCEPT_IF_NO_DEBUG
         {
+            CHECK_MATRIX_BOUND(i, j);
             return data_[ i * width_ + j ];
         }
 
         // this is a simpler way of accessing [y][x] by using a set of coordinates
         template<typename D>
+        [[nodiscard]]
         constexpr inline T& operator [] ( const coordinates<D>& a_coordinates )
         {
+            CHECK_MATRIX_BOUND(a_coordinates.y, a_coordinates.x);
             return data_[ a_coordinates.y * width_ + a_coordinates.x ];
         }
 
