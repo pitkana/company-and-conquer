@@ -1,28 +1,19 @@
 #define DEBUG 1 //set to 0 to disable debug features
 
 #include <iostream>
-#include "backend/helper_tools.hpp"
 #include <memory>
 #include <SFML/Window.hpp>
+#include "backend/game.hpp"
+#include "backend/action.hpp"
 
 int main() 
 {
-    helper::Matrix<size_t> a(5,5,0);
-    a(10, 10);
-    sf::Window window(sf::VideoMode(800, 600), "My window");
-    
-// run the program as long as the window is open
-    while (window.isOpen())
-    {
-        // check all the window's events that were triggered since the last iteration of the loop
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            // "close requested" event: we close the window
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
-    }
+    Game game;
+    game.add_action(Action::CharacterAction(0.5, 20, helper::coordinates<size_t>(5, 3)));
+    game.add_action(Action::BuildingAction("turret", helper::coordinates<size_t>(15, 1)));
+    game.add_action(Action::CharacterAction(0.3, 50, helper::coordinates<size_t>(2, 10)));
 
+    game.execute_actions();
     return 0;
 }
+
