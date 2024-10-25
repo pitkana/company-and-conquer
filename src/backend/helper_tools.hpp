@@ -58,16 +58,6 @@ struct coordinates
 
     coordinates(const coordinates<T>& a ) noexcept : x(a.x), y(a.y) { }
 
-    // we create some basic operations inside the struct
-    inline coordinates<T> operator + ( const coordinates<T>& a ) noexcept
-    {
-        return { x+a.x, y+a.y };
-    }
-
-    inline coordinates<T> operator - ( const coordinates<T>& a ) noexcept
-    {
-        return { x-a.x, y-a.y };
-    }
 
     // copy assignment operator
     inline coordinates<T>& operator = ( const coordinates<T>& a ) noexcept
@@ -87,27 +77,40 @@ struct coordinates
 
     
     [[nodiscard]]
-    inline bool operator ==  ( const coordinates<T>& a ) noexcept
+    inline bool operator ==  ( const coordinates<T>& a ) const noexcept
     {
         return { x == a.x && y == a.y };
     }
 
 
     [[nodiscard]]
-    inline bool operator != ( const coordinates<T>& a ) noexcept
+    inline bool operator != ( const coordinates<T>& a ) const noexcept
     {
         return { x != a.x || y != a.y };
     }
 
+    // we create some basic operations inside the struct
+    [[nodiscard]]
+    inline coordinates<T> operator + ( const coordinates<T>& a ) const noexcept
+    {
+        return { x+a.x, y+a.y };
+    }
+
+    [[nodiscard]]
+    inline coordinates<T> operator - ( const coordinates<T>& a ) const noexcept
+    {
+        return { x-a.x, y-a.y };
+    }
+
     template<typename D>
     [[nodiscard]]
-    inline coordinates operator * ( const D& a ) noexcept
+    inline coordinates operator * ( const D& a ) const noexcept
     {
         return { x*a, y*a };
     }
 
     [[nodiscard]]
-    inline std::string toString()
+    inline std::string toString() const
     {
         return std::to_string(x) + " " + std::to_string(y);
     }
@@ -217,13 +220,13 @@ class RGBA
 
 
         [[nodiscard]]
-        inline RGBA operator + ( RGBA a_color ) noexcept 
+        inline RGBA operator + ( RGBA a_color ) const noexcept 
         {
             return { this->get_red() + a_color.get_red(), this->get_green() + a_color.get_green(), this->get_blue() + a_color.get_blue() };
         }
 
         [[nodiscard]]
-        inline RGBA operator - ( RGBA a_color ) noexcept
+        inline RGBA operator - ( RGBA a_color ) const noexcept
         {
             return { this->get_red() - a_color.get_red(), this->get_green() - a_color.get_green(), this->get_blue() - a_color.get_blue() };
         }
@@ -332,7 +335,7 @@ class Matrix
         // this is a simpler way of accessing [y][x] by using a set of coordinates
         template<typename D>
         [[nodiscard]]
-        constexpr inline T& operator [] ( const coordinates<D>& a_coordinates )
+        constexpr inline T& operator [] ( const coordinates<D>& a_coordinates ) NOEXCEPT_IF_NO_DEBUG
         {
             CHECK_MATRIX_BOUND(a_coordinates.y, a_coordinates.x);
             return data_[ a_coordinates.y * width_ + a_coordinates.x ];
@@ -342,7 +345,7 @@ class Matrix
 };
 // here we calculate if any of the given 2 vectors is a multiple of the other vector.
 template<typename T>
-inline bool same_direction(coordinates<T> a, coordinates<T> b)
+inline bool same_direction(const coordinates<T>& a, const coordinates<T>& b)
 {   
     //Two vectors are parallel (= multiple of the other) if their cross product is 0 (a.x * b.y - a.y * b.x == 0)
     return a.x * b.y == a.y * b.x;
