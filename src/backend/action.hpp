@@ -10,12 +10,12 @@ class CharacterAction {
         CharacterAction(float acc, float hp_eff, const helper::coordinates<size_t>& target):
             accuracy_(acc), hp_effect_(hp_eff), target_(target) {}
 
-        const float accuracy() const
+        float accuracy() const
         {
             return accuracy_;
         }
 
-        const float hp_effect() const
+        float hp_effect() const
         {
             return hp_effect_;
         }
@@ -37,6 +37,7 @@ class BuildingAction {
             building_type_(building), target_(target) {}
         
         // use string_view for efficient non-owning copy
+        // its basically a struct with the pointer to first character and length of string
         const std::string_view building_type() const
         {
             return building_type_;
