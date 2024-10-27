@@ -31,12 +31,12 @@ private:
 
     struct ActionVisitor {
         void operator() (const Action::BuildingAction& buildAction) {
-            std::cout << "Building a " << buildAction.building_type_ << " at " << buildAction.target_.toString() << std::endl;
+            std::cout << "Building a " << buildAction.building_type() << " at " << buildAction.target().toString() << std::endl;
         }
 
         void operator() (const Action::CharacterAction& charAction) {
-            std::cout << "Dealing " << charAction.hp_effect_ << " damage to enemy at " << charAction.target_.toString() 
-                      << " with accuracy " << charAction.accuracy_ << std::endl;
+            std::cout << "Dealing " << charAction.hp_effect() << " damage to enemy at " << charAction.target().toString() 
+                      << " with accuracy " << charAction.accuracy() << std::endl;
         }
     };
 
