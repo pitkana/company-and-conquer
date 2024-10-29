@@ -36,9 +36,8 @@ class BuildingAction {
         BuildingAction(const std::string& building, const helper::coordinates<size_t>& target):
             building_type_(building), target_(target) {}
         
-        // use string_view for efficient non-owning copy
-        // its basically a struct with the pointer to first character and length of string
-        const std::string_view building_type() const
+
+        const std::string& building_type() const
         {
             return building_type_;
         }
