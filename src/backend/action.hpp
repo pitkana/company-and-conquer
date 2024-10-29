@@ -33,7 +33,9 @@ class CharacterAction {
 
 class BuildingAction {
     public:
-        BuildingAction(const std::string& building, const helper::coordinates<size_t>& target):
+        // using string_view to avoid situations where we might construct a std::string when passing the parameter values
+        // also allows us to pass also other types not just std::string
+        BuildingAction(std::string_view building, const helper::coordinates<size_t>& target):
             building_type_(building), target_(target) {}
         
 
