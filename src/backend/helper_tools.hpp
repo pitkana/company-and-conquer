@@ -1,26 +1,8 @@
-#ifndef HELPERTOOLS
-#define HELPERTOOLS
-
-#if DEBUG >= 1
-#define CHECK_MATRIX_BOUND(y, x) if (x >= width_ || y >= height_) throw std::out_of_range("Accessed matrix index out of bounds")
-#define NOEXCEPT_IF_NO_DEBUG
-#else
-#define CHECK_MATRIX_BOUND(y, x)
-#define NOEXCEPT_IF_NO_DEBUG noexcept
-#endif
-
-#include <stdexcept>
-#include <algorithm>
-#include <cstdint>
-#include <memory>
-#include <vector>
-#include <cmath>
-#include <string>
-#include <array>
-
+#pragma once
+#include "coordinates.hpp"
 
 // create a namespace to stop any namespace errors
-namespace helper
+namespace Helper
 {
 
 
@@ -44,101 +26,6 @@ constexpr inline T clamp( const T& value, const T& smallest, const T& largest ) 
 
 
 
-
-template<typename T>
-struct coordinates 
-{
-    T x = 0;
-    T y = 0;
-    
-
-    //add a constructor for std::make_unique. Modified parameter names for clarity
-    coordinates( T x1 = 0, T y1 = 0 ) noexcept : x(x1), y(y1) { } 
-
-
-    coordinates(const coordinates<T>& a ) noexcept : x(a.x), y(a.y) { }
-
-
-    // copy assignment operator
-    inline coordinates<T>& operator = ( const coordinates<T>& a ) noexcept
-    { 
-        x = a.x;
-        y = a.y;
-        return *this;
-    }
-
-    // move assignment operator
-    coordinates<T>& operator = ( const coordinates<T>&& a ) noexcept
-    { 
-        x = a.x;
-        y = a.y;
-        return *this;
-    }
-
-    
-    [[nodiscard]]
-    inline bool operator ==  ( const coordinates<T>& a ) const noexcept
-    {
-        return { x == a.x && y == a.y };
-    }
-
-
-    [[nodiscard]]
-    inline bool operator != ( const coordinates<T>& a ) const noexcept
-    {
-        return { x != a.x || y != a.y };
-    }
-
-    // we create some basic operations inside the struct
-    [[nodiscard]]
-    inline coordinates<T> operator + ( const coordinates<T>& a ) const noexcept
-    {
-        return { x+a.x, y+a.y };
-    }
-
-    [[nodiscard]]
-    inline coordinates<T> operator - ( const coordinates<T>& a ) const noexcept
-    {
-        return { x-a.x, y-a.y };
-    }
-
-    template<typename D>
-    [[nodiscard]]
-    inline coordinates operator * ( const D& a ) const noexcept
-    {
-        return { x*a, y*a };
-    }
-
-    [[nodiscard]]
-    inline std::string toString() const
-    {
-        return std::to_string(x) + " " + std::to_string(y);
-    }
-
-};
-
-
-template<typename T, typename D>
-constexpr inline coordinates<T> square_to_pos( const coordinates<T>& coords, const D screen_width, const D screen_height, 
-                                                bool use_clamp, const size_t amount_of_squares )
-{
-    T x = coords.x;
-    T y = coords.y;
-    
-    if ( use_clamp ) {
-        x = clamp<T>(x, 0, amount_of_squares);
-        y = clamp<T>(y, 0, amount_of_squares);
-    }
-    
-
-    D square_width = screen_width/amount_of_squares;
-    D square_height = screen_height/amount_of_squares;
-
-    T x1 = x*square_width;
-    T y1 = y*square_height;
-
-    return coordinates<T>{x1, y1};
-}
 
 
 class RGBA
@@ -266,83 +153,6 @@ class RGBA
         }
 };
 
-/**
- * @brief class definition for a Matrix class that contains a std::vector
- * as the underlying container. The class is more used as a grid based container 
- * and not used to make mathematical matrix operations on its data.
- */
-template<typename T>
-class Matrix
-{
-    private: 
-        std::vector<T> data_;
-        size_t width_ = 0;
-        size_t height_ = 0;
-
-
-    public:
-        // initialise a n x n matrix
-        Matrix( size_t n ) noexcept : data_(n * n), width_(n), height_(n) { }
-
-        // initialise a n x m matrix
-        Matrix( size_t n, size_t m ) noexcept : data_(n * m), width_(n), height_(m) { }
-
-
-        // initialise a n x n matrix with the <value> at every cell
-        template<typename D>
-        Matrix( size_t n, D value ) noexcept : data_(n * n, value), width_(n), height_(n) { }
-
-
-        // initialise a n x m matrix with the <value> initialised at every cell
-        template<typename D>
-        Matrix( size_t n, size_t m, D value ) noexcept : data_(n * m, value), width_(n), height_(m) { }
-
-        [[nodiscard]]
-        constexpr size_t size() const noexcept
-        {
-            return width_ * height_;
-        }
-
-        [[nodiscard]]
-        constexpr size_t width() const noexcept
-        {
-            return width_;
-        }
-
-        [[nodiscard]]
-        constexpr size_t height() const noexcept
-        {
-            return height_;
-        }
-
-
-        // works the same way as accessing with [i][j] as std::vector<std::vector<T>>
-        [[nodiscard]]
-        constexpr T& operator () ( const size_t i, const size_t j ) NOEXCEPT_IF_NO_DEBUG
-        {
-            CHECK_MATRIX_BOUND(i, j);
-            return data_[ i * width_ + j ];
-        }
-
-        // works the same way as accessing with [i][j] as std::vector<std::vector<T>>
-        [[nodiscard]]
-        constexpr const T& operator () ( const size_t i, const size_t j ) const NOEXCEPT_IF_NO_DEBUG
-        {
-            CHECK_MATRIX_BOUND(i, j);
-            return data_[ i * width_ + j ];
-        }
-
-        // this is a simpler way of accessing [y][x] by using a set of coordinates
-        template<typename D>
-        [[nodiscard]]
-        constexpr inline T& operator [] ( const coordinates<D>& a_coordinates ) NOEXCEPT_IF_NO_DEBUG
-        {
-            CHECK_MATRIX_BOUND(a_coordinates.y, a_coordinates.x);
-            return data_[ a_coordinates.y * width_ + a_coordinates.x ];
-        }
-
-
-};
 // here we calculate if any of the given 2 vectors is a multiple of the other vector.
 template<typename T>
 inline bool same_direction(const coordinates<T>& a, const coordinates<T>& b)
@@ -350,6 +160,27 @@ inline bool same_direction(const coordinates<T>& a, const coordinates<T>& b)
     //Two vectors are parallel (= multiple of the other) if their cross product is 0 (a.x * b.y - a.y * b.x == 0)
     return a.x * b.y == a.y * b.x;
 }
+
+template<typename T, typename D>
+constexpr inline coordinates<T> square_to_pos( const coordinates<T>& coords, const D screen_width, const D screen_height, 
+                                                bool use_clamp, const size_t amount_of_squares )
+{
+    T x = coords.x;
+    T y = coords.y;
+    
+    if ( use_clamp ) {
+        x = clamp<T>(x, 0, amount_of_squares);
+        y = clamp<T>(y, 0, amount_of_squares);
+    }
+    
+
+    D square_width = screen_width/amount_of_squares;
+    D square_height = screen_height/amount_of_squares;
+
+    T x1 = x*square_width;
+    T y1 = y*square_height;
+
+    return coordinates<T>{x1, y1};
+}
 }
 
-#endif
