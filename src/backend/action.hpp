@@ -5,6 +5,8 @@
 
 #include "coordinates.hpp"
 
+#define ACTION_TYPES Action::CharacterAction, Action::BuildingAction
+
 namespace Action {
 class CharacterAction {
     public:

@@ -5,10 +5,6 @@
 #include <variant>
 #include <iostream>
 
-#define ACTION_TYPES Action::CharacterAction, Action::BuildingAction
-
-
-
 
 class Game {
 public:
