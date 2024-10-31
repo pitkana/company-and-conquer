@@ -1,4 +1,5 @@
 #pragma once
+
 #include "action.hpp"
 #include <deque>
 #include <memory>

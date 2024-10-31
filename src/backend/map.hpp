@@ -21,10 +21,10 @@ class Map
 
         /*
         * We will create a board into this container ( NOTE: you can specify a custom board size ).
-        * The size_t in the Square template is used to define the template type for helper::coordinates,
+        * The size_t in the Square template is used to define the template type for coordinates,
         * so basically the maximum coordinate value. 
         */
-        helper::Matrix< std::shared_ptr< Square<size_t> >> all_squares_;
+        Matrix< std::shared_ptr< Square<size_t> >> all_squares_;
 
         
         // we define the directions from the helper tools that we'll use in directions handling
@@ -60,7 +60,7 @@ class Map
                     // here we use normal initialisation because if we use std::make_shared the objects
                     // wont be deleted until all the weak pointers go out of scope.
                     // Because I use std::weak_ptr's in square, I cannot use std::make_shared
-                    all_squares_(i, j) = std::shared_ptr< Square<size_t> >( new Square<size_t>(helper::coordinates<size_t>{0, 0}) );
+                    all_squares_(i, j) = std::shared_ptr< Square<size_t> >( new Square<size_t>(coordinates<size_t>{0, 0}) );
 
                 }
             }
@@ -75,9 +75,9 @@ class Map
          * @param direction given direction
          * @return std::shared_ptr< Square<size_t> >
          */
-        std::shared_ptr<Square<size_t>> get_neighbor( const helper::coordinates<size_t>& location, helper::Directions direction )
+        std::shared_ptr<Square<size_t>> get_neighbor( const coordinates<size_t>& location, helper::Directions direction )
         {
-            helper::coordinates<int64_t> new_location;
+            coordinates<int64_t> new_location;
 
             std::shared_ptr< Square<size_t> > possible_location = nullptr;
 
@@ -113,7 +113,7 @@ class Map
          * @param location location of whose adjacent squares to return
          * @return std::vector< std::shared_ptr<Square<size_t> >> 
          */
-        std::vector< std::shared_ptr<Square<size_t> >> get_neighbors( const helper::coordinates<size_t>& location )
+        std::vector< std::shared_ptr<Square<size_t> >> get_neighbors( const coordinates<size_t>& location )
         {
 
             std::vector< std::shared_ptr<Square<size_t> >> possible_locations;
@@ -131,9 +131,9 @@ class Map
         }
 
 
-        // converts the window coordinates given as helper::coordinates<int64_t> into a squares helper::coordinates<int64_t>, this new helper::coordinates<int64_t> can then be used
+        // converts the window coordinates given as coordinates<int64_t> into a squares coordinates<int64_t>, this new coordinates<int64_t> can then be used
         // to get the corresponding square
-        helper::coordinates<int64_t> convert_pos( const int& x, const int& y, const int64_t& screen_width, const int64_t& screen_height, bool use_clamp = true ) noexcept
+        coordinates<int64_t> convert_pos( const int& x, const int& y, const int64_t& screen_width, const int64_t& screen_height, bool use_clamp = true ) noexcept
         {
             int square_width = screen_width/this->all_squares_.width();
             int square_height = screen_height/this->all_squares_.height();
@@ -148,7 +148,7 @@ class Map
 
             
 
-            return helper::coordinates<int64_t>{x1, y1};
+            return coordinates<int64_t>{x1, y1};
         }
 };
 

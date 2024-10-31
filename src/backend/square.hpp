@@ -1,5 +1,4 @@
-#ifndef SQUARE
-#define SQUARE
+#pragma once
 
 #include <optional>
 #include <string>
@@ -10,13 +9,14 @@
 #include <iterator>
 
 #include "helper_tools.hpp"
+#include "coordinates.hpp"
 
 
 template<typename T>
 class Square
 {
     private:
-        helper::coordinates<T> position_;
+        coordinates<T> position_;
 
 
     public:
@@ -28,12 +28,12 @@ class Square
          * 
          * @param coordinate The coordinates of the square
          */
-        Square( const helper::coordinates<T>& coordinate ) : position_( coordinate ) { }
+        Square( const coordinates<T>& coordinate ) : position_( coordinate ) { }
         
 
         /**
          * @brief Construct a new Square object, this constructor uses separate x and y 
-         * coordinate values in the constructor, while the other one uses helper::coordinates<T>
+         * coordinate values in the constructor, while the other one uses coordinates<T>
          * @param x the x -coordinate
          * @param y the y -coordinates
          */
@@ -48,7 +48,7 @@ class Square
 
         }
 
-        // check whether 2 given Squares have the same helper::coordinates<int64_t>,
+        // check whether 2 given Squares have the same coordinates<int64_t>,
         // if they have, then this operator considers them the same Square
         inline bool operator == ( Square a_square ) noexcept
         {
@@ -56,5 +56,3 @@ class Square
         }
 
 };
-
-#endif
