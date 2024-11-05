@@ -17,14 +17,25 @@ class Unit
 public:
     Unit(std::string &name) :
         name_(name) {};
-    
+
+    const std::string GetName() const {
+        return name_;
+    }
+
+    const std::array<uint_8t> GetInventory() const {
+        return inventory_;
+    }
+
+    const uint_8t GetHP() const {
+        return current_hp_;
+    }
 
 
 private:
-    std::string name_;
+    std::string &name_;
 
-    std::array<uint_8t, unit_consts.inventory_size> inventory;
-    uint_8t current_hp = unit_consts.max_hp;
+    std::array<uint_8t, unit_consts.inventory_size> inventory_;
+    uint_8t current_hp_ = unit_consts.max_hp;
 
 
 }
