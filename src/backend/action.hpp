@@ -9,8 +9,8 @@
 namespace Action {
 class CharacterAction {
     public:
-        CharacterAction(float acc, float hp_eff, const coordinates<size_t>& target):
-            accuracy_(acc), hp_effect_(hp_eff), target_(target) {}
+        CharacterAction(float acc, int hp_eff, int area_of_effect, const coordinates<size_t>& target):
+            accuracy_(acc), hp_effect_(hp_eff), area_of_effect_(area_of_effect), target_(target) {}
 
         float accuracy() const
         {
@@ -28,9 +28,10 @@ class CharacterAction {
         }
 
     private:
-        float accuracy_;
-        float hp_effect_;
-        coordinates<size_t> target_;
+        const float accuracy_;
+        const int hp_effect_;
+        const int area_of_effect_;
+        const coordinates<size_t> target_;
     };
 
 class BuildingAction {
