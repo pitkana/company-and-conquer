@@ -1,14 +1,16 @@
 #ifndef unit
 #define unit
 
-#include <array>
+#include <vector>
+#include <string>
+#include <cstdint>
 
-struct unit_consts {
-    uint_8t max_hp = 10;
-    uint_8t move_range = 5;
-    uint_8t visual_range = 5;
-    uint_8t inventory_size = 4;
-}
+struct {
+    uint8_t max_hp = 10;
+    uint8_t move_range = 5;
+    uint8_t visual_range = 5;
+    uint8_t inventory_size = 4;
+} unit_consts;
 
 
 class Unit
@@ -16,17 +18,17 @@ class Unit
 
 public:
     Unit(std::string &name) :
-        name_(name) {};
+        name_(name), inventory_({}), current_hp_(unit_consts.max_hp) {}
 
     const std::string GetName() const {
         return name_;
     }
 
-    const std::array<uint_8t> GetInventory() const {
+    const std::vector<uint8_t> GetInventory() const {
         return inventory_;
     }
 
-    const uint_8t GetHP() const {
+    const uint8_t GetHP() const {
         return current_hp_;
     }
 
@@ -34,10 +36,9 @@ public:
 private:
     std::string &name_;
 
-    std::array<uint_8t, unit_consts.inventory_size> inventory_;
-    uint_8t current_hp_ = unit_consts.max_hp;
+    std::vector<uint8_t> inventory_;
+    uint8_t current_hp_;
 
-
-}
+};
 
 #endif
