@@ -21,6 +21,7 @@ target_sources(unit_test PUBLIC ${SOURCES})
 target_include_directories(unit_test PUBLIC .)
 target_include_directories(unit_test PUBLIC ../src/)
 target_link_libraries(unit_test PRIVATE sfml-graphics)
+target_compile_features(unit_test PRIVATE cxx_std_17)
 target_link_libraries(unit_test PRIVATE backend)
 target_include_directories(unit_test PRIVATE ../src/backend)
 
