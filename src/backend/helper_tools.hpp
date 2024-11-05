@@ -27,7 +27,6 @@ constexpr inline T clamp( const T& value, const T& smallest, const T& largest ) 
 
 
 
-
 class RGBA
 {   
     private:
@@ -107,13 +106,13 @@ class RGBA
 
 
         [[nodiscard]]
-        inline RGBA operator + ( RGBA a_color ) const noexcept 
+        inline RGBA operator + ( RGBA a_color ) noexcept 
         {
             return { this->get_red() + a_color.get_red(), this->get_green() + a_color.get_green(), this->get_blue() + a_color.get_blue() };
         }
 
         [[nodiscard]]
-        inline RGBA operator - ( RGBA a_color ) const noexcept
+        inline RGBA operator - ( RGBA a_color ) noexcept
         {
             return { this->get_red() - a_color.get_red(), this->get_green() - a_color.get_green(), this->get_blue() - a_color.get_blue() };
         }
@@ -155,7 +154,7 @@ class RGBA
 
 // here we calculate if any of the given 2 vectors is a multiple of the other vector.
 template<typename T>
-inline bool same_direction(const coordinates<T>& a, const coordinates<T>& b)
+inline bool same_direction(coordinates<T> a, coordinates<T> b)
 {   
     //Two vectors are parallel (= multiple of the other) if their cross product is 0 (a.x * b.y - a.y * b.x == 0)
     return a.x * b.y == a.y * b.x;
