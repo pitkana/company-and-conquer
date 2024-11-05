@@ -1,6 +1,5 @@
 #include "team.hpp"
 
-
 void Team::enqueue_turn(const Turn& turn) {
     turns_.push_back(turn);
 }
@@ -9,20 +8,26 @@ void Team::enqueue_turn(const Turn&& turn) {
     turns_.push_back(turn);
 }
 
-Turn Team::undo_turn() {
+std::optional<Turn> Team::undo_turn() {
+    if (turns_.empty()) {
+        return std::nullopt;
+    }
+
     Turn& last = turns_.back();
     turns_.pop_back();
     return last;
 }
 
-Turn Team::dequeue_turn() {
+std::optional<Turn> Team::dequeue_turn() {
+    if (turns_.empty()) {
+        return std::nullopt;
+    }
     Turn& first = turns_.front();
     turns_.pop_front();
     return first;
 }
 
 void Team::add_unit(Unit& unit) {
-    team_size_++;
     units_.push_back(unit);
 }
 
@@ -31,7 +36,7 @@ std::vector<Unit>& Team::get_units() {
 }
 
 size_t Team::team_size() const {
-    return team_size_;
+    return units_.size();
 }
 
 int Team::get_id() const {
