@@ -1,13 +1,10 @@
 #pragma once
+
 #include "action.hpp"
 #include <deque>
 #include <memory>
 #include <variant>
 #include <iostream>
-
-#define ACTION_TYPES Action::CharacterAction, Action::BuildingAction
-
-
 
 
 class Game {

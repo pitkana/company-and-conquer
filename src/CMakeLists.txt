@@ -6,7 +6,7 @@ enable_language(CXX)
 # use C++ standard version 20
 set(CMAKE_CXX_STANDARD 20)
 # produce non-optimized code with debug symbols
-set(CMAKE_BUILD_TYPE Debug)
+# set(CMAKE_BUILD_TYPE Debug)
 
 # Generate compile_commands.json file for LSP
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
