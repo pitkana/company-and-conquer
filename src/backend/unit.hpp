@@ -28,7 +28,7 @@ public:
         return inventory_;
     }
 
-    const uint8_t GetHP() const {
+    int8_t GetHP() const {
         return current_hp_;
     }
 
@@ -37,7 +37,7 @@ private:
     std::string &name_;
 
     std::vector<uint8_t> inventory_;
-    uint8_t current_hp_;
+    int8_t current_hp_;
 
 };
 
