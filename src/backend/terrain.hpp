@@ -16,15 +16,16 @@ template<typename T>
 class Terrain
 {
     private:
-        static const uint16_t can_shoot_through_ = 0;
-        static const uint16_t can_see_through_ = 1;
-        static const uint16_t can_walk_through = 2;
-        static const uint16_t can_build_in = 3;
+        // indeces for accessing <square_properties_>
+        static const size_t can_shoot_through_ = 0;
+        static const size_t can_see_through_ = 1;
+        static const size_t can_walk_through = 2;
+        static const size_t can_build_in = 3;
 
 
         int32_t texture_idx_ = 0;
         int32_t movement_cost_ = 1;
-        std::vector<bool> square_properties_;
+        std::vector<bool> square_properties_; // psecial version of std::vector that should be implemented as a bitset
 
 
 
@@ -49,6 +50,8 @@ class Terrain
         }
 
         constexpr int32_t texture() { return texture_idx_; }
+
+        constexpr int32_t movement_cost() { return movement_cost_; }
 
         
 

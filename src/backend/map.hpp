@@ -9,7 +9,7 @@
 #include <limits>
 
 
-#include "Terrain.hpp"
+#include "terrain.hpp"
 #include "matrix.hpp"
 
 
@@ -29,7 +29,7 @@ class Map
         * The size_t in the Terrain template is used to define the template type for coordinates,
         * so basically the maximum coordinate value. 
         */
-        Matrix< std::shared_ptr< Terrain<size_t> >> all_Terrains_;
+        Matrix< std::shared_ptr< Terrain<size_t> >> all_terrains_;
 
 
         
@@ -49,7 +49,7 @@ class Map
          * @param width width of the map
          * @param height the height of the map
          */
-        Map( const size_t width, const size_t height ) : all_Terrains_( width, height )
+        Map( const size_t width, const size_t height ) : all_terrains_( width, height )
         {
             this->create_board();
         }
@@ -60,7 +60,7 @@ class Map
          * 
          * @param size amount of Terrains
          */
-        Map( const size_t size ) : all_Terrains_(size)
+        Map( const size_t size ) : all_terrains_(size)
         {
             this->create_board();
         }
@@ -72,13 +72,13 @@ class Map
         {
 
             // with this nested loop we create all the Terrains
-            for ( size_t i = 0; i < this->all_Terrains_.width(); i++ ) {
-                for ( size_t j = 0; j < this->all_Terrains_.height(); j++ ) {
+            for ( size_t i = 0; i < this->all_terrains_.width(); i++ ) {
+                for ( size_t j = 0; j < this->all_terrains_.height(); j++ ) {
 
                     // here we use normal initialisation because if we use std::make_shared the objects
                     // wont be deleted until all the weak pointers go out of scope.
                     // Because I use std::weak_ptr's in Terrain, I cannot use std::make_shared
-                    all_Terrains_(i, j) = std::shared_ptr< Terrain<size_t> >( new Terrain<size_t>() );
+                    all_terrains_(i, j) = std::shared_ptr< Terrain<size_t> >( new Terrain<size_t>() );
 
                 }
             }
@@ -102,25 +102,25 @@ class Map
             switch ( direction ) {
                 case Helper::Directions::North:
                     if ( location.y > 0 ) {
-                        possible_location = all_Terrains_( location.x, location.y - 1 );
+                        possible_location = this->all_terrains_( location.x, location.y - 1 );
                     }
                     break;
 
                 case Helper::Directions::East:
-                    if ( location.x < this->all_Terrains_.width() - 1) {
-                        possible_location = this->all_Terrains_( location.x + 1, location.y );
+                    if ( location.x < this->all_terrains_.width() - 1) {
+                        possible_location = this->all_terrains_( location.x + 1, location.y );
                     }
                     break;
 
                 case Helper::Directions::South:
-                    if ( location.y < this->all_Terrains_.width() - 1 ) {
-                        possible_location = this->all_Terrains_( location.x, location.y + 1 );
+                    if ( location.y < this->all_terrains_.width() - 1 ) {
+                        possible_location = this->all_terrains_( location.x, location.y + 1 );
                     }
                     break;
 
                 case Helper::Directions::West:
                     if ( location.x > 0 ) {
-                        possible_location = this->all_Terrains_( location.x - 1, location.y );
+                        possible_location = this->all_terrains_( location.x - 1, location.y );
                     }
                     break;
             }
@@ -152,20 +152,60 @@ class Map
             return possible_locations;
         }
 
+        /**
+         * @brief a nice-to-have method for checking if the direction we want to go to is valid.
+         * Implemented here so that code in other parts is shorter.
+         * @param location the current location from where we want to move
+         * @param direction the direction we want to go to
+         * @return <true> there is a tile in the given direction
+         * @return <false> if there is not a tile 
+         */
+        constexpr inline bool valid_direction( const coordinates<size_t>& location, const Helper::Directions direction )
+        {
+            switch ( direction ) {
+                case Helper::Directions::North:
+                    if ( location.y > 0 ) {
+                        return true;
+                    }
+                    break;
+
+                case Helper::Directions::East:
+                    if ( location.x < this->all_terrains_.width() - 1) {
+                        return true;
+                    }
+                    break;
+
+                case Helper::Directions::South:
+                    if ( location.y < this->all_terrains_.width() - 1 ) {
+                        return true;
+                    }
+                    break;
+
+                case Helper::Directions::West:
+                    if ( location.x > 0 ) {
+                        return true;
+                    }
+                    break;
+            }
+            
+
+            return false;
+        }
+
 
         // converts the window coordinates given as coordinates<int64_t> into a Terrains coordinates<int64_t>, this new coordinates<int64_t> can then be used
         // to get the corresponding Terrain
         coordinates<int64_t> convert_pos( const int& x, const int& y, const int64_t& screen_width, const int64_t& screen_height, bool use_clamp = true ) noexcept
         {
-            int square_width = screen_width/this->all_Terrains_.width();
-            int square_height = screen_height/this->all_Terrains_.height();
+            int square_width = screen_width/this->all_terrains_.width();
+            int square_height = screen_height/this->all_terrains_.height();
 
             int x1 = x/square_width;
             int y1 = y/square_height;
 
             if ( use_clamp ) {
-                x1 = Helper::clamp<size_t>(x1, 0, this->all_Terrains_.width());
-                y1 = Helper::clamp<size_t>(y1, 0, this->all_Terrains_.height());
+                x1 = Helper::clamp<size_t>(x1, 0, this->all_terrains_.width());
+                y1 = Helper::clamp<size_t>(y1, 0, this->all_terrains_.height());
             }
 
             
@@ -185,9 +225,79 @@ class Map
             // cant use unordered_set with coordinates without making a hash function so I used a vector
             std::vector<bool> is_processed( width_ * height_ );
 
+            // this will contain the distance and predecessor of each vertex as: <distance, location of predecessor>
             Matrix< std::pair<size_t, coordinates<size_t>> > vertex_attributes(width_, height_, std::make_pair( std::numeric_limits<size_t>::max(), coordinates{0, 0} ));
+            vertex_attributes( location.x, location.y ) = std::make_pair( 0, location );
 
 
+            auto Relax = [&vertex_attributes]( coordinates<size_t>& curr, coordinates<size_t>& a_neighbour, size_t weight ) -> void
+            {
+                if ( vertex_attributes( curr.x, curr.y ).first + weight < vertex_attributes( a_neighbour.x, a_neighbour.y ).first ) {
+                    vertex_attributes( a_neighbour.x, a_neighbour.y ) = std::make_pair( vertex_attributes( curr.x, curr.y ).first + weight, curr );
+                }
+            };
+
+            
+            std::pair<size_t, coordinates<size_t>> curr;
+            coordinates<size_t> aux; // well use this in the following loop
+
+            std::priority_queue< std::pair<size_t, coordinates<size_t> >> distances;
+
+            while ( !(distances.empty()) ) {
+                curr = distances.top();
+                distances.pop();
+
+                if ( !(is_processed[ curr.second.x * width_  + curr.second.y ]) ) {
+
+                    for ( const Helper::Directions& a_direction : directions_ ) {
+                        if ( valid_direction( location, a_direction ) ) {
+                            switch( a_direction ) {
+                                case Helper::Directions::North:
+                                    if ( !(is_processed[ curr.second.x * width_  + (curr.second.y - 1) ]) ) {
+                                        
+                                        aux = {curr.second.x, curr.second.y - 1};
+                                        Relax( curr, aux, all_terrains_( curr.second.x, curr.second.y - 1 )->movement_cost() );
+
+                                        distances.push( std::make_pair( vertex_attributes( aux.x, aux.y ).first, aux ) );
+                                    }
+                                    break;
+
+                                case Helper::Directions::East:
+                                    if ( !(is_processed[ (curr.second.x + 1) * width_  + curr.second.y ]) ) {
+
+                                        aux = {curr.second.x + 1, curr.second.y};
+                                        Relax( curr, aux, all_terrains_( curr.second.x, curr.second.y - 1 )->movement_cost() );
+
+                                        distances.push( std::make_pair( vertex_attributes( aux.x, aux.y ).first, aux ) );
+                                    }
+                                    break;
+
+                                case Helper::Directions::South:
+                                    if ( !(is_processed[ curr.second.x * width_  + (curr.second.y + 1) ]) ) {
+
+                                        aux = {curr.second.x, curr.second.y + 1};
+                                        Relax( curr, aux, all_terrains_( curr.second.x, curr.second.y - 1 )->movement_cost() );
+
+                                        distances.push( std::make_pair( vertex_attributes( aux.x, aux.y ).first, aux ) );
+                                    }
+                                    break;
+
+                                case Helper::Directions::West:
+                                    if ( !(is_processed[ (curr.second.x - 1) * width_  + curr.second.y ]) ) {
+
+                                        aux = {curr.second.x - 1, curr.second.y};
+                                        Relax( curr, aux, all_terrains_( curr.second.x, curr.second.y - 1 )->movement_cost() );
+
+                                        distances.push( std::make_pair( vertex_attributes( aux.x, aux.y ).first, aux ) );
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                }
+
+                is_processed[ curr.second.x * width_  + curr.second.y ] = true;
+            }
         }
 
 
