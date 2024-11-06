@@ -7,6 +7,7 @@
 #include "backend/game.hpp"
 #include "backend/action.hpp"
 #include "backend/coordinates.hpp"
+#include "backend/unit.hpp"
 
 int main() 
 {
@@ -16,6 +17,10 @@ int main()
     game.add_action(Action::CharacterAction(0.3, 50, coordinates<size_t>(2, 10)));
 
     game.execute_actions();
+
+    std::string ok = "Joo";
+    Unit juu(ok);
+    std::cout << juu.GetHP() << std::endl;
     return 0;
 }
 
