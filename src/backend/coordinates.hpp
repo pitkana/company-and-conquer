@@ -60,6 +60,31 @@ struct coordinates
         return { x-a.x, y-a.y };
     }
 
+    [[nodiscard]]
+    inline bool operator < ( const coordinates<T>& a ) const noexcept
+    {
+        return x < a.x;
+    }
+
+    [[nodiscard]]
+    inline bool operator <= ( const coordinates<T>& a ) const noexcept
+    {
+        return x <= a.x;
+    }
+
+    [[nodiscard]]
+    inline bool operator > ( const coordinates<T>& a ) const noexcept
+    {
+        return x > a.x;
+    }
+
+    [[nodiscard]]
+    inline bool operator >= ( const coordinates<T>& a ) const noexcept
+    {
+        return x >= a.x;
+    }
+
+
     template<typename D>
     [[nodiscard]]
     inline coordinates operator * ( const D& a ) const noexcept
@@ -72,6 +97,8 @@ struct coordinates
     {
         return std::to_string(x) + " " + std::to_string(y);
     }
+
+
 };
 
 

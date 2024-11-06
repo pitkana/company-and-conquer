@@ -165,25 +165,36 @@ class Map
             switch ( direction ) {
                 case Helper::Directions::North:
                     if ( location.y > 0 ) {
-                        return true;
+                        // we do a nested if-statement because ordering of evaluations is not quaranteed in older c++ versions
+                        // and we might be out of range when trying to access a tile
+                        if ( all_terrains_( location.x, location.y - 1 )->can_move_to() ) {
+                            return true;
+                        }
+                        
                     }
                     break;
 
                 case Helper::Directions::East:
                     if ( location.x < this->all_terrains_.width() - 1) {
-                        return true;
+                        if ( all_terrains_( location.x + 1, location.y )->can_move_to() ) {
+                            return true;
+                        }
                     }
                     break;
 
                 case Helper::Directions::South:
-                    if ( location.y < this->all_terrains_.width() - 1 ) {
-                        return true;
+                    if ( location.y < this->all_terrains_.height() - 1 ) {
+                        if ( all_terrains_( location.x, location.y + 1 )->can_move_to() ) {
+                            return true;
+                        }
                     }
                     break;
 
                 case Helper::Directions::West:
                     if ( location.x > 0 ) {
-                        return true;
+                        if ( all_terrains_( location.x - 1, location.y)->can_move_to() ) {
+                            return true;
+                        }
                     }
                     break;
             }
@@ -220,13 +231,14 @@ class Map
          * @param movement_range the amount that the unit can traverse
          * @return std::vector< coordinates< size_t > > all the coordinates of the tiles that the unit con go to
          */
+        
         std::vector< coordinates< size_t > > possible_tiles_to_move_to( const coordinates<size_t>& location, const uint8_t movement_range )
         {   
             // cant use unordered_set with coordinates without making a hash function so I used a vector
             std::vector<bool> is_processed( width_ * height_ );
 
             // this will contain the distance and predecessor of each vertex as: <distance, location of predecessor>
-            Matrix< std::pair<size_t, coordinates<size_t>> > vertex_attributes(width_, height_, std::make_pair( std::numeric_limits<size_t>::max(), coordinates{0, 0} ));
+            Matrix< std::pair<size_t, coordinates<size_t>> > vertex_attributes(width_, height_, std::make_pair( std::numeric_limits<size_t>::max(), coordinates<size_t>{0, 0} ));
             vertex_attributes( location.x, location.y ) = std::make_pair( 0, location );
 
 
@@ -241,7 +253,9 @@ class Map
             std::pair<size_t, coordinates<size_t>> curr;
             coordinates<size_t> aux; // well use this in the following loop
 
-            std::priority_queue< std::pair<size_t, coordinates<size_t> >> distances;
+            // very interesting template constructor for std::priority_queue, we need it to make it possible to use std::pair in it
+            // it basically orders the pairs by the first element into a min-heap
+            std::priority_queue< std::pair<size_t, coordinates<size_t> >, std::vector<std::pair<size_t, coordinates<size_t> >> , std::less<std::pair<size_t, coordinates<size_t> >> > distances;
 
             while ( !(distances.empty()) ) {
                 curr = distances.top();
@@ -249,14 +263,20 @@ class Map
 
                 if ( !(is_processed[ curr.second.x * width_  + curr.second.y ]) ) {
 
+                    // the tile is only connected to 4 other tiles in the main directions
                     for ( const Helper::Directions& a_direction : directions_ ) {
+
+                        // check if the direction is valid before doing the relaxation of path
+                        // created this <valid_direction> method to not put all the if-statements into one clutter
                         if ( valid_direction( location, a_direction ) ) {
+
+                            // for different directions we have a different increment in the indexing
                             switch( a_direction ) {
                                 case Helper::Directions::North:
                                     if ( !(is_processed[ curr.second.x * width_  + (curr.second.y - 1) ]) ) {
                                         
                                         aux = {curr.second.x, curr.second.y - 1};
-                                        Relax( curr, aux, all_terrains_( curr.second.x, curr.second.y - 1 )->movement_cost() );
+                                        Relax( curr.second, aux, all_terrains_( curr.second.x, curr.second.y - 1 )->movement_cost() );
 
                                         distances.push( std::make_pair( vertex_attributes( aux.x, aux.y ).first, aux ) );
                                     }
@@ -266,7 +286,7 @@ class Map
                                     if ( !(is_processed[ (curr.second.x + 1) * width_  + curr.second.y ]) ) {
 
                                         aux = {curr.second.x + 1, curr.second.y};
-                                        Relax( curr, aux, all_terrains_( curr.second.x, curr.second.y - 1 )->movement_cost() );
+                                        Relax( curr.second, aux, all_terrains_( curr.second.x, curr.second.y - 1 )->movement_cost() );
 
                                         distances.push( std::make_pair( vertex_attributes( aux.x, aux.y ).first, aux ) );
                                     }
@@ -276,7 +296,7 @@ class Map
                                     if ( !(is_processed[ curr.second.x * width_  + (curr.second.y + 1) ]) ) {
 
                                         aux = {curr.second.x, curr.second.y + 1};
-                                        Relax( curr, aux, all_terrains_( curr.second.x, curr.second.y - 1 )->movement_cost() );
+                                        Relax( curr.second, aux, all_terrains_( curr.second.x, curr.second.y - 1 )->movement_cost() );
 
                                         distances.push( std::make_pair( vertex_attributes( aux.x, aux.y ).first, aux ) );
                                     }
@@ -286,7 +306,7 @@ class Map
                                     if ( !(is_processed[ (curr.second.x - 1) * width_  + curr.second.y ]) ) {
 
                                         aux = {curr.second.x - 1, curr.second.y};
-                                        Relax( curr, aux, all_terrains_( curr.second.x, curr.second.y - 1 )->movement_cost() );
+                                        Relax( curr.second, aux, all_terrains_( curr.second.x, curr.second.y - 1 )->movement_cost() );
 
                                         distances.push( std::make_pair( vertex_attributes( aux.x, aux.y ).first, aux ) );
                                     }
@@ -298,6 +318,22 @@ class Map
 
                 is_processed[ curr.second.x * width_  + curr.second.y ] = true;
             }
+            
+
+            
+            std::vector< coordinates<size_t> > tiles_that_are_close_enough;
+
+            // copy the tile into the return container only if their distance 
+            // is equal or less than the given <movement_range>
+            // I didn't use <std::copy_if> because the original vector has
+            // std::pair's so the simple for-loop is more efficient and much clearer
+            for ( std::pair<size_t, coordinates<size_t> >& a_tile : vertex_attributes ) {
+                if ( a_tile.first <= movement_range ) {
+                    tiles_that_are_close_enough.push_back( a_tile.second );
+                }
+            }
+
+            return tiles_that_are_close_enough;
         }
 
 
