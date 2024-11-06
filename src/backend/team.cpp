@@ -35,6 +35,10 @@ std::vector<Unit>& Team::get_units() {
     return units_;
 }
 
+const std::vector<Unit>& Team::get_units() const {
+    return units_;
+}
+
 size_t Team::team_size() const {
     return units_.size();
 }

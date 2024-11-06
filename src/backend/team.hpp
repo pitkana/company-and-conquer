@@ -38,7 +38,11 @@ public:
     [[nodiscard]]
     std::vector<Unit>& get_units();
 
-    //return the size of this team
+    //const version of get_units
+    [[nodiscard]]
+    const std::vector<Unit>& get_units() const;
+
+    //return the amount of Units on this team
     [[nodiscard]]
     size_t team_size() const;
 
@@ -51,6 +55,7 @@ private:
     std::deque<Turn> turns_;
     int team_id_;
 
+    //gives team a unique id, incremented once for each team constructed
     inline static int id_count_ = 0;
 };
 
