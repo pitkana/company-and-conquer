@@ -13,46 +13,43 @@
 
 
 template<typename T>
-class Square
+class Terrain
 {
     private:
-        coordinates<T> position_;
+        static const uint16_t can_shoot_through_ = 0;
+        static const uint16_t can_see_through_ = 1;
+        static const uint16_t can_walk_through = 2;
+        static const uint16_t can_build_in = 3;
+
+
+        int32_t texture_idx_ = 0;
+        int32_t movement_cost_ = 1;
+        std::vector<bool> square_properties_;
+
 
 
     public:
 
-        Square() { }
-
-        /**
-         * @brief Construct a new Square object
-         * 
-         * @param coordinate The coordinates of the square
-         */
-        Square( const coordinates<T>& coordinate ) : position_( coordinate ) { }
-        
-
-        /**
-         * @brief Construct a new Square object, this constructor uses separate x and y 
-         * coordinate values in the constructor, while the other one uses coordinates<T>
-         * @param x the x -coordinate
-         * @param y the y -coordinates
-         */
-        Square( const T& x, const T& y ) : position_(x, y) { }
+        Square() : square_properties_(4) { }
 
 
         // returns true if this square contains a piece, and false if the square's empty
-        inline bool has_piece() noexcept
+        constexpr inline bool has_piece() noexcept
         {
             // we call the bool() operator of std::shared_ptr
             return (this->container) ? true : false;
-
         }
+
 
         // check whether 2 given Squares have the same coordinates<int64_t>,
         // if they have, then this operator considers them the same Square
-        inline bool operator == ( Square a_square ) noexcept
+        constexpr inline bool operator == ( Square a_square ) noexcept
         {
             return { this->position.x == a_square.coordinates().x && this->position.y == a_square.coordinates().y };
         }
+
+        constexpr int32_t texture() { return texture_idx_; }
+
+        
 
 };
