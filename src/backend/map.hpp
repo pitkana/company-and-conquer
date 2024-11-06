@@ -27,12 +27,12 @@ class Map
         Matrix< std::shared_ptr< Square<size_t> >> all_squares_;
 
         
-        // we define the directions from the helper tools that we'll use in directions handling
-        std::vector< helper::Directions > directions_ = { 
-            helper::Directions::North, 
-            helper::Directions::East, 
-            helper::Directions::South, 
-            helper::Directions::West 
+        // we define the directions from the Helper tools that we'll use in directions handling
+        std::vector< Helper::Directions > directions_ = { 
+            Helper::Directions::North, 
+            Helper::Directions::East, 
+            Helper::Directions::South, 
+            Helper::Directions::West 
         };
 
 
@@ -75,29 +75,29 @@ class Map
          * @param direction given direction
          * @return std::shared_ptr< Square<size_t> >
          */
-        std::shared_ptr<Square<size_t>> get_neighbor( const coordinates<size_t>& location, helper::Directions direction )
+        std::shared_ptr<Square<size_t>> get_neighbor( const coordinates<size_t>& location, Helper::Directions direction )
         {
             coordinates<int64_t> new_location;
 
             std::shared_ptr< Square<size_t> > possible_location = nullptr;
 
             switch ( direction ) {
-                case helper::Directions::North:
+                case Helper::Directions::North:
                     if ( location.y > 0 ) {
                         possible_location = all_squares_( location.x, location.y - 1 );
                     }
 
-                case helper::Directions::East:
+                case Helper::Directions::East:
                     if ( location.x < this->all_squares_.width() - 1) {
                         possible_location = this->all_squares_( location.x + 1, location.y );
                     }
 
-                case helper::Directions::South:
+                case Helper::Directions::South:
                     if ( location.y < this->all_squares_.width() - 1 ) {
                         possible_location = this->all_squares_( location.x, location.y + 1 );
                     }
 
-                case helper::Directions::West:
+                case Helper::Directions::West:
                     if ( location.x > 0 ) {
                         possible_location = this->all_squares_( location.x - 1, location.y );
                     }
@@ -120,7 +120,7 @@ class Map
 
             std::shared_ptr<Square<size_t>> a_neighbor;
 
-            for ( helper::Directions a_direction : directions_ ) {
+            for ( Helper::Directions a_direction : directions_ ) {
                 a_neighbor = get_neighbor( location, a_direction );
                 if ( a_neighbor ) {
                     possible_locations.push_back( a_neighbor );
@@ -142,8 +142,8 @@ class Map
             int y1 = y/square_height;
 
             if ( use_clamp ) {
-                x1 = helper::clamp<int32_t>(x1, 0, this->all_squares_.width());
-                y1 = helper::clamp<int32_t>(y1, 0, this->all_squares_.height());
+                x1 = Helper::clamp<int32_t>(x1, 0, this->all_squares_.width());
+                y1 = Helper::clamp<int32_t>(y1, 0, this->all_squares_.height());
             }
 
             
