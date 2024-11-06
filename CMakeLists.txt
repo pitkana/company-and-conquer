@@ -7,7 +7,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 
 add_subdirectory(src)
-add_subdirectory(tests)
+
 
 include(FetchContent)
 FetchContent_Declare(SFML
