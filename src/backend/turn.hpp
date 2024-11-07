@@ -1,6 +1,7 @@
 #pragma once
 
 #include <variant>
+#include <memory>
 
 #include "coordinates.hpp"
 #include "action.hpp"
@@ -11,11 +12,11 @@
 */
 struct Turn {
     Turn(const Unit& unit, const coordinates<size_t>& unit_origin, 
-         const coordinates<size_t>& movement_destination, const std::variant<ACTION_TYPES>& action):
+         const coordinates<size_t>& movement_destination, std::shared_ptr<Action> action):
          unit(unit), unit_origin(unit_origin), movement_destination(movement_destination), action(action) {}
 
     const Unit& unit;
     const coordinates<size_t>& unit_origin;
     const coordinates<size_t>& movement_destination;
-    std::variant<ACTION_TYPES> action;
+    std::shared_ptr<Action> action;
 };

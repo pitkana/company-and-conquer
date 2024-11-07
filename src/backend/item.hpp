@@ -3,6 +3,7 @@
 #include <string>
 #include <variant>
 #include <sstream>
+#include <memory>
 
 #include "action.hpp"
 #include "coordinates.hpp"
@@ -17,7 +18,7 @@ public:
 
     // Return the action associated with this item on the coordinates given as parameter
     [[nodiscard]]
-    virtual std::variant<ACTION_TYPES> get_action(const coordinates<size_t>& target) const = 0;
+    virtual std::shared_ptr<Action> get_action(const coordinates<size_t>& target) const = 0;
 
     // Return name of this item
     [[nodiscard]]
@@ -33,7 +34,7 @@ protected:
 
 class Weapon : public Item {
 public:
-    Weapon(const std::string& name, float accuracy, int damage, int area_of_effect = 0):
+    Weapon(const std::string& name, int accuracy, int damage, int area_of_effect = 0):
            Item(name), accuracy_(accuracy), damage_(damage), area_of_effect_(area_of_effect) 
     {
         //Initialize description based on parameters
@@ -42,14 +43,12 @@ public:
         description_ = desc.str();
     }
 
-    virtual ~Weapon() = default;
-
-    //Returns a CharacterAction for the damaging action
+    //Returns an ItemAction for the damaging action
     [[nodiscard]]
-    virtual std::variant<ACTION_TYPES> get_action(const coordinates<size_t>& target) const;
+    virtual std::shared_ptr<Action> get_action(const coordinates<size_t>& target) const;
 
 private:
-    const float accuracy_;
+    const int accuracy_;
     const int damage_;
     //Area of effect means how many squares out will this item affect from the target, 0 means only the target square.
     const int area_of_effect_;
@@ -65,11 +64,9 @@ public:
         description_ = desc.str();
     }
 
-    virtual ~Consumable() = default;
-
-    //Returns a CharacterAction for the healing action
+    //Returns an ItemAction for the healing action
     [[nodiscard]]
-    virtual std::variant<ACTION_TYPES> get_action(const coordinates<size_t>& target) const;
+    virtual std::shared_ptr<Action> get_action(const coordinates<size_t>& target) const;
 
 private:
     const int heal_amount_;

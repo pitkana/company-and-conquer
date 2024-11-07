@@ -48,14 +48,17 @@ std::unordered_map<int, std::vector<Unit>*> Game::get_units_map() {
     return units_map;
 }
 
+void Game::execute_action(std::shared_ptr<Action> action) {
+    assert(action); //assert that action is not null
+    action->execute(*this);
+}
+
 void Game::end_turn(int team_id) {
     Team& team = get_team_by_id(team_id);
     //loop until no more turns left, moving the unit and executing actions
     while (const std::optional<Turn> turn = team.dequeue_turn()) {
         //Placeholder for when this function is implemented
         //move_unit(turn->unit, turn->unit_origin, turn->movement_destination);
-        Turn tTurn = *std::move(turn);
-        std::visit(visitor_, tTurn.action);
+        execute_action(turn->action);
     }
-
 }

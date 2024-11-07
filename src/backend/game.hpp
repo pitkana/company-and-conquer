@@ -6,9 +6,9 @@
 #include <vector>
 #include <unordered_map>
 
-#include "action.hpp"
 #include "team.hpp"
 
+class Action;
 
 //Game class that instances the playing of a level
 class Game {
@@ -46,6 +46,8 @@ public:
     [[nodiscard]]
     std::unordered_map<int, std::vector<Unit>*> get_units_map();
 
+    void execute_action(std::shared_ptr<Action> action);
+
     //End the turn, thus executing all of the selected actions
     void end_turn(int team_id);
 
@@ -54,15 +56,4 @@ private:
 
     //Visitor struct that will be used for executing the actions of Units
     //What each action does inside of Game is defined here
-    struct ActionVisitor {
-        void operator() (const Action::BuildingAction& buildAction) {
-            std::cout << "Building a " << buildAction.building_type() << " at " << buildAction.target().toString() << std::endl;
-        }
-
-        void operator() (const Action::CharacterAction& charAction) {
-            std::cout << "Dealing " << charAction.hp_effect() << " damage to enemy at " << charAction.target().toString() 
-                      << " with accuracy " << charAction.accuracy() << std::endl;
-        }
-
-    } visitor_;
 };

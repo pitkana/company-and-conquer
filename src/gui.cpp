@@ -29,7 +29,7 @@ int main()
     coordinates<size_t> dest(10, 10);
     coordinates<size_t> target(7, 7);
     for (Unit& unit : team1.get_units()) {
-        double accuracy = ((double) std::rand()) / RAND_MAX;
+        int accuracy = std::rand() % 101;
         int damage = (std::rand() % 8) + 1;
         std::shared_ptr<Weapon> gun = std::make_shared<Weapon>("Rifle", accuracy, damage);
         unit.add_item(std::static_pointer_cast<Item>(gun));
