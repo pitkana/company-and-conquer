@@ -323,13 +323,15 @@ class Map
             
             std::vector< coordinates<size_t> > tiles_that_are_close_enough;
 
-            // copy the tile into the return container only if their distance 
+            // add the tile's coordinates into the return container only if their distance 
             // is equal or less than the given <movement_range>
             // I didn't use <std::copy_if> because the original vector has
             // std::pair's so the simple for-loop is more efficient and much clearer
-            for ( std::pair<size_t, coordinates<size_t> >& a_tile : vertex_attributes ) {
-                if ( a_tile.first <= movement_range ) {
-                    tiles_that_are_close_enough.push_back( a_tile.second );
+            for ( size_t width = 0; width < vertex_attributes.width(); width++ ) {
+                for ( size_t height = 0; height < vertex_attributes.height(); height ) {
+                    if ( vertex_attributes(width, height).first <= movement_range ) {
+                        tiles_that_are_close_enough.push_back( coordinates<size_t>{ width, height } );
+                    }
                 }
             }
 
