@@ -8,6 +8,7 @@
 #include "backend/action.hpp"
 #include "backend/coordinates.hpp"
 #include "backend/unit.hpp"
+#include "backend/map.hpp"
 
 int main() 
 {
