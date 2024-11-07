@@ -1,30 +1,5 @@
-cmake_minimum_required(VERSION 3.11.0)
 project(unit_test VERSION 0.1.0)
-
 enable_language(CXX)
-
-# use C++ standard version 20
-set(CMAKE_CXX_STANDARD 20)
-# produce non-optimized code with debug symbols
-# set(CMAKE_BUILD_TYPE Debug)
-
-# Generate compile_commands.json file for LSP
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
-
-include(FetchContent)
-FetchContent_Declare(SFML
-    GIT_REPOSITORY https://github.com/SFML/SFML.git
-    GIT_TAG 2.6.x
-    GIT_SHALLOW ON
-    EXCLUDE_FROM_ALL
-    SYSTEM)
-FetchContent_MakeAvailable(SFML)
-
-message(STATUS "BUILD directory is ${CMAKE_BINARY_DIR}")
-message(STATUS "SRC directory is ${CMAKE_SOURCE_DIR}")
-
 
 # Add all .c, - files under src/ directory
 file(GLOB SOURCES_C "*.c")
@@ -46,7 +21,8 @@ target_sources(unit_test PUBLIC ${SOURCES})
 target_include_directories(unit_test PUBLIC .)
 target_include_directories(unit_test PUBLIC ../src/)
 target_link_libraries(unit_test PRIVATE sfml-graphics)
-target_compile_features(unit_test PRIVATE cxx_std_17)
+target_link_libraries(unit_test PRIVATE backend)
+target_include_directories(unit_test PRIVATE ../src/backend)
 
 
 # get a lot of warnings

@@ -21,6 +21,7 @@ add_executable(gui)
 target_sources(gui PUBLIC ${SOURCES})
 target_link_libraries(gui PRIVATE sfml-graphics)
 target_link_libraries(gui PRIVATE backend)
+target_include_directories(gui PRIVATE backend)
 
 
 # get a lot of warnings
