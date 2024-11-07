@@ -169,6 +169,7 @@ class Map
          */
         inline bool valid_direction( const coordinates<size_t>& location, const coordinates<int32_t>& direction )
         {
+            // have to cast so we can check if the valu goes to below 0
             coordinates<int64_t> aux = {static_cast<int64_t>(location.x) + direction.x, static_cast<int64_t>(location.y) + direction.y};
 
             if ( aux.x < 0 || aux.x < this->all_terrains_.width() ) {
@@ -251,9 +252,9 @@ class Map
                             // for different directions we have a different increment in the indexing
                             aux = curr.second + a_direction;
 
-                            if ( !(is_processed[ curr.second.x * width_  + (curr.second.y - 1) ]) ) {   
-                                aux = {curr.second.x, curr.second.y - 1};
-                                Relax( curr.second, aux, all_terrains_( curr.second.x, curr.second.y - 1 )->movement_cost() );
+                            // check if we've already processed the tile
+                            if ( !(is_processed[ aux.x * width_  + aux.y ]) ) {   
+                                Relax( curr.second, aux, all_terrains_( aux.x, aux.y )->movement_cost() );
 
                                 distances.push( std::make_pair( vertex_attributes( aux.x, aux.y ).first, aux ) );
                             }
