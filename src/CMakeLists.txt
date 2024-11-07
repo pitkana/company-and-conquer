@@ -23,6 +23,7 @@ target_link_libraries(gui PRIVATE sfml-graphics)
 target_compile_features(gui PRIVATE cxx_std_17)
 target_link_libraries(gui PRIVATE backend)
 target_include_directories(gui PRIVATE backend)
+set_target_properties(backend PROPERTIES LINKER_LANGUAGE CXX)
 
 
 # get a lot of warnings
