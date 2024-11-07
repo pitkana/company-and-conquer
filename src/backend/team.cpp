@@ -22,12 +22,12 @@ std::optional<Turn> Team::dequeue_turn() {
     if (turns_.empty()) {
         return std::nullopt;
     }
-    Turn& first = turns_.front();
+    Turn first = turns_.front();
     turns_.pop_front();
     return first;
 }
 
-void Team::add_unit(Unit& unit) {
+void Team::add_unit(Unit unit) {
     units_.push_back(unit);
 }
 

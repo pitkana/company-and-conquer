@@ -31,7 +31,7 @@ protected:
     std::string description_;
 };
 
-class Weapon : protected Item {
+class Weapon : public Item {
 public:
     Weapon(const std::string& name, float accuracy, int damage, int area_of_effect = 0):
            Item(name), accuracy_(accuracy), damage_(damage), area_of_effect_(area_of_effect) 
@@ -55,7 +55,7 @@ private:
     const int area_of_effect_;
 };
 
-class Consumable : protected Item {
+class Consumable : public Item {
 public:
     Consumable(const std::string& name, int heal_amount, int area_of_effect):
         Item(name), heal_amount_(heal_amount), area_of_effect_(area_of_effect)

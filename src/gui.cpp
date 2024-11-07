@@ -1,21 +1,42 @@
-// #define DEBUG 0 //set to 0 to disable debug features
-
 #include <iostream>
 #include <memory>
 #include <SFML/Window.hpp>
 
-#include "backend/game.hpp"
-#include "backend/action.hpp"
-#include "backend/coordinates.hpp"
+#include "coordinates.hpp"
+#include "game.hpp"
+#include "action.hpp"
+#include "coordinates.hpp"
+#include "turn.hpp"
+#include <random>
 
 int main() 
 {
     Game game;
-    game.add_action(Action::CharacterAction(0.5, 20, coordinates<size_t>(5, 3)));
-    game.add_action(Action::BuildingAction("turret", coordinates<size_t>(15, 1)));
-    game.add_action(Action::CharacterAction(0.3, 50, coordinates<size_t>(2, 10)));
 
-    game.execute_actions();
-    return 0;
+    {
+        Team team1;
+
+        for (int i = 0; i < 10; ++i) {
+            team1.add_unit(std::to_string(i));
+        }
+
+        game.add_team(std::move(team1));
+    }
+
+    Team& team1 = game.get_team_by_id(0);
+
+    coordinates<size_t> origin(5, 5);
+    coordinates<size_t> dest(10, 10);
+    coordinates<size_t> target(7, 7);
+    for (Unit& unit : team1.get_units()) {
+        double accuracy = ((double) std::rand()) / RAND_MAX;
+        int damage = (std::rand() % 8) + 1;
+        std::shared_ptr<Weapon> gun = std::make_shared<Weapon>("Rifle", accuracy, damage);
+        unit.add_item(std::static_pointer_cast<Item>(gun));
+        team1.enqueue_turn(Turn(unit, origin, dest, unit.GetInventory()[0]->get_action(target)));
+        // std::cout << std::holds_alternative<Action::CharacterAction>(unit.GetInventory()[0]->get_action(target)) << std::endl;
+    }
+
+    game.end_turn(0);
 }
 

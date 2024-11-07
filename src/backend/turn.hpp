@@ -17,5 +17,5 @@ struct Turn {
     const Unit& unit;
     const coordinates<size_t>& unit_origin;
     const coordinates<size_t>& movement_destination;
-    const std::variant<ACTION_TYPES>& action;
+    std::variant<ACTION_TYPES> action;
 };

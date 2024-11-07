@@ -29,7 +29,7 @@ public:
     std::optional<Turn> dequeue_turn();
 
     //add Unit to the team
-    void add_unit(Unit& unit);
+    void add_unit(Unit unit);
 
     //Remove unit TODO: Add when way to identify Units exists
     // void remove_unit();

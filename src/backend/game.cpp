@@ -5,17 +5,7 @@
 
 #include "game.hpp"
 
-void Game::add_team(Team team) {
-    teams_.push_back(team);
-}
 
-std::vector<Team>& Game::get_teams() {
-    return teams_;
-}
-
-const std::vector<Team>& Game::get_teams() const {
-    return teams_;
-}
 
 Team& Game::get_team_by_id(int team_id) {
     //find the specified team by its team_id using std::find_if
@@ -49,10 +39,10 @@ std::vector<Unit*> Game::get_units() {
     return units;
 }
 
-std::unordered_map<int, std::vector<Unit>&> Game::get_units_map() {
-    std::unordered_map<int, std::vector<Unit>&> units_map;
+std::unordered_map<int, std::vector<Unit>*> Game::get_units_map() {
+    std::unordered_map<int, std::vector<Unit>*> units_map;
     for (Team& team : get_teams()) {
-        units_map[team.get_id()] = team.get_units();
+        units_map[team.get_id()] = &team.get_units();
     }
 
     return units_map;
@@ -64,7 +54,8 @@ void Game::end_turn(int team_id) {
     while (const std::optional<Turn> turn = team.dequeue_turn()) {
         //Placeholder for when this function is implemented
         //move_unit(turn->unit, turn->unit_origin, turn->movement_destination);
-        std::visit(visitor_, turn->action);
+        Turn tTurn = *std::move(turn);
+        std::visit(visitor_, tTurn.action);
     }
 
 }
