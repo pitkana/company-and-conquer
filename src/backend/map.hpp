@@ -184,25 +184,6 @@ class Map
         }
 
 
-        // converts the window coordinates given as coordinates<int64_t> into a Terrains coordinates<int64_t>, this new coordinates<int64_t> can then be used
-        // to get the corresponding Terrain
-        coordinates<int64_t> convert_pos( const int& x, const int& y, const int64_t& screen_width, const int64_t& screen_height, bool use_clamp = true ) noexcept
-        {
-            int square_width = screen_width/this->all_terrains_.width();
-            int square_height = screen_height/this->all_terrains_.height();
-
-            int x1 = x/square_width;
-            int y1 = y/square_height;
-
-            if ( use_clamp ) {
-                x1 = Helper::clamp<size_t>(x1, 0, this->all_terrains_.width());
-                y1 = Helper::clamp<size_t>(y1, 0, this->all_terrains_.height());
-            }
-
-            
-
-            return coordinates<int64_t>{x1, y1};
-        }
 
         /**
          * @brief get all the possible tiles that the unit can move to from the current location
