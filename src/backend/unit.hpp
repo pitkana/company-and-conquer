@@ -1,9 +1,11 @@
-#ifndef unit
-#define unit
+#pragma once
 
 #include <vector>
 #include <string>
 #include <cstdint>
+#include <memory>
+
+#include "item.hpp"
 
 struct {
     int max_hp = 10;
@@ -17,9 +19,9 @@ class Unit
 {
 
 public:
-    Unit(std::string &name) :
+    Unit(const std::string &name) :
         name_(name) {
-        inventory_ = {};
+        inventory_.reserve(unit_consts.inventory_size);
         current_hp_ = unit_consts.max_hp;
     }
 
@@ -27,8 +29,14 @@ public:
         return name_;
     }
 
-    const std::vector<uint8_t>& GetInventory() const {
+    const std::vector<std::shared_ptr<Item>>& GetInventory() const {
         return inventory_;
+    }
+
+    void add_item(std::shared_ptr<Item> item) {
+        if (inventory_.size() < unit_consts.inventory_size) {
+            inventory_.push_back(item);
+        }
     }
 
     int GetHP() const {
@@ -37,11 +45,10 @@ public:
 
 
 private:
-    std::string &name_;
+    std::string name_;
 
-    std::vector<uint8_t> inventory_;
+    std::vector<std::shared_ptr<Item>> inventory_;
     int current_hp_;
 
 };
 
-#endif 
