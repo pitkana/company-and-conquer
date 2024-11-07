@@ -29,7 +29,7 @@ class Map
         * The size_t in the Terrain template is used to define the template type for coordinates,
         * so basically the maximum coordinate value. 
         */
-        Matrix< std::shared_ptr< Terrain<size_t> >> all_terrains_;
+        Matrix< std::shared_ptr< Terrain >> all_terrains_;
 
 
         
@@ -41,7 +41,7 @@ class Map
             Helper::Directions::West 
         };
 
-        std::vector< coordinates<int32_t> > directions_arr_ = { 
+        std::vector< coordinates<int32_t> > directions_vectors_ = { 
             {0, -1}, 
             {1, 0}, 
             {0, 1}, 
@@ -85,7 +85,7 @@ class Map
                     // here we use normal initialisation because if we use std::make_shared the objects
                     // wont be deleted until all the weak pointers go out of scope.
                     // Because I use std::weak_ptr's in Terrain, I cannot use std::make_shared
-                    all_terrains_(i, j) = std::shared_ptr< Terrain<size_t> >( new Terrain<size_t>() );
+                    all_terrains_(i, j) = std::shared_ptr< Terrain >( new Terrain() );
 
                 }
             }
@@ -98,13 +98,13 @@ class Map
          * 
          * @param location location of whose adjacent Terrain to return
          * @param direction given direction
-         * @return std::shared_ptr< Terrain<size_t> >
+         * @return std::shared_ptr< Terrain >
          */
-        std::shared_ptr<Terrain<size_t>> get_neighbor( const coordinates<size_t>& location, const Helper::Directions direction )
+        std::shared_ptr<Terrain> get_neighbor( const coordinates<size_t>& location, const Helper::Directions direction )
         {
             coordinates<int64_t> new_location;
 
-            std::shared_ptr< Terrain<size_t> > possible_location = nullptr;
+            std::shared_ptr< Terrain > possible_location = nullptr;
 
             switch ( direction ) {
                 case Helper::Directions::North:
@@ -140,14 +140,14 @@ class Map
          * @brief Get the neighbors of a given location from all the main directions
          * 
          * @param location location of whose adjacent Terrains to return
-         * @return std::vector< std::shared_ptr<Terrain<size_t> >> 
+         * @return std::vector< std::shared_ptr<Terrain >> 
          */
-        std::vector< std::shared_ptr<Terrain<size_t> >> get_neighbors( const coordinates<size_t>& location )
+        std::vector< std::shared_ptr<Terrain >> get_neighbors( const coordinates<size_t>& location )
         {
 
-            std::vector< std::shared_ptr<Terrain<size_t> >> possible_locations;
+            std::vector< std::shared_ptr<Terrain >> possible_locations;
 
-            std::shared_ptr<Terrain<size_t>> a_neighbor;
+            std::shared_ptr<Terrain> a_neighbor;
 
             for ( Helper::Directions a_direction : directions_ ) {
                 a_neighbor = get_neighbor( location, a_direction );
@@ -243,7 +243,7 @@ class Map
                 if ( !(is_processed[ curr.second.x * width_  + curr.second.y ]) ) {
 
                     // the tile is only connected to 4 other tiles in the main directions
-                    for ( const coordinates<int32_t>& a_direction : directions_arr_ ) {
+                    for ( const coordinates<int32_t>& a_direction : directions_vectors_ ) {
 
                         // check if the direction is valid before doing the relaxation of path
                         // created this <valid_direction> method to not put all the if-statements into one clutter
