@@ -41,6 +41,13 @@ class Map
             Helper::Directions::West 
         };
 
+        std::vector< coordinates<int32_t> > directions_arr_ = { 
+            {0, -1}, 
+            {1, 0}, 
+            {0, 1}, 
+            {-1, 0} 
+        };
+
 
     public:
         /**
@@ -93,7 +100,7 @@ class Map
          * @param direction given direction
          * @return std::shared_ptr< Terrain<size_t> >
          */
-        std::shared_ptr<Terrain<size_t>> get_neighbor( const coordinates<size_t>& location, Helper::Directions direction )
+        std::shared_ptr<Terrain<size_t>> get_neighbor( const coordinates<size_t>& location, const Helper::Directions direction )
         {
             coordinates<int64_t> new_location;
 
@@ -160,47 +167,19 @@ class Map
          * @return <true> there is a tile in the given direction
          * @return <false> if there is not a tile 
          */
-        constexpr inline bool valid_direction( const coordinates<size_t>& location, const Helper::Directions direction )
+        inline bool valid_direction( const coordinates<size_t>& location, const coordinates<int32_t>& direction )
         {
-            switch ( direction ) {
-                case Helper::Directions::North:
-                    if ( location.y > 0 ) {
-                        // we do a nested if-statement because ordering of evaluations is not quaranteed in older c++ versions
-                        // and we might be out of range when trying to access a tile
-                        if ( all_terrains_( location.x, location.y - 1 )->can_move_to() ) {
-                            return true;
-                        }
-                        
-                    }
-                    break;
+            coordinates<int64_t> aux = {static_cast<int64_t>(location.x) + direction.x, static_cast<int64_t>(location.y) + direction.y};
 
-                case Helper::Directions::East:
-                    if ( location.x < this->all_terrains_.width() - 1) {
-                        if ( all_terrains_( location.x + 1, location.y )->can_move_to() ) {
-                            return true;
-                        }
-                    }
-                    break;
-
-                case Helper::Directions::South:
-                    if ( location.y < this->all_terrains_.height() - 1 ) {
-                        if ( all_terrains_( location.x, location.y + 1 )->can_move_to() ) {
-                            return true;
-                        }
-                    }
-                    break;
-
-                case Helper::Directions::West:
-                    if ( location.x > 0 ) {
-                        if ( all_terrains_( location.x - 1, location.y)->can_move_to() ) {
-                            return true;
-                        }
-                    }
-                    break;
+            if ( aux.x < 0 || aux.x < this->all_terrains_.width() ) {
+                return false;
             }
-            
 
-            return false;
+            else if ( aux.y < 0 || aux.y < this->all_terrains_.height() ) {
+                return false;
+            }
+
+            return true;
         }
 
 
@@ -231,7 +210,6 @@ class Map
          * @param movement_range the amount that the unit can traverse
          * @return std::vector< coordinates< size_t > > all the coordinates of the tiles that the unit con go to
          */
-        
         std::vector< coordinates< size_t > > possible_tiles_to_move_to( const coordinates<size_t>& location, const uint8_t movement_range )
         {   
             // cant use unordered_set with coordinates without making a hash function so I used a vector
@@ -264,53 +242,20 @@ class Map
                 if ( !(is_processed[ curr.second.x * width_  + curr.second.y ]) ) {
 
                     // the tile is only connected to 4 other tiles in the main directions
-                    for ( const Helper::Directions& a_direction : directions_ ) {
+                    for ( const coordinates<int32_t>& a_direction : directions_arr_ ) {
 
                         // check if the direction is valid before doing the relaxation of path
                         // created this <valid_direction> method to not put all the if-statements into one clutter
-                        if ( valid_direction( location, a_direction ) ) {
+                        if ( valid_direction( curr.second, a_direction ) ) {
 
                             // for different directions we have a different increment in the indexing
-                            switch( a_direction ) {
-                                case Helper::Directions::North:
-                                    if ( !(is_processed[ curr.second.x * width_  + (curr.second.y - 1) ]) ) {
-                                        
-                                        aux = {curr.second.x, curr.second.y - 1};
-                                        Relax( curr.second, aux, all_terrains_( curr.second.x, curr.second.y - 1 )->movement_cost() );
+                            aux = curr.second + a_direction;
 
-                                        distances.push( std::make_pair( vertex_attributes( aux.x, aux.y ).first, aux ) );
-                                    }
-                                    break;
+                            if ( !(is_processed[ curr.second.x * width_  + (curr.second.y - 1) ]) ) {   
+                                aux = {curr.second.x, curr.second.y - 1};
+                                Relax( curr.second, aux, all_terrains_( curr.second.x, curr.second.y - 1 )->movement_cost() );
 
-                                case Helper::Directions::East:
-                                    if ( !(is_processed[ (curr.second.x + 1) * width_  + curr.second.y ]) ) {
-
-                                        aux = {curr.second.x + 1, curr.second.y};
-                                        Relax( curr.second, aux, all_terrains_( curr.second.x, curr.second.y - 1 )->movement_cost() );
-
-                                        distances.push( std::make_pair( vertex_attributes( aux.x, aux.y ).first, aux ) );
-                                    }
-                                    break;
-
-                                case Helper::Directions::South:
-                                    if ( !(is_processed[ curr.second.x * width_  + (curr.second.y + 1) ]) ) {
-
-                                        aux = {curr.second.x, curr.second.y + 1};
-                                        Relax( curr.second, aux, all_terrains_( curr.second.x, curr.second.y - 1 )->movement_cost() );
-
-                                        distances.push( std::make_pair( vertex_attributes( aux.x, aux.y ).first, aux ) );
-                                    }
-                                    break;
-
-                                case Helper::Directions::West:
-                                    if ( !(is_processed[ (curr.second.x - 1) * width_  + curr.second.y ]) ) {
-
-                                        aux = {curr.second.x - 1, curr.second.y};
-                                        Relax( curr.second, aux, all_terrains_( curr.second.x, curr.second.y - 1 )->movement_cost() );
-
-                                        distances.push( std::make_pair( vertex_attributes( aux.x, aux.y ).first, aux ) );
-                                    }
-                                    break;
+                                distances.push( std::make_pair( vertex_attributes( aux.x, aux.y ).first, aux ) );
                             }
                         }
                     }
@@ -328,7 +273,7 @@ class Map
             // I didn't use <std::copy_if> because the original vector has
             // std::pair's so the simple for-loop is more efficient and much clearer
             for ( size_t width = 0; width < vertex_attributes.width(); width++ ) {
-                for ( size_t height = 0; height < vertex_attributes.height(); height ) {
+                for ( size_t height = 0; height < vertex_attributes.height(); height++ ) {
                     if ( vertex_attributes(width, height).first <= movement_range ) {
                         tiles_that_are_close_enough.push_back( coordinates<size_t>{ width, height } );
                     }

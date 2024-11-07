@@ -54,6 +54,13 @@ struct coordinates
         return { x+a.x, y+a.y };
     }
 
+    template<typename E>
+    [[nodiscard]]
+    inline coordinates<T> operator + ( const coordinates<E>& a ) const noexcept
+    {
+        return { x+a.x, y+a.y };
+    }
+
     [[nodiscard]]
     inline coordinates<T> operator - ( const coordinates<T>& a ) const noexcept
     {
