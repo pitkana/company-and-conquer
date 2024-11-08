@@ -8,12 +8,14 @@
 #include <random>
 
 #include "square.hpp"
+#include "matrix.hpp"
+
 
 
 /**
  * @brief Main class that will hold every other object of the game in the backend
  * 
- */
+ */ 
 class Map
 {
     private:
@@ -86,21 +88,25 @@ class Map
                     if ( location.y > 0 ) {
                         possible_location = all_squares_( location.x, location.y - 1 );
                     }
+                    break;
 
                 case Helper::Directions::East:
                     if ( location.x < this->all_squares_.width() - 1) {
                         possible_location = this->all_squares_( location.x + 1, location.y );
                     }
+                    break;
 
                 case Helper::Directions::South:
                     if ( location.y < this->all_squares_.width() - 1 ) {
                         possible_location = this->all_squares_( location.x, location.y + 1 );
                     }
+                    break;
 
                 case Helper::Directions::West:
                     if ( location.x > 0 ) {
                         possible_location = this->all_squares_( location.x - 1, location.y );
                     }
+                    break;
             }
 
             return possible_location;
@@ -142,8 +148,8 @@ class Map
             int y1 = y/square_height;
 
             if ( use_clamp ) {
-                x1 = Helper::clamp<int32_t>(x1, 0, this->all_squares_.width());
-                y1 = Helper::clamp<int32_t>(y1, 0, this->all_squares_.height());
+                x1 = Helper::clamp<size_t>(x1, 0, this->all_squares_.width());
+                y1 = Helper::clamp<size_t>(y1, 0, this->all_squares_.height());
             }
 
             

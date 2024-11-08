@@ -152,6 +152,7 @@ class RGBA
         }
 };
 
+
 // here we calculate if any of the given 2 vectors is a multiple of the other vector.
 template<typename T>
 inline bool same_direction(coordinates<T> a, coordinates<T> b)
