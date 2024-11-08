@@ -221,7 +221,7 @@ class Map
         std::vector< coordinates< size_t > > possible_tiles_to_move_to( const coordinates<size_t>& location, const uint8_t movement_range )
         {   
             // cant use unordered_set with coordinates without making a hash function so I used a vector
-            Matrix<bool> is_processed( width_, height_ );
+            std::vector<bool> is_processed( width_, height_ );
 
             // this will contain the distance and predecessor of each vertex as: <distance, location of predecessor>
             Matrix< std::pair<size_t, coordinates<size_t>> > vertex_attributes(width_, height_, std::make_pair( std::numeric_limits<size_t>::max(), coordinates<size_t>{0, 0} ));
@@ -247,7 +247,7 @@ class Map
                 curr = distances.top();
                 distances.pop();
 
-                if ( !(is_processed( curr.second.x, curr.second.y ) ) {
+                if ( !(is_processed[ curr.second.x * width_ + curr.second.y ]) ) {
 
                     // the tile is only connected to 4 other tiles in the main directions
                     for ( const coordinates<int32_t>& a_direction : directions_vectors_ ) {
@@ -260,7 +260,7 @@ class Map
                             aux = curr.second + a_direction;
 
                             // check if we've already processed the tile
-                            if ( !(is_processed( aux.x, aux.y ) ) {   
+                            if ( !(is_processed[ aux.x * width_ + aux.y ] )) {   
                                 Relax( curr.second, aux, all_terrains_( aux.x, aux.y )->movement_cost() );
 
                                 distances.push( std::make_pair( vertex_attributes( aux.x, aux.y ).first, aux ) );
@@ -269,7 +269,7 @@ class Map
                     }
                 }
 
-                is_processed( curr.second.x, curr.second.y ) = true;
+                is_processed[ curr.second.x * width_ + curr.second.y ] = true;
             }
             
 
