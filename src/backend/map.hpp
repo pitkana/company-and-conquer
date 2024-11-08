@@ -140,9 +140,9 @@ class Map
          * @brief Get the neighbors of a given location from all the main directions
          * 
          * @param location location of whose adjacent Terrains to return
-         * @return std::vector< std::shared_ptr<Terrain >> 
+         * @return std::vector< std::shared_ptr<Terrain> > 
          */
-        std::vector< std::shared_ptr<Terrain >> get_neighbors( const coordinates<size_t>& location )
+        std::vector< std::shared_ptr<Terrain> > get_neighbors( const coordinates<size_t>& location )
         {
 
             std::vector< std::shared_ptr<Terrain >> possible_locations;
@@ -153,6 +153,32 @@ class Map
                 a_neighbor = get_neighbor( location, a_direction );
                 if ( a_neighbor ) {
                     possible_locations.push_back( a_neighbor );
+                }
+            }
+
+            return possible_locations;
+        }
+
+        /**
+         * @brief Get the neighbouring coordinates of a given location from all the main directions
+         * 
+         * @param location location of whose adjacent Terrains to return
+         * @return std::vector< coordinates<size_t>> 
+         */
+        std::vector< coordinates<size_t> > get_neighbouring_coordinates( const coordinates<size_t>& location )
+        {
+
+            std::vector< coordinates<size_t> > possible_locations;
+
+            std::shared_ptr<Terrain> a_neighbor;
+
+            // get the coordinates vectors of every direction
+            for ( coordinates<int32_t> a_direction : directions_vectors_ ) {
+                
+                if ( valid_direction( location, a_direction ) ) {
+                    // because we already checked if the direction is valid, 
+                    // we can just make the sum of the location and direction
+                    possible_locations.push_back( location + a_direction );
                 }
             }
 
@@ -195,7 +221,7 @@ class Map
         std::vector< coordinates< size_t > > possible_tiles_to_move_to( const coordinates<size_t>& location, const uint8_t movement_range )
         {   
             // cant use unordered_set with coordinates without making a hash function so I used a vector
-            std::vector<bool> is_processed( width_ * height_ );
+            Matrix<bool> is_processed( width_, height_ );
 
             // this will contain the distance and predecessor of each vertex as: <distance, location of predecessor>
             Matrix< std::pair<size_t, coordinates<size_t>> > vertex_attributes(width_, height_, std::make_pair( std::numeric_limits<size_t>::max(), coordinates<size_t>{0, 0} ));
@@ -221,7 +247,7 @@ class Map
                 curr = distances.top();
                 distances.pop();
 
-                if ( !(is_processed[ curr.second.x * width_  + curr.second.y ]) ) {
+                if ( !(is_processed( curr.second.x, curr.second.y ) ) {
 
                     // the tile is only connected to 4 other tiles in the main directions
                     for ( const coordinates<int32_t>& a_direction : directions_vectors_ ) {
@@ -234,7 +260,7 @@ class Map
                             aux = curr.second + a_direction;
 
                             // check if we've already processed the tile
-                            if ( !(is_processed[ aux.x * width_  + aux.y ]) ) {   
+                            if ( !(is_processed( aux.x, aux.y ) ) {   
                                 Relax( curr.second, aux, all_terrains_( aux.x, aux.y )->movement_cost() );
 
                                 distances.push( std::make_pair( vertex_attributes( aux.x, aux.y ).first, aux ) );
@@ -243,7 +269,7 @@ class Map
                     }
                 }
 
-                is_processed[ curr.second.x * width_  + curr.second.y ] = true;
+                is_processed( curr.second.x, curr.second.y ) = true;
             }
             
 
