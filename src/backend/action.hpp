@@ -1,6 +1,7 @@
 #pragma once
 
 #include "coordinates.hpp"
+#include "item.hpp"
 
 class Game; //forward declaration
 
@@ -37,4 +38,18 @@ private:
     const int accuracy_;
     const int hp_effect_;
     const int area_of_effect_;
+};
+
+class BuildingAction : public Action {
+public:
+    BuildingAction(const BuildingPart& part, const coordinates<size_t>& target):
+        Action(target), building_part_(part) {}
+
+    [[nodiscard]]
+    BuildingPartType get_part_type() const;
+
+    virtual void execute(Game& game) const;
+
+private:
+    const BuildingPart& building_part_;
 };

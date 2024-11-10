@@ -13,6 +13,7 @@ class Item {
 public:
     //Initialize item with a name
     Item(const std::string& name): name_(name) {}
+    Item(const std::string& name, const std::string& desc): name_(name), description_(desc) {}
 
     virtual ~Item() = default;
 
@@ -90,5 +91,48 @@ private:
     const int area_of_effect_;
 };
 
-//TODO:
-// Add BuildingPart item when it's known how building Buildings works
+
+enum class BuildingPartType : uint8_t {
+    TurretLegs,
+    TurretBarrel,
+    MedicTentMedkit,
+    MedicTentTent
+};
+
+
+class BuildingPart : public Item {
+public:
+    BuildingPart(BuildingPartType part_type): Item(name_from_type(), desc_from_type()), part_type_(part_type) {}
+
+    [[nodiscard]]
+    virtual std::shared_ptr<Action> get_action(const coordinates<size_t>& target) const = 0;
+
+    [[nodiscard]]
+    BuildingPartType get_part_type() const {
+        return part_type_;
+    }
+
+private:
+    [[nodiscard]]
+    std::string name_from_type() const {
+        switch (part_type_) {
+            case BuildingPartType::TurretLegs: return "Turret legs";
+            case BuildingPartType::TurretBarrel: return "Turret barrel";
+            case BuildingPartType::MedicTentMedkit: return "Medkit";
+            case BuildingPartType::MedicTentTent: return "Tent";
+        }
+    }
+
+    [[nodiscard]]
+    std::string desc_from_type() const {
+        switch (part_type_) {
+            case BuildingPartType::TurretLegs: return "Used for building a gun turret";
+            case BuildingPartType::TurretBarrel: return "Used for building a gun turret";
+            case BuildingPartType::MedicTentMedkit: return "Used for building a medic tent";
+            case BuildingPartType::MedicTentTent: return "Used for building a medic tent";
+        }
+    }
+
+private:
+    const BuildingPartType part_type_;
+};

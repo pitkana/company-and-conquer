@@ -20,3 +20,9 @@ std::shared_ptr<Action> Weapon::get_action(const coordinates<size_t> &target) co
 std::shared_ptr<Action> Consumable::get_action(const coordinates<size_t> &target) const {
     return std::static_pointer_cast<Action>(std::make_shared<ItemAction>(100, heal_amount_, area_of_effect_, target));
 }
+
+// BuildingPart derived class
+std::shared_ptr<Action> BuildingPart::get_action(const coordinates<size_t> &target) const {
+
+}
+
