@@ -16,3 +16,11 @@ In this folder, you can create your own unit test files to validate the operatio
 
 **Results:**
 
+## Test of interaction of Action, Item and Game classes
+
+**Involved Classes:** Game, Action, Item, Team, Turn
+
+**Test File:** action_test.cpp
+
+**Results:** The functions and interactions worked as expected. Units were added to a team, weapons given to units.
+Multiple turns enqueued with weapon's actions and then executed (prints the weapon's values)
