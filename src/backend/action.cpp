@@ -9,7 +9,7 @@ int ItemAction::hp_effect() const {
     return hp_effect_;
 }
 
-const coordinates<size_t>& ItemAction::target() const {
+const coordinates<size_t>& Action::target() const {
     return target_;
 }
 
