@@ -46,6 +46,8 @@ class Terrain
 
         constexpr size_t movement_cost() { return movement_cost_; }
 
+        void set_movement_cost(size_t cost) {movement_cost_ = cost;}
+
         constexpr bool can_move_to() 
         {
             return ( terrain_properties_[can_walk_through] );

@@ -179,7 +179,6 @@ class Map
 
             std::vector< coordinates<size_t> > possible_locations;
 
-            std::shared_ptr<Terrain> a_neighbor;
 // get the coordinates vectors of every direction
             for ( coordinates<int32_t> a_direction : directions_vectors_ ) {
                 
@@ -306,7 +305,7 @@ class Map
         std::vector< coordinates< size_t > > possible_tiles_to_move_to3( const coordinates<size_t>& location, uint8_t movement_range ) {
             struct Vertex {
                 size_t cooldown;
-                const coordinates<size_t>& coords;
+                coordinates<size_t> coords;
             };
 
             Matrix<int> visited(width_, height_, false);
@@ -325,7 +324,6 @@ class Map
                     const Vertex& current_vertex = vertex_queue.front();
                     std::vector<coordinates<size_t>> neighbours = get_neighbouring_coordinates(current_vertex.coords);
                     for (const auto& neighbour : neighbours) {
-                        // bool& is_visited = visited(neighbour.y, neighbour.x);
                         const std::shared_ptr<Terrain>& neighbour_terrain = all_terrains_[neighbour];
                         if (visited(neighbour.y, neighbour.x)|| !neighbour_terrain->can_move_to()) continue;
                         visited(neighbour.y, neighbour.x) = true;
