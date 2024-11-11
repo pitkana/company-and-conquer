@@ -218,7 +218,7 @@ class Map
          * @param movement_range the amount that the unit can traverse
          * @return std::vector< coordinates< size_t > > all the coordinates of the tiles that the unit con go to
          */
-        std::vector< coordinates< size_t > > possible_tiles_to_move_to( const coordinates<size_t>& location, const uint8_t movement_range )
+        std::vector< coordinates<size_t> > possible_tiles_to_move_to( const coordinates<size_t>& location, const uint8_t movement_range )
         {   
             // cant use unordered_set with coordinates without making a hash function so I used a vector
             std::vector<bool> is_processed( width_, height_ );
@@ -247,6 +247,7 @@ class Map
                 curr = distances.top();
                 distances.pop();
 
+                // check if we've already computed the current vertex
                 if ( !(is_processed[ curr.second.x * width_ + curr.second.y ]) ) {
 
                     // the tile is only connected to 4 other tiles in the main directions
@@ -267,9 +268,11 @@ class Map
                             }
                         }
                     }
+
+                    is_processed[ curr.second.x * width_ + curr.second.y ] = true;
                 }
 
-                is_processed[ curr.second.x * width_ + curr.second.y ] = true;
+                
             }
             
 
