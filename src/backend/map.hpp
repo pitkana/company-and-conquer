@@ -1,12 +1,14 @@
 #ifndef MAP
 #define MAP
 #include <vector>
+#include <list>
 #include <memory>
 #include <cstdint>
 #include <unordered_set>
 #include <queue>
 #include <utility>
 #include <limits>
+#include <iostream>
 
 
 #include "terrain.hpp"
@@ -56,7 +58,7 @@ class Map
          * @param width width of the map
          * @param height the height of the map
          */
-        Map( const size_t width, const size_t height ) : all_terrains_( width, height )
+        Map( const size_t width, const size_t height ) : width_(width), height_(height), all_terrains_( width, height )
         {
             this->create_board();
         }
@@ -72,6 +74,13 @@ class Map
             this->create_board();
         }
 
+        void update_terrain(Terrain& terrain, size_t y, size_t x) {
+            all_terrains_(y, x) = std::shared_ptr<Terrain>(&terrain);
+        }
+
+        std::shared_ptr<Terrain> get_terrain(size_t y, size_t x) {
+            return all_terrains_(y, x);
+        }
 
 
         // add the new Terrains into the board
@@ -85,7 +94,7 @@ class Map
                     // here we use normal initialisation because if we use std::make_shared the objects
                     // wont be deleted until all the weak pointers go out of scope.
                     // Because I use std::weak_ptr's in Terrain, I cannot use std::make_shared
-                    all_terrains_(i, j) = std::shared_ptr< Terrain >( new Terrain() );
+                    all_terrains_(i, j) = std::shared_ptr< Terrain >( new Terrain('.') );
 
                 }
             }
@@ -171,8 +180,7 @@ class Map
             std::vector< coordinates<size_t> > possible_locations;
 
             std::shared_ptr<Terrain> a_neighbor;
-
-            // get the coordinates vectors of every direction
+// get the coordinates vectors of every direction
             for ( coordinates<int32_t> a_direction : directions_vectors_ ) {
                 
                 if ( valid_direction( location, a_direction ) ) {
@@ -198,11 +206,11 @@ class Map
             // have to cast so we can check if the valu goes to below 0
             coordinates<int64_t> aux = {static_cast<int64_t>(location.x) + direction.x, static_cast<int64_t>(location.y) + direction.y};
 
-            if ( aux.x < 0 || aux.x < this->all_terrains_.width() ) {
+            if ( aux.x < 0 || aux.x >= this->all_terrains_.width() ) {
                 return false;
             }
 
-            else if ( aux.y < 0 || aux.y < this->all_terrains_.height() ) {
+            else if ( aux.y < 0 || aux.y >= this->all_terrains_.height() ) {
                 return false;
             }
 
@@ -292,6 +300,71 @@ class Map
             }
 
             return tiles_that_are_close_enough;
+        }
+
+
+        std::vector< coordinates< size_t > > possible_tiles_to_move_to3( const coordinates<size_t>& location, uint8_t movement_range ) {
+            struct Vertex {
+                size_t cooldown;
+                const coordinates<size_t>& coords;
+            };
+
+            Matrix<int> visited(width_, height_, false);
+
+            std::vector<coordinates<size_t>> result;
+
+            std::queue<Vertex> vertex_queue;
+            vertex_queue.push({0, location});
+            
+            std::list<Vertex> waiting_vertices;
+            uint8_t movements_left = movement_range;
+            while (movements_left > 0) {
+                int current_size = vertex_queue.size();
+            
+                for (int i = 0; i < current_size; i++) {
+                    const Vertex& current_vertex = vertex_queue.front();
+                    std::vector<coordinates<size_t>> neighbours = get_neighbouring_coordinates(current_vertex.coords);
+                    for (const auto& neighbour : neighbours) {
+                        // bool& is_visited = visited(neighbour.y, neighbour.x);
+                        const std::shared_ptr<Terrain>& neighbour_terrain = all_terrains_[neighbour];
+                        if (visited(neighbour.y, neighbour.x)|| !neighbour_terrain->can_move_to()) continue;
+                        visited(neighbour.y, neighbour.x) = true;
+
+                        if (neighbour_terrain->movement_cost() > 1) {
+                            waiting_vertices.push_back({neighbour_terrain->movement_cost(), neighbour});
+                        } else {
+                            vertex_queue.push({0, neighbour});
+                            result.push_back(neighbour);
+                        }
+                    }
+                    vertex_queue.pop();
+                }
+                
+                auto it = waiting_vertices.begin();
+                while (it != waiting_vertices.end()) {
+                    auto waiting_vertex_it = it++;
+                    Vertex& waiting_vertex = *waiting_vertex_it;
+                    if (--waiting_vertex.cooldown <= 0) {
+                        vertex_queue.push(waiting_vertex);
+                        result.push_back(waiting_vertex.coords);
+                        waiting_vertices.erase(waiting_vertex_it);
+                    }
+                }
+                movements_left--;
+            }
+
+            return result;
+        }
+        
+        void print_map() const {
+            for (size_t y = 0; y < height_; ++y) {
+                for (size_t x = 0; x < width_; ++x) {
+                    std::cout << all_terrains_(y, x)->get_repr();
+                }
+                std::cout << '\n';
+            }
+
+            std::cout << std::endl;
         }
 
 
