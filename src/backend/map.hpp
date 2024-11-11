@@ -250,6 +250,7 @@ class Map
             // very interesting template constructor for std::priority_queue, we need it to make it possible to use std::pair in it
             // it basically orders the pairs by the first element into a min-heap
             std::priority_queue< std::pair<size_t, coordinates<size_t> >, std::vector<std::pair<size_t, coordinates<size_t> >> , std::less<std::pair<size_t, coordinates<size_t> >> > distances;
+            distances.push( vertex_attributes( location.x, location.y ) );
 
             while ( !(distances.empty()) ) {
                 curr = distances.top();

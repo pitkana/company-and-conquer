@@ -38,7 +38,7 @@ void print_movement(Map& map) {
     std::cin >> x >> y;
     if (std::cin.fail()) {std::cin.clear();return;}
 
-    std::vector<coordinates<size_t>> movement = map.possible_tiles_to_move_to3({x, y}, 3);
+    std::vector<coordinates<size_t>> movement = map.possible_tiles_to_move_to({x, y}, 3);
 
     for (size_t y = 0; y < 10; ++y) {
       for (size_t x = 0; x < 10; ++x) {
