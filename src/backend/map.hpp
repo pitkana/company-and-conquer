@@ -234,13 +234,13 @@ class Map
 
             // this will contain the distance and predecessor of each vertex as: <distance, location of predecessor>
             Matrix< std::pair<size_t, coordinates<size_t>> > vertex_attributes(width_, height_, std::make_pair( std::numeric_limits<size_t>::max(), coordinates<size_t>{0, 0} ));
-            vertex_attributes( location.x, location.y ) = std::make_pair( 0, location );
+            vertex_attributes( location.y, location.x ) = std::make_pair( 0, location );
 
 
             auto Relax = [&vertex_attributes, this]( coordinates<size_t>& curr, coordinates<size_t>& a_neighbour, size_t weight ) -> void
             {
-                if ( ( vertex_attributes( curr.x, curr.y ).first + weight < vertex_attributes( a_neighbour.x, a_neighbour.y ).first ) && (this->all_terrains_[a_neighbour]->can_move_to()) ) {
-                    vertex_attributes( a_neighbour.x, a_neighbour.y ) = std::make_pair( vertex_attributes( curr.x, curr.y ).first + weight, curr );
+                if ( ( vertex_attributes( curr.y, curr.x ).first + weight < vertex_attributes( a_neighbour.y, a_neighbour.x ).first ) && (this->all_terrains_[a_neighbour]->can_move_to()) ) {
+                    vertex_attributes( a_neighbour.y, a_neighbour.x ) = std::make_pair( vertex_attributes( curr.y, curr.x ).first + weight, curr );
                 }
             };
 
@@ -251,7 +251,7 @@ class Map
             // very interesting template constructor for std::priority_queue, we need it to make it possible to use std::pair in it
             // it basically orders the pairs by the first element into a min-heap
             std::priority_queue< std::pair<size_t, coordinates<size_t> >, std::vector<std::pair<size_t, coordinates<size_t> >> , std::greater<std::pair<size_t, coordinates<size_t> >> > distances;
-            distances.push( vertex_attributes( location.x, location.y ) );
+            distances.push( vertex_attributes( location.y, location.x ) );
 
             
 
@@ -262,7 +262,7 @@ class Map
                 // if the top value (so the one with the smallest weight ) is more than movement range,
                 // then we know that there cant be other tiles that the player can go to and
                 // we stop running
-                if ( vertex_attributes( curr.second.x, curr.second.y ).first > movement_range ) {
+                if ( vertex_attributes( curr.second.y, curr.second.x ).first > movement_range ) {
                     break;
                 }
 
@@ -281,9 +281,9 @@ class Map
 
                             // check if we've already processed the tile
                             if ( !(is_processed[ aux.x * width_ + aux.y ] )) {   
-                                Relax( curr.second, aux, all_terrains_( aux.x, aux.y )->movement_cost() );
+                                Relax( curr.second, aux, all_terrains_( aux.y, aux.x )->movement_cost() );
 
-                                distances.push( std::make_pair( vertex_attributes( aux.x, aux.y ).first, aux ) );
+                                distances.push( std::make_pair( vertex_attributes( aux.y, aux.x ).first, aux ) );
                             }
                         }
                     }
@@ -296,7 +296,6 @@ class Map
             
 
             
-            
 
             // add the tile's coordinates into the return container only if their distance 
             // is equal or less than the given <movement_range>
@@ -306,8 +305,8 @@ class Map
             
             for ( size_t width = 0; width < vertex_attributes.width(); width++ ) {
                 for ( size_t height = 0; height < vertex_attributes.height(); height++ ) {
-                    if ( vertex_attributes(width, height).first <= movement_range ) {
-                        tiles_that_are_close_enough.push_back( coordinates<size_t>{ width, height } );
+                    if ( vertex_attributes(height, width).first <= movement_range ) {
+                        tiles_that_are_close_enough.push_back( coordinates<size_t>{ height, width } );
                     }
                 }
             }
