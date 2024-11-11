@@ -1,6 +1,7 @@
 #include <iostream>
 #include <unordered_map>
 #include <algorithm>
+#include <chrono>
 
 #include "map.hpp"
 
@@ -38,7 +39,12 @@ void print_movement(Map& map) {
     std::cin >> x >> y;
     if (std::cin.fail()) {std::cin.clear();return;}
 
-    std::vector<coordinates<size_t>> movement = map.possible_tiles_to_move_to({x, y}, 3);
+    std::chrono::high_resolution_clock::time_point time0 = std::chrono::high_resolution_clock::now();
+    std::vector<coordinates<size_t>> movement = map.possible_tiles_to_move_to3({x, y}, 100);
+
+    std::chrono::high_resolution_clock::time_point time1 = std::chrono::high_resolution_clock::now();
+
+    std::cout << "duration: " << (std::chrono::duration_cast<std::chrono::duration<double>>(time1 - time0)).count() << "\n";
 
     for (size_t y = 0; y < 10; ++y) {
       for (size_t x = 0; x < 10; ++x) {
@@ -60,7 +66,7 @@ void print_movement(Map& map) {
 
 int main() {
 
-  Map map(10, 10);
+  Map map(500, 500);
 
   Terrain background('.');
   Terrain wall = Terrain('#', false, false, false, false);
