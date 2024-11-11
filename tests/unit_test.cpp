@@ -16,7 +16,7 @@ void change_terrain(Map& a_map) {
   if (std::cin.fail()) {return;}
 
   char terrain_type;
-  std::cout << "Enter terrain character representative (. or #)" << std::endl;
+  std::cout << "Enter terrain character representative (. or # or -)" << std::endl;
   std::cin >> terrain_type;
   if (std::cin.fail()) {return;}
 
@@ -25,6 +25,9 @@ void change_terrain(Map& a_map) {
       a_map.update_terrain(terrains[terrain_type], y, x);
       return;
     case '#':
+      a_map.update_terrain(terrains[terrain_type], y, x);
+      return;
+    case '-':
       a_map.update_terrain(terrains[terrain_type], y, x);
       return;
     default:
@@ -39,12 +42,7 @@ void print_movement(Map& map) {
     std::cin >> x >> y;
     if (std::cin.fail()) {std::cin.clear();return;}
 
-    std::chrono::high_resolution_clock::time_point time0 = std::chrono::high_resolution_clock::now();
-    std::vector<coordinates<size_t>> movement = map.possible_tiles_to_move_to3({x, y}, 100);
-
-    std::chrono::high_resolution_clock::time_point time1 = std::chrono::high_resolution_clock::now();
-
-    std::cout << "duration: " << (std::chrono::duration_cast<std::chrono::duration<double>>(time1 - time0)).count() << "\n";
+    std::vector<coordinates<size_t>> movement = map.possible_tiles_to_move_to3({x, y}, 4);
 
     for (size_t y = 0; y < 10; ++y) {
       for (size_t x = 0; x < 10; ++x) {
@@ -70,8 +68,11 @@ int main() {
 
   Terrain background('.');
   Terrain wall = Terrain('#', false, false, false, false);
+  Terrain swamp('-');
+  swamp.set_movement_cost(3);
   terrains[background.get_repr()] = background;
   terrains[wall.get_repr()] = wall;
+  terrains[swamp.get_repr()] = swamp;
 
   while (true) {
     std::cout << "A to change terrain, M to calculate movement, Q to quit" << std::endl;

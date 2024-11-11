@@ -13,6 +13,7 @@
 
 #include "terrain.hpp"
 #include "matrix.hpp"
+#include "timer.hpp"
 
 
 
@@ -227,6 +228,7 @@ class Map
          */
         std::vector< coordinates<size_t> > possible_tiles_to_move_to( const coordinates<size_t>& location, const uint8_t movement_range )
         {   
+            Timer timer;
             // cant use unordered_set with coordinates without making a hash function so I used a vector.
             std::vector<bool> is_processed( width_ * height_, false ); 
 
@@ -316,6 +318,7 @@ class Map
 
 
         std::vector< coordinates< size_t > > possible_tiles_to_move_to3( const coordinates<size_t>& location, uint8_t movement_range ) {
+            Timer timer;
             struct Vertex {
                 size_t cooldown;
                 coordinates<size_t> coords;
