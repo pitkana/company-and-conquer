@@ -7,6 +7,8 @@
 
 
 static std::unordered_map<char, Terrain> terrains;
+static size_t width = 50;
+static size_t height = 50;
 
 
 void change_terrain(Map& a_map) {
@@ -42,10 +44,10 @@ void print_movement(Map& map) {
     std::cin >> x >> y;
     if (std::cin.fail()) {std::cin.clear();return;}
 
-    std::vector<coordinates<size_t>> movement = map.possible_tiles_to_move_to3({x, y}, 4);
+    std::vector<coordinates<size_t>> movement = map.possible_tiles_to_move_to({x, y}, 10);
 
-    for (size_t y = 0; y < 10; ++y) {
-      for (size_t x = 0; x < 10; ++x) {
+    for (size_t y = 0; y < height; ++y) {
+      for (size_t x = 0; x < width; ++x) {
         if (std::find_if(movement.begin(), movement.end(), [x, y](const coordinates<size_t>& coords) {
           return (coords.x == x && coords.y == y);
         }) != movement.end()) {
@@ -64,7 +66,7 @@ void print_movement(Map& map) {
 
 int main() {
 
-  Map map(500, 500);
+  Map map(width, height);
 
   Terrain background('.');
   Terrain wall = Terrain('#', false, false, false, false);
