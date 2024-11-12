@@ -93,9 +93,9 @@ class Map
 
         void update_terrain(char terrain, size_t y, size_t x)
         {
-            // though about using switch statement, but 
-            // IMO it can become thedious if we keep adding 
-            // different terrains so use unordered_map for now.
+            // thought about using switch statement, but IMO
+            // it can become tedious if we keep adding 
+            // different terrains so I used unordered_map for now.
             if ( all_tile_types_.count( terrain ) ) {
                 all_terrains_(y, x) = all_tile_types_[terrain];
             }
