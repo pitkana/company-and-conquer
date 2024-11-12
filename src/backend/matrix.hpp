@@ -27,7 +27,7 @@ class Matrix
         Matrix( size_t n ) noexcept : data_(n * n), width_(n), height_(n) { }
 
         // initialise a n x m matrix
-        Matrix( size_t n, size_t m ) noexcept : data_(n * m), width_(n), height_(m) { }
+        Matrix( size_t y, size_t x ) noexcept : data_(y * x), width_(x), height_(y) { }
 
 
         // initialise a n x n matrix with the <value> at every cell
@@ -35,7 +35,7 @@ class Matrix
 
 
         // initialise a n x m matrix with the <value> initialised at every cell
-        Matrix( size_t n, size_t m, T value ) noexcept : data_(n * m, value), width_(n), height_(m) { }
+        Matrix( size_t y, size_t x, T value ) noexcept : data_(y * x, value), width_(x), height_(y) { }
 
         [[nodiscard]]
         constexpr size_t size() const noexcept
@@ -60,7 +60,7 @@ class Matrix
         [[nodiscard]]
         constexpr T& operator () ( const size_t y, const size_t x ) noexcept
         {
-            assert(y >= 0 && y < height_ && x >= 0 && x < width_);
+            assert(y < height_ && x < width_);
             return data_[ y * width_ + x ];
         }
 
@@ -68,7 +68,7 @@ class Matrix
         [[nodiscard]]
         constexpr const T& operator () ( const size_t y, const size_t x ) const noexcept
         {
-            assert(y >= 0 && y < height_ && x >= 0 && x < width_);
+            assert(y < height_ && x < width_);
             return data_[ y * width_ + x ];
         }
 
@@ -76,6 +76,14 @@ class Matrix
         template<typename D>
         [[nodiscard]]
         constexpr inline T& operator [] ( const coordinates<D>& a_coordinates ) noexcept
+        {
+            assert(a_coordinates.y >= 0 && a_coordinates.y < height_ && a_coordinates.x >= 0 && a_coordinates.x < width_);
+            return data_[ a_coordinates.y * width_ + a_coordinates.x ];
+        }
+
+        template<typename D>
+        [[nodiscard]]
+        constexpr inline T& operator () ( const coordinates<D>& a_coordinates ) noexcept
         {
             assert(a_coordinates.y >= 0 && a_coordinates.y < height_ && a_coordinates.x >= 0 && a_coordinates.x < width_);
             return data_[ a_coordinates.y * width_ + a_coordinates.x ];
