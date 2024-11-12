@@ -11,6 +11,7 @@
 #include <iostream>
 
 
+
 #include "terrain.hpp"
 #include "matrix.hpp"
 #include "timer.hpp"
@@ -181,7 +182,7 @@ class Map
             std::vector< coordinates<size_t> > possible_locations;
 
 // get the coordinates vectors of every direction
-            for ( coordinates<int32_t> a_direction : directions_vectors_ ) {
+            for ( const coordinates<int32_t>& a_direction : directions_vectors_ ) {
                 
                 if ( valid_direction( location, a_direction ) ) {
                     // because we already checked if the direction is valid, 
@@ -229,31 +230,48 @@ class Map
         std::vector< coordinates<size_t> > possible_tiles_to_move_to( const coordinates<size_t>& location, const uint8_t movement_range )
         {   
             Timer timer;
+            // this will contain the distance and predecessor of a vertex as: <distance, location of predecessor>
+            struct a_vertex
+            {
+                size_t first;
+                coordinates<size_t> second;
+
+                inline bool operator < ( const a_vertex& a ) const noexcept
+                {
+                    return first < a.first;
+                }
+                inline bool operator > ( const a_vertex& a ) const noexcept
+                {
+                    return first > a.first;
+                }
+            };
             // cant use unordered_set with coordinates without making a hash function so I used a vector.
             std::vector<bool> is_processed( width_ * height_, false ); 
 
             // this will contain the distance and predecessor of each vertex as: <distance, location of predecessor>
-            Matrix< std::pair<size_t, coordinates<size_t>> > vertex_attributes(width_, height_, std::make_pair( std::numeric_limits<size_t>::max(), coordinates<size_t>{0, 0} ));
-            vertex_attributes( location.y, location.x ) = std::make_pair( 0, location );
+            Matrix< a_vertex > vertex_attributes(width_, height_, { std::numeric_limits<size_t>::max(), coordinates<size_t>{0, 0} });
+            vertex_attributes( location.y, location.x ) = { 0, location };
 
 
-            auto Relax = [&vertex_attributes, this]( coordinates<size_t>& curr, coordinates<size_t>& a_neighbour, size_t weight ) -> void
+            auto Relax = [&vertex_attributes, this]( const a_vertex& curr, const coordinates<size_t>& a_neighbour, size_t weight ) -> void
             {
-                if ( ( vertex_attributes( curr.y, curr.x ).first + weight < vertex_attributes( a_neighbour.y, a_neighbour.x ).first ) && (this->all_terrains_[a_neighbour]->can_move_to()) ) {
-                    vertex_attributes( a_neighbour.y, a_neighbour.x ) = std::make_pair( vertex_attributes( curr.y, curr.x ).first + weight, curr );
+                if ( ( curr.first + weight < vertex_attributes( a_neighbour.y, a_neighbour.x ).first ) && (this->all_terrains_[a_neighbour]->can_move_to()) ) {
+                    //vertex_attributes( a_neighbour.y, a_neighbour.x ) = { vertex_attributes( curr.y, curr.x ).first + weight, curr };
+                    vertex_attributes( a_neighbour.y, a_neighbour.x ).first = curr.first + weight;
+                    vertex_attributes( a_neighbour.y, a_neighbour.x ).second = curr.second;
                 }
             };
 
             
-            std::pair<size_t, coordinates<size_t>> curr;
+            a_vertex curr;
             coordinates<size_t> aux; // well use this in the following loop
 
             // very interesting template constructor for std::priority_queue, we need it to make it possible to use std::pair in it
             // it basically orders the pairs by the first element into a min-heap
-            std::priority_queue< std::pair<size_t, coordinates<size_t> >, std::vector<std::pair<size_t, coordinates<size_t> >> , std::greater<std::pair<size_t, coordinates<size_t> >> > distances;
+            std::priority_queue< a_vertex, std::vector<a_vertex>, std::greater<a_vertex> > distances;
             distances.push( vertex_attributes( location.y, location.x ) );
 
-            
+            std::vector< coordinates<size_t> > tiles_that_are_close_enough;
 
             while ( !(distances.empty()) ) {
                 curr = distances.top();
@@ -262,8 +280,13 @@ class Map
                 // if the top value (so the one with the smallest weight ) is more than movement range,
                 // then we know that there cant be other tiles that the player can go to and
                 // we stop running
-                if ( vertex_attributes( curr.second.y, curr.second.x ).first > movement_range ) {
+                if ( curr.first > movement_range ) {
                     break;
+                }
+                else {
+                    // add the tile's coordinates into the return container only if their distance 
+                    // is equal or less than the given <movement_range>
+                    tiles_that_are_close_enough.push_back( coordinates<size_t>{ curr.second.x, curr.second.y  } );
                 }
 
                 // check if we've already computed the current vertex
@@ -281,9 +304,9 @@ class Map
 
                             // check if we've already processed the tile
                             if ( !(is_processed[ aux.x * width_ + aux.y ] )) {   
-                                Relax( curr.second, aux, all_terrains_( aux.y, aux.x )->movement_cost() );
+                                Relax( curr, aux, all_terrains_( aux.y, aux.x )->movement_cost() );
 
-                                distances.push( std::make_pair( vertex_attributes( aux.y, aux.x ).first, aux ) );
+                                distances.push( { vertex_attributes( aux.y, aux.x ).first, aux } );
                             }
                         }
                     }
@@ -295,22 +318,6 @@ class Map
             }
             
 
-            
-
-            // add the tile's coordinates into the return container only if their distance 
-            // is equal or less than the given <movement_range>
-            // I didn't use <std::copy_if> because the original vector has
-            // std::pair's so the simple for-loop is more efficient and much clearer
-            std::vector< coordinates<size_t> > tiles_that_are_close_enough;
-            
-            for ( size_t width = 0; width < vertex_attributes.width(); width++ ) {
-                for ( size_t height = 0; height < vertex_attributes.height(); height++ ) {
-                    if ( vertex_attributes(height, width).first <= movement_range ) {
-                        tiles_that_are_close_enough.push_back( coordinates<size_t>{ height, width } );
-                    }
-                }
-            }
-            
 
             return tiles_that_are_close_enough;
         }

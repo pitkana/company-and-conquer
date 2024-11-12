@@ -60,7 +60,7 @@ class Matrix
         [[nodiscard]]
         constexpr T& operator () ( const size_t y, const size_t x ) noexcept
         {
-            assert(y >= 0 && y < height_ && x >= 0 && x < width_);
+            assert(y < height_ && && x < width_);
             return data_[ y * width_ + x ];
         }
 
@@ -68,7 +68,7 @@ class Matrix
         [[nodiscard]]
         constexpr const T& operator () ( const size_t y, const size_t x ) const noexcept
         {
-            assert(y >= 0 && y < height_ && x >= 0 && x < width_);
+            assert(y < height_ && x < width_);
             return data_[ y * width_ + x ];
         }
 
