@@ -10,6 +10,7 @@
 #include <limits>
 #include <iostream>
 #include <bitset>
+#include <unordered_map>
 
 
 #include "terrain.hpp"
@@ -25,6 +26,20 @@
 class Map
 {
     private:
+        // base tiles
+        // here we use normal initialisation because if we use std::make_shared the objects
+        // wont be deleted until all the weak pointers go out of scope.
+        // Because I use std::weak_ptr's in Terrain, I cannot use std::make_shared
+        const std::shared_ptr< Terrain > background_ = std::shared_ptr< Terrain>( new Terrain('.') );
+        const std::shared_ptr< Terrain > wall_ = std::shared_ptr< Terrain>( new Terrain('#', false, false, false, false) );
+        const std::shared_ptr< Terrain > swamp_ = std::shared_ptr< Terrain>( new Terrain('-', 3) );
+
+        std::unordered_map<char, std::shared_ptr< Terrain >> all_tile_types_ = { 
+            {'.', this->background_ }, 
+            {'#', this->wall_ }, 
+            {'-', this->swamp_ }
+        };
+
         size_t width_ = 0;
         size_t height_ = 0;
 
@@ -76,11 +91,22 @@ class Map
             this->create_board();
         }
 
-        void update_terrain(Terrain& terrain, size_t y, size_t x) {
-            all_terrains_(y, x) = std::shared_ptr<Terrain>(&terrain);
+        void update_terrain(char terrain, size_t y, size_t x)
+        {
+            // though about using switch statement, but 
+            // IMO it can become thedious if we keep adding 
+            // different terrains so use unordered_map for now.
+            if ( all_tile_types_.count( terrain ) ) {
+                all_terrains_(y, x) = all_tile_types_[terrain];
+            }
+            else {
+                all_terrains_(y, x) = background_;
+            }
+            
         }
 
-        std::shared_ptr<Terrain> get_terrain(size_t y, size_t x) {
+        std::shared_ptr<Terrain> get_terrain(size_t y, size_t x) 
+        {
             return all_terrains_(y, x);
         }
 
@@ -95,7 +121,7 @@ class Map
                     // here we use normal initialisation because if we use std::make_shared the objects
                     // wont be deleted until all the weak pointers go out of scope.
                     // Because I use std::weak_ptr's in Terrain, I cannot use std::make_shared
-                    all_terrains_(i, j) = std::shared_ptr< Terrain >( new Terrain('.') );
+                    all_terrains_(i, j) = this->background_;
 
                 }
             }
@@ -181,7 +207,7 @@ class Map
             std::vector< coordinates<size_t> > possible_locations;
             possible_locations.reserve(4);
 
-// get the coordinates vectors of every direction
+            // get the coordinates vectors of every direction
             for ( const coordinates<int32_t>& a_direction : directions_vectors_ ) {
                 
                 if ( valid_direction( location, a_direction ) ) {
@@ -283,11 +309,11 @@ class Map
                 if ( curr.first > movement_range ) {
                     break;
                 }
-                else {
-                    // add the tile's coordinates into the return container only if their distance 
-                    // is equal or less than the given <movement_range>
-                    tiles_that_are_close_enough.push_back( coordinates<size_t>{ curr.second.x, curr.second.y  } );
-                }
+
+                // add the tile's coordinates into the return container only if their distance 
+                // is equal or less than the given <movement_range>
+                tiles_that_are_close_enough.emplace_back( curr.second.x, curr.second.y );
+                
 
                 // check if we've already computed the current vertex
                 if ( !(is_processed[ curr.second.y * width_ + curr.second.x ]) ) {
@@ -303,10 +329,10 @@ class Map
                             aux = curr.second + a_direction;
 
                             // check if we've already processed the tile
-                            if ( !(is_processed[ aux.x * width_ + aux.y ] )) {   
-                                Relax( curr.second, aux, all_terrains_( aux.y, aux.x )->movement_cost() );
+                            if ( !(is_processed[ aux.y * height_ + aux.x ] )) {   
+                                Relax( curr, aux, all_terrains_( aux.y, aux.x )->movement_cost() );
 
-                                distances.push( { vertex_attributes( aux.y, aux.x ).first, aux } );
+                                distances.emplace( vertex_attributes( aux.y, aux.x ).first, aux );
                             }
                         }
                     }
@@ -315,23 +341,6 @@ class Map
                 }
 
                 
-            }
-            
-
-            
-
-            // add the tile's coordinates into the return container only if their distance 
-            // is equal or less than the given <movement_range>
-            // I didn't use <std::copy_if> because the original vector has
-            // std::pair's so the simple for-loop is more efficient and much clearer
-            std::vector< coordinates<size_t> > tiles_that_are_close_enough;
-            
-            for ( size_t width = 0; width < vertex_attributes.width(); width++ ) {
-                for ( size_t height = 0; height < vertex_attributes.height(); height++ ) {
-                    if ( vertex_attributes(height, width).first <= movement_range ) {
-                        tiles_that_are_close_enough.push_back( coordinates<size_t>{ height, width } );
-                    }
-                }
             }
             
 

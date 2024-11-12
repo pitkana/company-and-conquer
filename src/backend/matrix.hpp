@@ -60,7 +60,7 @@ class Matrix
         [[nodiscard]]
         constexpr T& operator () ( const size_t y, const size_t x ) noexcept
         {
-            assert(y < height_ && && x < width_);
+            //assert(y < height_ && x < width_);
             return data_[ y * width_ + x ];
         }
 
@@ -68,7 +68,7 @@ class Matrix
         [[nodiscard]]
         constexpr const T& operator () ( const size_t y, const size_t x ) const noexcept
         {
-            assert(y < height_ && x < width_);
+            //assert(y < height_ && x < width_);
             return data_[ y * width_ + x ];
         }
 
@@ -77,7 +77,7 @@ class Matrix
         [[nodiscard]]
         constexpr inline T& operator [] ( const coordinates<D>& a_coordinates ) noexcept
         {
-            assert(a_coordinates.y >= 0 && a_coordinates.y < height_ && a_coordinates.x >= 0 && a_coordinates.x < width_);
+            //assert(a_coordinates.y >= 0 && a_coordinates.y < height_ && a_coordinates.x >= 0 && a_coordinates.x < width_);
             return data_[ a_coordinates.y * width_ + a_coordinates.x ];
         }
 
@@ -85,7 +85,7 @@ class Matrix
         [[nodiscard]]
         constexpr inline T& operator () ( const coordinates<D>& a_coordinates ) noexcept
         {
-            assert(a_coordinates.y >= 0 && a_coordinates.y < height_ && a_coordinates.x >= 0 && a_coordinates.x < width_);
+            //assert(a_coordinates.y >= 0 && a_coordinates.y < height_ && a_coordinates.x >= 0 && a_coordinates.x < width_);
             return data_[ a_coordinates.y * width_ + a_coordinates.x ];
         }
 

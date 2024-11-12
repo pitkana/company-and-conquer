@@ -24,13 +24,13 @@ void change_terrain(Map& a_map) {
 
   switch (terrain_type) {
     case '.':
-      a_map.update_terrain(terrains[terrain_type], y, x);
+      a_map.update_terrain(terrain_type, y, x);
       return;
     case '#':
-      a_map.update_terrain(terrains[terrain_type], y, x);
+      a_map.update_terrain(terrain_type, y, x);
       return;
     case '-':
-      a_map.update_terrain(terrains[terrain_type], y, x);
+      a_map.update_terrain(terrain_type, y, x);
       return;
     default:
       return;
@@ -46,8 +46,8 @@ void print_movement(Map& map) {
 
     std::vector<coordinates<size_t>> movement = map.possible_tiles_to_move_to({x, y}, 4);
 
-    for (size_t y = 0; y < width; ++y) {
-      for (size_t x = 0; x < height; ++x) {
+    for (size_t y = 0; y < 10; ++y) {
+      for (size_t x = 0; x < 10; ++x) {
         if (std::find_if(movement.begin(), movement.end(), [x, y](const coordinates<size_t>& coords) {
           return (coords.x == x && coords.y == y);
         }) != movement.end()) {
@@ -75,6 +75,7 @@ int main() {
   terrains[background.get_repr()] = background;
   terrains[wall.get_repr()] = wall;
   terrains[swamp.get_repr()] = swamp;
+
 
 
   while (true) {
