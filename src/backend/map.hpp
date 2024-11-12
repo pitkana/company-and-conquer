@@ -9,7 +9,7 @@
 #include <utility>
 #include <limits>
 #include <iostream>
-
+#include <bitset>
 
 
 #include "terrain.hpp"
@@ -88,7 +88,6 @@ class Map
         // add the new Terrains into the board
         constexpr inline void create_board() noexcept
         {
-
             // with this nested loop we create all the Terrains
             for ( size_t i = 0; i < this->all_terrains_.width(); i++ ) {
                 for ( size_t j = 0; j < this->all_terrains_.height(); j++ ) {
@@ -180,6 +179,7 @@ class Map
         {
 
             std::vector< coordinates<size_t> > possible_locations;
+            possible_locations.reserve(4);
 
 // get the coordinates vectors of every direction
             for ( const coordinates<int32_t>& a_direction : directions_vectors_ ) {
@@ -205,7 +205,7 @@ class Map
         inline bool valid_direction( const coordinates<size_t>& location, const coordinates<int32_t>& direction )
         {
             // have to cast so we can check if the valu goes to below 0
-            coordinates<int64_t> aux = {static_cast<int64_t>(location.x) + direction.x, static_cast<int64_t>(location.y) + direction.y};
+            const coordinates<int64_t> aux = {static_cast<int64_t>(location.x) + direction.x, static_cast<int64_t>(location.y) + direction.y};
 
             if ( aux.x < 0 || aux.x >= this->all_terrains_.width() ) {
                 return false;
@@ -290,7 +290,7 @@ class Map
                 }
 
                 // check if we've already computed the current vertex
-                if ( !(is_processed[ curr.second.x * width_ + curr.second.y ]) ) {
+                if ( !(is_processed[ curr.second.y * width_ + curr.second.x ]) ) {
 
                     // the tile is only connected to 4 other tiles in the main directions
                     for ( const coordinates<int32_t>& a_direction : directions_vectors_ ) {
@@ -304,20 +304,36 @@ class Map
 
                             // check if we've already processed the tile
                             if ( !(is_processed[ aux.x * width_ + aux.y ] )) {   
-                                Relax( curr, aux, all_terrains_( aux.y, aux.x )->movement_cost() );
+                                Relax( curr.second, aux, all_terrains_( aux.y, aux.x )->movement_cost() );
 
                                 distances.push( { vertex_attributes( aux.y, aux.x ).first, aux } );
                             }
                         }
                     }
 
-                    is_processed[ curr.second.x * width_ + curr.second.y ] = true;
+                    is_processed[ curr.second.y * width_ + curr.second.x ] = true;
                 }
 
                 
             }
             
 
+            
+
+            // add the tile's coordinates into the return container only if their distance 
+            // is equal or less than the given <movement_range>
+            // I didn't use <std::copy_if> because the original vector has
+            // std::pair's so the simple for-loop is more efficient and much clearer
+            std::vector< coordinates<size_t> > tiles_that_are_close_enough;
+            
+            for ( size_t width = 0; width < vertex_attributes.width(); width++ ) {
+                for ( size_t height = 0; height < vertex_attributes.height(); height++ ) {
+                    if ( vertex_attributes(height, width).first <= movement_range ) {
+                        tiles_that_are_close_enough.push_back( coordinates<size_t>{ height, width } );
+                    }
+                }
+            }
+            
 
             return tiles_that_are_close_enough;
         }
@@ -330,12 +346,13 @@ class Map
                 coordinates<size_t> coords;
             };
 
-            Matrix<int> visited(width_, height_, false);
+            // Matrix<int> visited(width_, height_, false);
+            std::vector<bool> visited(width_ * height_, false);
 
             std::vector<coordinates<size_t>> result;
 
-            std::queue<Vertex> vertex_queue;
-            vertex_queue.push({0, location});
+            std::deque<Vertex> vertex_queue;
+            vertex_queue.emplace_back(0, location);
             
             std::list<Vertex> waiting_vertices;
             uint8_t movements_left = movement_range;
@@ -344,20 +361,21 @@ class Map
             
                 for (int i = 0; i < current_size; i++) {
                     const Vertex& current_vertex = vertex_queue.front();
+
                     std::vector<coordinates<size_t>> neighbours = get_neighbouring_coordinates(current_vertex.coords);
                     for (const auto& neighbour : neighbours) {
                         const std::shared_ptr<Terrain>& neighbour_terrain = all_terrains_[neighbour];
-                        if (visited(neighbour.y, neighbour.x)|| !neighbour_terrain->can_move_to()) continue;
-                        visited(neighbour.y, neighbour.x) = true;
+                        if (visited[neighbour.y * width_ + neighbour.x]|| !neighbour_terrain->can_move_to()) continue;
+                        visited[neighbour.y * width_ + neighbour.x] = true;
 
                         if (neighbour_terrain->movement_cost() > 1) {
-                            waiting_vertices.push_back({neighbour_terrain->movement_cost(), neighbour});
+                            waiting_vertices.emplace_back(neighbour_terrain->movement_cost(), neighbour);
                         } else {
-                            vertex_queue.push({0, neighbour});
+                            vertex_queue.emplace_back(0, neighbour);
                             result.push_back(neighbour);
                         }
                     }
-                    vertex_queue.pop();
+                    vertex_queue.pop_front();
                 }
                 
                 auto it = waiting_vertices.begin();
@@ -365,8 +383,8 @@ class Map
                     auto waiting_vertex_it = it++;
                     Vertex& waiting_vertex = *waiting_vertex_it;
                     if (--waiting_vertex.cooldown <= 0) {
-                        vertex_queue.push(waiting_vertex);
                         result.push_back(waiting_vertex.coords);
+                        vertex_queue.push_back(std::move(waiting_vertex));
                         waiting_vertices.erase(waiting_vertex_it);
                     }
                 }
