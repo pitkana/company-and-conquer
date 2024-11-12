@@ -29,7 +29,7 @@ class Map
         Matrix< std::shared_ptr< Square<size_t> >> all_squares_;
 
         
-        // we define the directions from the helper tools that we'll use in directions handling
+        // we define the directions from the Helper tools that we'll use in directions handling
         std::vector< Helper::Directions > directions_ = { 
             Helper::Directions::North, 
             Helper::Directions::East, 
