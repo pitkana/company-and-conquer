@@ -27,7 +27,6 @@ constexpr inline T clamp( const T& value, const T& smallest, const T& largest ) 
 
 
 
-
 class RGBA
 {   
     private:

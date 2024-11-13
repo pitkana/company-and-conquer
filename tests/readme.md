@@ -16,13 +16,11 @@ In this folder, you can create your own unit test files to validate the operatio
 
 **Results:**
 
+## Test of interaction of Action, Item and Game classes
 
-## Test of movement with Map
+**Involved Classes:** Game, Action, Item, Team, Turn
 
-**Involved Classes:** Map, Terrain
+**Test File:** action_test.cpp
 
-**Test File:** movement_test.cpp
-
-**Results:**
-Movement calculating algorithms work properly, taking into account walls and tiles that cost more to move into.
-
+**Results:** The functions and interactions worked as expected. Units were added to a team, weapons given to units.
+Multiple turns enqueued with weapon's actions and then executed (prints the weapon's values)

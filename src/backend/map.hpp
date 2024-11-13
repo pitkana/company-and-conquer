@@ -52,7 +52,7 @@ class Map
 
 
         
-        // we define the directions from the helper tools that we'll use in directions handling
+        // we define the directions from the Helper tools that we'll use in directions handling
         std::vector< Helper::Directions > directions_ = { 
             Helper::Directions::North, 
             Helper::Directions::East, 

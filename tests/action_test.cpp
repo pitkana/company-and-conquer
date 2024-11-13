@@ -9,7 +9,7 @@
 #include "turn.hpp"
 #include <random>
 
-int main() 
+void action_test() 
 {
     Game game;
 
