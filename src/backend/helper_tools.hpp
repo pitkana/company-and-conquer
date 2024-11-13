@@ -162,23 +162,23 @@ inline bool same_direction(coordinates<T> a, coordinates<T> b)
 }
 
 template<typename T, typename D>
-constexpr inline coordinates<T> square_to_pos( const coordinates<T>& coords, const D screen_width, const D screen_height, 
-                                                bool use_clamp, const size_t amount_of_squares )
+constexpr inline coordinates<T> Terrain_to_pos( const coordinates<T>& coords, const D screen_width, const D screen_height, 
+                                                bool use_clamp, const size_t amount_of_Terrains )
 {
     T x = coords.x;
     T y = coords.y;
     
     if ( use_clamp ) {
-        x = clamp<T>(x, 0, amount_of_squares);
-        y = clamp<T>(y, 0, amount_of_squares);
+        x = clamp<T>(x, 0, amount_of_Terrains);
+        y = clamp<T>(y, 0, amount_of_Terrains);
     }
     
 
-    D square_width = screen_width/amount_of_squares;
-    D square_height = screen_height/amount_of_squares;
+    D Terrain_width = screen_width/amount_of_Terrains;
+    D Terrain_height = screen_height/amount_of_Terrains;
 
-    T x1 = x*square_width;
-    T y1 = y*square_height;
+    T x1 = x*Terrain_width;
+    T y1 = y*Terrain_height;
 
     return coordinates<T>{x1, y1};
 }
