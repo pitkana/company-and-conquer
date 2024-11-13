@@ -16,3 +16,13 @@ In this folder, you can create your own unit test files to validate the operatio
 
 **Results:**
 
+
+## Test of movement with Map
+
+**Involved Classes:** Map, Terrain
+
+**Test File:** movement_test.cpp
+
+**Results:**
+Movement calculating algorithms work properly, taking into account walls and tiles that cost more to move into.
+
