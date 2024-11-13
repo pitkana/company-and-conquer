@@ -64,7 +64,7 @@ void print_movement(Map& map) {
 }
 
 
-int main() {
+int movement_test() {
 
   Map map(width, height);
 
