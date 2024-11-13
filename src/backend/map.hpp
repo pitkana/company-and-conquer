@@ -348,6 +348,7 @@ class Map
         }
 
 
+        // Breadth-first-search based algorithm on finding movement tiles
         std::vector< coordinates< size_t > > possible_tiles_to_move_to3( const coordinates<size_t>& location, uint8_t movement_range ) {
             Timer timer;
             struct Vertex {
@@ -355,17 +356,22 @@ class Map
                 coordinates<size_t> coords;
             };
 
-            // Matrix<int> visited(width_, height_, false);
             std::vector<bool> visited(width_ * height_, false);
+            //initialize result vector with the given location
+            std::vector<coordinates<size_t>> result(1, location);
 
-            std::vector<coordinates<size_t>> result;
-
+            // Queue of vertices that will be visited in the search.
             std::deque<Vertex> vertex_queue;
-            vertex_queue.emplace_back(0, location);
-            
+            // List of vertices that have a movement cost greater than 1 and thus won't be searched until that many movements have been used
             std::list<Vertex> waiting_vertices;
+
+            // Add starting location to queue and mark it as visited
+            vertex_queue.emplace_back(0, location);
+            visited[location.y * width_ + location.x] = true;
             uint8_t movements_left = movement_range;
+
             while (movements_left > 0) {
+                // Store how many tiles to visit in this movement
                 int current_size = vertex_queue.size();
             
                 for (int i = 0; i < current_size; i++) {
@@ -373,10 +379,14 @@ class Map
 
                     std::vector<coordinates<size_t>> neighbours = get_neighbouring_coordinates(current_vertex.coords);
                     for (const auto& neighbour : neighbours) {
+                        // Get this neighbour's terrain, check if the neighbour was already visited or if you can move to it.
+                        // If visited or can't move, skip it, otherwise visit it and mark it as visited
                         const std::shared_ptr<Terrain>& neighbour_terrain = all_terrains_[neighbour];
                         if (visited[neighbour.y * width_ + neighbour.x]|| !neighbour_terrain->can_move_to()) continue;
                         visited[neighbour.y * width_ + neighbour.x] = true;
 
+                        // If it costs only 1 movement action to move into this tile, add it to the queue straight away.
+                        // Otherwise add it to waiting_vertices
                         if (neighbour_terrain->movement_cost() > 1) {
                             waiting_vertices.emplace_back(neighbour_terrain->movement_cost(), neighbour);
                         } else {
@@ -387,6 +397,8 @@ class Map
                     vertex_queue.pop_front();
                 }
                 
+                // Loop through waiting vertices, decrease each vertex's cooldown and if it reaches 0, remove it from waiting_vertices
+                // and add it to the queue of vertices to visit on the next movement
                 auto it = waiting_vertices.begin();
                 while (it != waiting_vertices.end()) {
                     auto waiting_vertex_it = it++;
