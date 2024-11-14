@@ -34,8 +34,8 @@ protected:
 
 class Weapon : public Item {
 public:
-    Weapon(const std::string& name, int accuracy, int damage, int area_of_effect = 0):
-           Item(name), accuracy_(accuracy), damage_(damage), area_of_effect_(area_of_effect) 
+    Weapon(const std::string& name, int accuracy, int damage, int falloff, int area_of_effect = 0):
+           Item(name), accuracy_(accuracy), damage_(damage), falloff_(falloff), area_of_effect_(area_of_effect) 
     {
         //Initialize description based on parameters
         std::stringstream desc;
@@ -47,9 +47,26 @@ public:
     [[nodiscard]]
     virtual std::shared_ptr<Action> get_action(const coordinates<size_t>& target) const;
 
+    int get_accuracy() const {
+        return accuracy_;
+    }
+
+    int get_damage() const {
+        return damage_;
+    }
+
+    int get_falloff() const {
+        return falloff_;
+    }
+
+    int get_aoe() const {
+        return area_of_effect_;
+    }
+
 private:
     const int accuracy_;
     const int damage_;
+    const int falloff_;
     //Area of effect means how many squares out will this item affect from the target, 0 means only the target square.
     const int area_of_effect_;
 };

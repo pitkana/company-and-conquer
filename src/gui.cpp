@@ -9,6 +9,7 @@
 #include "turn.hpp"
 #include <random>
 
+
 int main() 
 {
     Game game;
@@ -31,12 +32,12 @@ int main()
     for (Unit& unit : team1.get_units()) {
         int accuracy = std::rand() % 101;
         int damage = (std::rand() % 8) + 1;
-        std::shared_ptr<Weapon> gun = std::make_shared<Weapon>("Rifle", accuracy, damage);
+        int falloff = (std::rand() % 5) + 1;
+        std::shared_ptr<Weapon> gun = std::make_shared<Weapon>("Rifle", accuracy, damage, falloff);
         unit.add_item(std::static_pointer_cast<Item>(gun));
-        team1.enqueue_turn(Turn(unit, origin, dest, unit.GetInventory()[0]->get_action(target)));
+        team1.enqueue_turn(Turn(unit, origin, dest, unit.get_inventory()[0]->get_action(target)));
         // std::cout << std::holds_alternative<Action::CharacterAction>(unit.GetInventory()[0]->get_action(target)) << std::endl;
     }
 
     game.end_turn(0);
 }
-
