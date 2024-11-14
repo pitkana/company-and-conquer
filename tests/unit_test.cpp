@@ -9,7 +9,7 @@
 #include "turn.hpp"
 #include <random>
 
-int main() 
+int unit_test() 
 {
     Game game;
 
