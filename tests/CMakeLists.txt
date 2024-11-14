@@ -17,13 +17,13 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 # add the executable target
 add_executable(test)
 
-target_sources(unit_test PUBLIC ${SOURCES})
-target_include_directories(unit_test PUBLIC .)
-target_include_directories(unit_test PUBLIC ../src/)
-target_link_libraries(unit_test PRIVATE sfml-graphics)
-target_compile_features(unit_test PRIVATE cxx_std_17)
-target_link_libraries(unit_test PRIVATE backend)
-target_include_directories(unit_test PRIVATE ../src/backend)
+target_sources(test PUBLIC ${SOURCES})
+target_include_directories(test PUBLIC .)
+target_include_directories(test PUBLIC ../src/)
+target_link_libraries(test PRIVATE sfml-graphics)
+target_compile_features(test PRIVATE cxx_std_17)
+target_link_libraries(test PRIVATE backend)
+target_include_directories(test PRIVATE ../src/backend)
 
 
 # get a lot of warnings

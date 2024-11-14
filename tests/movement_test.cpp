@@ -7,7 +7,7 @@
 
 
 static std::unordered_map<char, Terrain> terrains;
-static size_t width = 10;
+static size_t width = 20;
 static size_t height = 10;
 
 
@@ -46,8 +46,8 @@ void print_movement(Map& map) {
 
     std::vector<coordinates<size_t>> movement = map.possible_tiles_to_move_to({x, y}, 4);
 
-    for (size_t y = 0; y < 10; ++y) {
-      for (size_t x = 0; x < 10; ++x) {
+    for (size_t y = 0; y < height; ++y) {
+      for (size_t x = 0; x < width; ++x) {
         if (std::find_if(movement.begin(), movement.end(), [x, y](const coordinates<size_t>& coords) {
           return (coords.x == x && coords.y == y);
         }) != movement.end()) {

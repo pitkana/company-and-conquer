@@ -27,7 +27,7 @@ class Matrix
         Matrix( size_t n ) noexcept : data_(n * n), width_(n), height_(n) { }
 
         // initialise a n x m matrix
-        Matrix( size_t y, size_t x ) noexcept : data_(y * x), width_(x), height_(y) { }
+        Matrix( size_t height, size_t width ) noexcept : data_(height * width), width_(width), height_(height) { }
 
 
         // initialise a n x n matrix with the <value> at every cell
@@ -35,7 +35,7 @@ class Matrix
 
 
         // initialise a n x m matrix with the <value> initialised at every cell
-        Matrix( size_t y, size_t x, T value ) noexcept : data_(y * x, value), width_(x), height_(y) { }
+        Matrix( size_t height, size_t width, T value ) noexcept : data_(height * width, value), width_(width), height_(height) { }
 
         [[nodiscard]]
         constexpr size_t size() const noexcept

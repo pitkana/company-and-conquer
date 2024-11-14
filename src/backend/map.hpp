@@ -40,8 +40,6 @@ class Map
             {'-', this->swamp_ }
         };
 
-        size_t width_ = 0;
-        size_t height_ = 0;
 
         /*
         * We will create a board into this container ( NOTE: you can specify a custom board size ).
@@ -75,7 +73,7 @@ class Map
          * @param width width of the map
          * @param height the height of the map
          */
-        Map( const size_t width, const size_t height ) : width_(width), height_(height), all_terrains_( width, height )
+        Map( const size_t width, const size_t height ) : all_terrains_( height, width )
         {
             this->create_board();
         }
@@ -89,6 +87,16 @@ class Map
         Map( const size_t size ) : all_terrains_(size)
         {
             this->create_board();
+        }
+
+        [[nodiscard]]
+        constexpr inline size_t width() const {
+            return all_terrains_.width();
+        }
+
+        [[nodiscard]]
+        constexpr inline size_t height() const {
+            return all_terrains_.height();
         }
 
         void update_terrain(char terrain, size_t y, size_t x)
@@ -115,13 +123,13 @@ class Map
         constexpr inline void create_board() noexcept
         {
             // with this nested loop we create all the Terrains
-            for ( size_t i = 0; i < this->all_terrains_.width(); i++ ) {
-                for ( size_t j = 0; j < this->all_terrains_.height(); j++ ) {
+            for ( size_t y = 0; y < height(); y++ ) {
+                for ( size_t x = 0; x < width(); x++ ) {
 
                     // here we use normal initialisation because if we use std::make_shared the objects
                     // wont be deleted until all the weak pointers go out of scope.
                     // Because I use std::weak_ptr's in Terrain, I cannot use std::make_shared
-                    all_terrains_(i, j) = this->background_;
+                    all_terrains_(y, x) = this->background_;
 
                 }
             }
@@ -150,13 +158,13 @@ class Map
                     break;
 
                 case Helper::Directions::East:
-                    if ( location.x < this->all_terrains_.width() - 1) {
+                    if ( location.x < width() - 1) {
                         possible_location = this->all_terrains_( location.x + 1, location.y );
                     }
                     break;
 
                 case Helper::Directions::South:
-                    if ( location.y < this->all_terrains_.width() - 1 ) {
+                    if ( location.y < height() - 1 ) {
                         possible_location = this->all_terrains_( location.x, location.y + 1 );
                     }
                     break;
@@ -272,10 +280,10 @@ class Map
                 }
             };
             // cant use unordered_set with coordinates without making a hash function so I used a vector.
-            std::vector<bool> is_processed( width_ * height_, false ); 
+            std::vector<bool> is_processed( width() * height(), false ); 
 
             // this will contain the distance and predecessor of each vertex as: <distance, location of predecessor>
-            Matrix< a_vertex > vertex_attributes(width_, height_, { std::numeric_limits<size_t>::max(), coordinates<size_t>{0, 0} });
+            Matrix< a_vertex > vertex_attributes(height(), width(), { std::numeric_limits<size_t>::max(), coordinates<size_t>{0, 0} });
             vertex_attributes( location.y, location.x ) = { 0, location };
 
 
@@ -316,7 +324,7 @@ class Map
                 
 
                 // check if we've already computed the current vertex
-                if ( !(is_processed[ curr.second.y * width_ + curr.second.x ]) ) {
+                if ( !(is_processed[ curr.second.y * width() + curr.second.x ]) ) {
 
                     // the tile is only connected to 4 other tiles in the main directions
                     for ( const coordinates<int32_t>& a_direction : directions_vectors_ ) {
@@ -329,7 +337,7 @@ class Map
                             aux = curr.second + a_direction;
 
                             // check if we've already processed the tile
-                            if ( !(is_processed[ aux.y * height_ + aux.x ] )) {   
+                            if ( !(is_processed[ aux.y * width() + aux.x ] )) {   
                                 Relax( curr, aux, all_terrains_( aux.y, aux.x )->movement_cost() );
 
                                 distances.emplace( vertex_attributes( aux.y, aux.x ).first, aux );
@@ -337,7 +345,7 @@ class Map
                         }
                     }
 
-                    is_processed[ curr.second.y * width_ + curr.second.x ] = true;
+                    is_processed[ curr.second.y * width() + curr.second.x ] = true;
                 }
 
                 
@@ -356,7 +364,7 @@ class Map
                 coordinates<size_t> coords;
             };
 
-            std::vector<bool> visited(width_ * height_, false);
+            std::vector<bool> visited(width() * height(), false);
             //initialize result vector with the given location
             std::vector<coordinates<size_t>> result(1, location);
 
@@ -367,7 +375,7 @@ class Map
 
             // Add starting location to queue and mark it as visited
             vertex_queue.emplace_back(0, location);
-            visited[location.y * width_ + location.x] = true;
+            visited[location.y * width() + location.x] = true;
             uint8_t movements_left = movement_range;
 
             while (movements_left > 0) {
@@ -382,8 +390,8 @@ class Map
                         // Get this neighbour's terrain, check if the neighbour was already visited or if you can move to it.
                         // If visited or can't move, skip it, otherwise visit it and mark it as visited
                         const std::shared_ptr<Terrain>& neighbour_terrain = all_terrains_[neighbour];
-                        if (visited[neighbour.y * width_ + neighbour.x]|| !neighbour_terrain->can_move_to()) continue;
-                        visited[neighbour.y * width_ + neighbour.x] = true;
+                        if (visited[neighbour.y * width() + neighbour.x]|| !neighbour_terrain->can_move_to()) continue;
+                        visited[neighbour.y * width() + neighbour.x] = true;
 
                         // If it costs only 1 movement action to move into this tile, add it to the queue straight away.
                         // Otherwise add it to waiting_vertices
@@ -416,8 +424,8 @@ class Map
         }
         
         void print_map() const {
-            for (size_t y = 0; y < height_; ++y) {
-                for (size_t x = 0; x < width_; ++x) {
+            for (size_t y = 0; y < height(); ++y) {
+                for (size_t x = 0; x < width(); ++x) {
                     std::cout << all_terrains_(y, x)->get_repr();
                 }
                 std::cout << '\n';
