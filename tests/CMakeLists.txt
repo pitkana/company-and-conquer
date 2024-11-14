@@ -24,6 +24,7 @@ target_link_libraries(test PRIVATE sfml-graphics)
 target_compile_features(test PRIVATE cxx_std_17)
 target_link_libraries(test PRIVATE backend)
 target_include_directories(test PRIVATE ../src/backend)
+set_target_properties(backend PROPERTIES LINKER_LANGUAGE CXX)
 
 
 # get a lot of warnings
