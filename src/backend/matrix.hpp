@@ -83,7 +83,23 @@ class Matrix
 
         template<typename D>
         [[nodiscard]]
+        constexpr inline const T& operator [] ( const coordinates<D>& a_coordinates ) const noexcept
+        {
+            //assert(a_coordinates.y >= 0 && a_coordinates.y < height_ && a_coordinates.x >= 0 && a_coordinates.x < width_);
+            return data_[ a_coordinates.y * width_ + a_coordinates.x ];
+        }
+
+        template<typename D>
+        [[nodiscard]]
         constexpr inline T& operator () ( const coordinates<D>& a_coordinates ) noexcept
+        {
+            //assert(a_coordinates.y >= 0 && a_coordinates.y < height_ && a_coordinates.x >= 0 && a_coordinates.x < width_);
+            return data_[ a_coordinates.y * width_ + a_coordinates.x ];
+        }
+
+        template<typename D>
+        [[nodiscard]]
+        constexpr inline const T& operator () ( const coordinates<D>& a_coordinates ) const noexcept
         {
             //assert(a_coordinates.y >= 0 && a_coordinates.y < height_ && a_coordinates.x >= 0 && a_coordinates.x < width_);
             return data_[ a_coordinates.y * width_ + a_coordinates.x ];
