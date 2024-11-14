@@ -1,14 +1,20 @@
 #include <memory>
+#include <queue>
+#include <utility>
+#include <limits>
+#include <iostream>
+#include <unordered_map>
+#include <list>
 
 #include "map.hpp"
 
-Map::Map( const size_t width, const size_t height ) : all_terrains_( height, width )
+Map::Map( const size_t width, const size_t height ) : all_terrains_( height, width ), all_units_(height, width), all_buildings_(height, width)
 {
     this->create_board();
 }
 
 
-Map::Map( const size_t size ) : all_terrains_(size)
+Map::Map( const size_t size ) : all_terrains_(size), all_units_(size), all_buildings_(size)
 {
     this->create_board();
 }

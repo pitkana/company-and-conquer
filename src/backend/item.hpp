@@ -5,8 +5,10 @@
 #include <sstream>
 #include <memory>
 
-#include "action.hpp"
 #include "coordinates.hpp"
+#include "building_part_type.hpp"
+
+class Action; //forward declaration
 
 //Item base class
 class Item {
@@ -23,10 +25,10 @@ public:
 
     // Return name of this item
     [[nodiscard]]
-    inline const std::string& get_name() const;
+    const std::string& get_name() const;
 
     [[nodiscard]]
-    inline const std::string& get_description() const;
+    const std::string& get_description() const;
 
 protected:
     std::string name_;
@@ -92,20 +94,12 @@ private:
 };
 
 
-enum class BuildingPartType : uint8_t {
-    TurretLegs,
-    TurretBarrel,
-    MedicTentMedkit,
-    MedicTentTent
-};
-
-
 class BuildingPart : public Item {
 public:
     BuildingPart(BuildingPartType part_type): Item(name_from_type(), desc_from_type()), part_type_(part_type) {}
 
     [[nodiscard]]
-    virtual std::shared_ptr<Action> get_action(const coordinates<size_t>& target) const = 0;
+    virtual std::shared_ptr<Action> get_action(const coordinates<size_t>& target) const;
 
     [[nodiscard]]
     BuildingPartType get_part_type() const {
@@ -121,6 +115,8 @@ private:
             case BuildingPartType::MedicTentMedkit: return "Medkit";
             case BuildingPartType::MedicTentTent: return "Tent";
         }
+
+        return "you messed up";
     }
 
     [[nodiscard]]
@@ -131,6 +127,8 @@ private:
             case BuildingPartType::MedicTentMedkit: return "Used for building a medic tent";
             case BuildingPartType::MedicTentTent: return "Used for building a medic tent";
         }
+
+        return "you messed up";
     }
 
 private:

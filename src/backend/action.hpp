@@ -1,9 +1,10 @@
 #pragma once
 
 #include "coordinates.hpp"
-#include "item.hpp"
+#include "building_part_type.hpp"
 
 class Game; //forward declaration
+class BuildingPart; //forward declaration
 
 class Action {
 public:

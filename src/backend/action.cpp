@@ -25,5 +25,5 @@ BuildingPartType BuildingAction::get_part_type() const {
 }
 
 void BuildingAction::execute(Game &game) const {
-
+    std::cout << "Adding a " << building_part_.get_name() << ", " << building_part_.get_description() << " to " << target().x << ", " << target().y << "." << std::endl;
 }

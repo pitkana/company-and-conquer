@@ -1,21 +1,16 @@
 #ifndef MAP
 #define MAP
 #include <vector>
-#include <list>
 #include <memory>
 #include <cstdint>
-#include <unordered_set>
-#include <queue>
-#include <utility>
-#include <limits>
-#include <iostream>
-#include <bitset>
 #include <unordered_map>
 
 
+#include "unit.hpp"
 #include "terrain.hpp"
 #include "matrix.hpp"
 #include "timer.hpp"
+#include "building.hpp"
 
 
 
@@ -47,6 +42,8 @@ class Map
         * so basically the maximum coordinate value. 
         */
         Matrix< std::shared_ptr< Terrain >> all_terrains_;
+        Matrix< std::shared_ptr< Unit >> all_units_;
+        Matrix< std::shared_ptr< Building >> all_buildings_;
 
 
         

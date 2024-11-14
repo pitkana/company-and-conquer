@@ -11,8 +11,11 @@ public:
     virtual ~Building() = default;
 
     virtual std::shared_ptr<Action> use_building(const coordinates<size_t>& target) const = 0;
-    virtual bool add_part(/*BuildingPart*/) = 0;
-    virtual bool remove_part(/*BuildingPart*/) = 0;
+    virtual bool add_part(const BuildingPart& part) = 0;
+    virtual bool remove_part(const BuildingPart& part) = 0;
+
+    [[nodiscard]]
+    virtual bool has_part(const BuildingPart& part) const = 0;
 
     [[nodiscard]]
     virtual bool is_ready() const = 0;
@@ -26,12 +29,16 @@ class Turret : public Building {
 public:
     Turret(const std::string& name): Building(name) {}
 
+    [[nodiscard]]
     virtual std::shared_ptr<Action> use_building(const coordinates<size_t>& target) const;
-    virtual bool add_part(/*BuildingPart*/);
-    virtual bool remove_part(/*BuildingPart*/);
+    virtual bool add_part(const BuildingPart& part);
+    virtual bool remove_part(const BuildingPart& part);
 
     [[nodiscard]]
+    virtual bool has_part(const BuildingPart& part) const;
+    [[nodiscard]]
     virtual bool is_ready() const;
+
     [[nodiscard]]
     bool has_legs() const;
     [[nodiscard]]
@@ -49,9 +56,10 @@ class MedicTent : public Building {
 public:
     MedicTent(const std::string& name): Building(name) {}
 
+    [[nodiscard]]
     virtual std::shared_ptr<Action> use_building(const coordinates<size_t>& target) const;
-    virtual bool add_part(/*BuildingPart*/);
-    virtual bool remove_part(/*BuildingPart*/);
+    virtual bool add_part(const BuildingPart& part);
+    virtual bool remove_part(const BuildingPart& part);
 
     [[nodiscard]]
     virtual bool is_ready() const;
@@ -60,6 +68,8 @@ public:
     [[nodiscard]]
     bool has_tent() const;
 
+private:
+    bool set_part(const BuildingPart& part, bool value);
 
 private:
     int heal_amount_ = 70;

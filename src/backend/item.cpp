@@ -1,5 +1,6 @@
 #include <memory>
 
+#include "action.hpp"
 #include "item.hpp"
 
 // Item base class
@@ -23,6 +24,6 @@ std::shared_ptr<Action> Consumable::get_action(const coordinates<size_t> &target
 
 // BuildingPart derived class
 std::shared_ptr<Action> BuildingPart::get_action(const coordinates<size_t> &target) const {
-
+    return std::make_shared<BuildingAction>(*this, target);
 }
 
