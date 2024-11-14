@@ -31,6 +31,9 @@ public:
     [[nodiscard]]
     int hp_effect() const;
 
+    [[nodiscard]]
+    const coordinates<size_t>& target() const;
+
     virtual void execute(Game& game) const;
 
 private:
