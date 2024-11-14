@@ -12,7 +12,7 @@ public:
     virtual ~Action() = default;
 
     [[nodiscard]]
-    const coordinates<size_t>& target() const;
+    virtual const coordinates<size_t>& target() const;
 
     virtual void execute(Game& game) const = 0;
 
@@ -30,9 +30,6 @@ public:
 
     [[nodiscard]]
     int hp_effect() const;
-
-    [[nodiscard]]
-    const coordinates<size_t>& target() const;
 
     virtual void execute(Game& game) const;
 
