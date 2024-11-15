@@ -9,6 +9,7 @@
 #include "building_part_type.hpp"
 
 class Action; //forward declaration
+class Building; //forward declaration
 
 //Item base class
 class Item {
@@ -102,33 +103,37 @@ public:
     virtual std::shared_ptr<Action> get_action(const coordinates<size_t>& target) const;
 
     [[nodiscard]]
-    BuildingPartType get_part_type() const {
-        return part_type_;
-    }
+    BuildingPartType get_part_type() const;
+
+    //Constructs and returns a shared_ptr to the building that this part type will build
+    [[nodiscard]]
+    std::shared_ptr<Building> get_building() const;
 
 private:
     [[nodiscard]]
     std::string name_from_type() const {
         switch (part_type_) {
-            case BuildingPartType::TurretLegs: return "Turret legs";
-            case BuildingPartType::TurretBarrel: return "Turret barrel";
-            case BuildingPartType::MedicTentMedkit: return "Medkit";
-            case BuildingPartType::MedicTentTent: return "Tent";
-        }
+            case BuildingPartType::TurretLegs: return "turret legs";
+            case BuildingPartType::TurretBarrel: return "turret barrel";
 
-        return "you messed up";
+            case BuildingPartType::MedicTentMedkit: return "medkit";
+            case BuildingPartType::MedicTentTent: return "tent";
+        }
+        //Unreachable case since all enum class cases are handled
+        __builtin_unreachable();
     }
 
     [[nodiscard]]
     std::string desc_from_type() const {
         switch (part_type_) {
-            case BuildingPartType::TurretLegs: return "Used for building a gun turret";
-            case BuildingPartType::TurretBarrel: return "Used for building a gun turret";
-            case BuildingPartType::MedicTentMedkit: return "Used for building a medic tent";
-            case BuildingPartType::MedicTentTent: return "Used for building a medic tent";
-        }
+            case BuildingPartType::TurretLegs:
+            case BuildingPartType::TurretBarrel: return "used for building a gun turret";
 
-        return "you messed up";
+            case BuildingPartType::MedicTentMedkit:
+            case BuildingPartType::MedicTentTent: return "used for building a medic tent";
+        }
+        //Unreachable case since all enum class cases are handled
+        __builtin_unreachable();
     }
 
 private:

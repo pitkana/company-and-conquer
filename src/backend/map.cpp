@@ -40,7 +40,9 @@ void Map::update_terrain(char terrain, size_t y, size_t x)
     else {
         all_terrains_(y, x) = background_;
     }
-    
+}
+void Map::update_terrain(char terrain, const coordinates<size_t>& coords) {
+    update_terrain(terrain, coords.y, coords.x);
 }
 
 
@@ -48,18 +50,19 @@ std::shared_ptr<Terrain> Map::get_terrain(size_t y, size_t x)
 {
     return all_terrains_(y, x);
 }
-
-void Map::update_terrain(char terrain, const coordinates<size_t>& coords) {
-    update_terrain(terrain, coords.y, coords.x);
-}
-
 std::shared_ptr<Terrain> Map::get_terrain(const coordinates<size_t>& coords) {
     return get_terrain(coords.y, coords.x);
 }
 
+
+
 bool Map::has_building(size_t y, size_t x) const {
     return all_buildings_(y, x) != nullptr;
 }
+bool Map::has_building(const coordinates<size_t> &coords) const {
+    return has_building(coords.y, coords.x);
+}
+
 bool Map::add_building(std::shared_ptr<Building> building, size_t y, size_t x) {
     if (!has_building(y, x) && get_terrain(y, x)->can_build_on()) {
         all_buildings_(y, x) = building;
@@ -68,20 +71,29 @@ bool Map::add_building(std::shared_ptr<Building> building, size_t y, size_t x) {
 
     return false;
 }
-std::shared_ptr<Building> Map::get_building(size_t y, size_t x) {
-    return all_buildings_(y, x);
-}
-
-bool Map::has_building(const coordinates<size_t> &coords) const {
-    return has_building(coords.y, coords.x);
-}
-
 bool Map::add_building(std::shared_ptr<Building> building, const coordinates<size_t> &coords) {
     return add_building(building, coords.y, coords.x);
 }
 
+std::shared_ptr<Building> Map::get_building(size_t y, size_t x) {
+    return all_buildings_(y, x);
+}
 std::shared_ptr<Building> Map::get_building(const coordinates<size_t> &coords) {
     return get_building(coords.y, coords.x);
+}
+
+bool Map::can_build_on(size_t y, size_t x) const {
+    return all_terrains_(y, x)->can_build_on();
+}
+bool Map::can_build_on(const coordinates<size_t> &coords) const {
+    return can_build_on(coords.y, coords.x);
+}
+
+bool Map::can_move_to(size_t y, size_t x) const {
+    return all_terrains_(y, x)->can_move_to();
+}
+bool Map::can_move_to(const coordinates<size_t> &coords) const {
+    return can_move_to(coords.y, coords.x);
 }
 
 

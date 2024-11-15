@@ -1,5 +1,5 @@
-#include "building_test.hpp"
+#include "movement_test.hpp"
 
 int main() {
-  building_test();
+  movement_test();
 }

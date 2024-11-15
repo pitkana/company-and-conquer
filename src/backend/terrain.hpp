@@ -54,18 +54,18 @@ class Terrain
         Terrain( char repr, size_t movement_cost ) : character_repr_( repr ), movement_cost_( movement_cost ) { }
 
 
-        constexpr int32_t texture() { return texture_idx_; }
+        constexpr int32_t texture() const { return texture_idx_; }
 
-        constexpr size_t movement_cost() { return movement_cost_; }
+        constexpr size_t movement_cost() const { return movement_cost_; }
 
         void set_movement_cost(size_t cost) {movement_cost_ = cost;}
 
-        bool can_move_to() 
+        bool can_move_to() const
         {
             return ( terrain_properties_[can_walk_through] );
         }
 
-        bool can_build_on() {
+        bool can_build_on() const {
             return terrain_properties_[can_build_in];
         }
 

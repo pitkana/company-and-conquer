@@ -32,11 +32,10 @@ bool Building::remove_part(const BuildingPart &part) {
 
 /* ----- Turret ----- */
 
-//TODO: finish after action is created for this
-
-// std::shared_ptr<Action> Turret::use_building(const coordinates<size_t> &target) const {
-//
-// }
+//TODO: placeholder
+std::shared_ptr<Action> Turret::use_building(const coordinates<size_t> &target) const {
+    return std::make_shared<ItemAction>(80, 30, 0, target);
+}
 
 bool Turret::is_ready() const {
     return has_barrel() && has_legs();
@@ -52,11 +51,10 @@ bool Turret::has_barrel() const {
 
 
 /* ----- MedicTent ----- */
-//TODO: finish after action is created for this
-
-// std::shared_ptr<Action> MedicTent::use_building(const coordinates<size_t> &target) const {
-//
-// }
+//TODO: placeholder
+std::shared_ptr<Action> MedicTent::use_building(const coordinates<size_t> &target) const {
+    return std::make_shared<ItemAction>(80, 30, 0, target);
+}
 
 bool MedicTent::is_ready() const {
     return has_medkit() && has_tent();

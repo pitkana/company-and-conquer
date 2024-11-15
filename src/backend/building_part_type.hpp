@@ -3,8 +3,8 @@
 #include <cstdint>
 
 enum class BuildingPartType : uint8_t {
-    TurretLegs,
-    TurretBarrel,
-    MedicTentMedkit,
-    MedicTentTent
+    TurretLegs = 0,
+    TurretBarrel = 1,
+    MedicTentMedkit = 2,
+    MedicTentTent = 3
 };
