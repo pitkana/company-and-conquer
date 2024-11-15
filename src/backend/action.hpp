@@ -22,9 +22,9 @@ protected:
     const coordinates<size_t>& target_;
 };
 
-class ItemAction : public Action {
+class WeaponAction : public Action {
 public:
-    ItemAction(int acc, int hp_eff, int area_of_effect, const coordinates<size_t>& target):
+    WeaponAction(int acc, int hp_eff, int area_of_effect, const coordinates<size_t>& target):
         Action(target), accuracy_(acc), hp_effect_(hp_eff), area_of_effect_(area_of_effect) {}
 
     [[nodiscard]]
@@ -33,11 +33,32 @@ public:
     [[nodiscard]]
     int hp_effect() const;
 
+    [[nodiscard]]
+    int area_of_effect() const;
+
     virtual void execute(Game& game) const;
 
 private:
     const int accuracy_;
     const int hp_effect_;
+    const int area_of_effect_;
+};
+
+class HealingAction : public Action {
+public:
+    HealingAction(int heal_amount, int area_of_effect, const coordinates<size_t>& target) :
+        Action(target), heal_amount_(heal_amount), area_of_effect_(area_of_effect) {}
+
+    [[nodiscard]]
+    int heal_amount() const;
+
+    [[nodiscard]]
+    int area_of_effect() const;
+
+    virtual void execute(Game& game) const;
+
+private:
+    const int heal_amount_;
     const int area_of_effect_;
 };
 
@@ -48,6 +69,9 @@ public:
 
     [[nodiscard]]
     BuildingPartType get_part_type() const;
+
+    [[nodiscard]]
+    const BuildingPart& get_part() const;
 
     virtual void execute(Game& game) const;
 

@@ -47,7 +47,7 @@ public:
         description_ = desc.str();
     }
 
-    //Returns an ItemAction for the damaging action
+    //Returns an WeaponAction for the damaging action
     [[nodiscard]]
     virtual std::shared_ptr<Action> get_action(const coordinates<size_t>& target) const;
 
@@ -75,9 +75,9 @@ private:
     const int area_of_effect_;
 };
 
-class Consumable : public Item {
+class HealingItem : public Item {
 public:
-    Consumable(const std::string& name, int heal_amount, int area_of_effect):
+    HealingItem(const std::string& name, int heal_amount, int area_of_effect = 0):
         Item(name), heal_amount_(heal_amount), area_of_effect_(area_of_effect)
     {
         std::stringstream desc;
@@ -85,7 +85,7 @@ public:
         description_ = desc.str();
     }
 
-    //Returns an ItemAction for the healing action
+    //Returns an HealAction for the healing action
     [[nodiscard]]
     virtual std::shared_ptr<Action> get_action(const coordinates<size_t>& target) const;
 
