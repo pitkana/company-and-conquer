@@ -16,7 +16,7 @@ class Action;
 class Game {
 public:
 
-    Game(size_t map_width, size_t map_height): map_(map_height, map_width) {}
+    Game(size_t map_height, size_t map_width): map_(map_height, map_width) {}
 
     //Add team to teams_
     inline void add_team(Team team) {
@@ -56,6 +56,9 @@ public:
 
     //End the turn, thus executing all of the selected actions
     void end_turn(int team_id);
+
+    Map& get_map();
+    const Map& get_map() const;
 
 private:
     std::vector<Team> teams_;

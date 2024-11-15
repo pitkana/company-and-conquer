@@ -61,7 +61,7 @@ bool Map::has_building(size_t y, size_t x) const {
     return all_buildings_(y, x) != nullptr;
 }
 bool Map::add_building(std::shared_ptr<Building> building, size_t y, size_t x) {
-    if (!has_building(y, x)) {
+    if (!has_building(y, x) && get_terrain(y, x)->can_build_on()) {
         all_buildings_(y, x) = building;
         return true;
     }

@@ -65,6 +65,10 @@ class Terrain
             return ( terrain_properties_[can_walk_through] );
         }
 
+        bool can_build_on() {
+            return terrain_properties_[can_build_in];
+        }
+
         char get_repr() const {return character_repr_;}
 
         
