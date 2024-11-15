@@ -49,6 +49,41 @@ std::shared_ptr<Terrain> Map::get_terrain(size_t y, size_t x)
     return all_terrains_(y, x);
 }
 
+void Map::update_terrain(char terrain, const coordinates<size_t>& coords) {
+    update_terrain(terrain, coords.y, coords.x);
+}
+
+std::shared_ptr<Terrain> Map::get_terrain(const coordinates<size_t>& coords) {
+    return get_terrain(coords.y, coords.x);
+}
+
+bool Map::has_building(size_t y, size_t x) const {
+    return all_buildings_(y, x) != nullptr;
+}
+bool Map::add_building(std::shared_ptr<Building> building, size_t y, size_t x) {
+    if (!has_building(y, x)) {
+        all_buildings_(y, x) = building;
+        return true;
+    }
+
+    return false;
+}
+std::shared_ptr<Building> Map::get_building(size_t y, size_t x) {
+    return all_buildings_(y, x);
+}
+
+bool Map::has_building(const coordinates<size_t> &coords) const {
+    return has_building(coords.y, coords.x);
+}
+
+bool Map::add_building(std::shared_ptr<Building> building, const coordinates<size_t> &coords) {
+    return add_building(building, coords.y, coords.x);
+}
+
+std::shared_ptr<Building> Map::get_building(const coordinates<size_t> &coords) {
+    return get_building(coords.y, coords.x);
+}
+
 
 constexpr inline void Map::create_board() noexcept
 {

@@ -6,13 +6,18 @@
 #include <vector>
 #include <unordered_map>
 
+#include "map.hpp"
 #include "team.hpp"
+#include "unit.hpp"
 
 class Action;
 
 //Game class that instances the playing of a level
 class Game {
 public:
+
+    Game(size_t map_width, size_t map_height): map_(map_height, map_width) {}
+
     //Add team to teams_
     inline void add_team(Team team) {
         teams_.push_back(team);
@@ -41,6 +46,7 @@ public:
     [[nodiscard]]
     std::vector<Unit*> get_units();
 
+
     //return all units as values in an unordered_map, keys being their team's id
     //pointers since you cant store references in map
     [[nodiscard]]
@@ -53,7 +59,6 @@ public:
 
 private:
     std::vector<Team> teams_;
+    Map map_;
 
-    //Visitor struct that will be used for executing the actions of Units
-    //What each action does inside of Game is defined here
 };

@@ -5,60 +5,41 @@
 #include "action.hpp"
 #include "item.hpp"
 
+
+bool Building::has_part(const BuildingPart &part) const {
+    const bool* part_bool = get_part_bool_ptr(part);
+    if (part_bool == nullptr || !*part_bool) return false;
+    return true;
+}
+
+bool Building::add_part(const BuildingPart &part) {
+    bool* part_bool = get_part_bool_ptr(part);
+    // If part isn't part of the building or it's already in the building, return false
+    if (part_bool == nullptr || *part_bool) return false;
+
+    *part_bool = true;
+    return true;
+}
+
+bool Building::remove_part(const BuildingPart &part) {
+    bool* part_bool = get_part_bool_ptr(part);
+    // If part isn't part of the building or it's already not in the building, return false
+    if (part_bool == nullptr || !*part_bool) return false;
+
+    *part_bool = false;
+    return true;
+}
+
+/* ----- Turret ----- */
+
 //TODO: finish after action is created for this
 
 // std::shared_ptr<Action> Turret::use_building(const coordinates<size_t> &target) const {
 //
 // }
 
-bool Turret::add_part(const BuildingPart &part) {
-    if (!has_part(part)) {
-        switch (part.get_part_type()) {
-        case BuildingPartType::TurretLegs:
-            has_legs_ = true;
-            return true;
-        case BuildingPartType::TurretBarrel:
-            has_barrel_ = true;
-            return true;
-        default:
-            return false;
-        }
-    }
-
-    return false;
-}
-
-bool Turret::remove_part(const BuildingPart &part) {
-    if (!has_part(part)) {
-        switch (part.get_part_type()) {
-        case BuildingPartType::TurretLegs:
-            has_legs_ = true;
-            return true;
-        case BuildingPartType::TurretBarrel:
-            has_barrel_ = true;
-            return true;
-        default:
-            return false;
-        }
-    }
-
-    return false;
-
-}
-
 bool Turret::is_ready() const {
     return has_barrel() && has_legs();
-}
-
-bool Turret::has_part(const BuildingPart &part) const {
-    switch (part.get_part_type()) {
-        case BuildingPartType::TurretLegs:
-            return has_legs();
-        case BuildingPartType::TurretBarrel:
-            return has_barrel();
-        default:
-            return false;
-    }
 }
 
 bool Turret::has_legs() const {
@@ -67,4 +48,24 @@ bool Turret::has_legs() const {
 
 bool Turret::has_barrel() const {
     return has_barrel_;
+}
+
+
+/* ----- MedicTent ----- */
+//TODO: finish after action is created for this
+
+// std::shared_ptr<Action> MedicTent::use_building(const coordinates<size_t> &target) const {
+//
+// }
+
+bool MedicTent::is_ready() const {
+    return has_medkit() && has_tent();
+}
+
+bool MedicTent::has_tent() const {
+    return has_tent_;
+}
+
+bool MedicTent::has_medkit() const {
+    return has_medkit_;
 }

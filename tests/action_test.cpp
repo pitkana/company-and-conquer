@@ -10,7 +10,7 @@
 
 void action_test() 
 {
-    Game game;
+    Game game(20, 20);
 
     {
         Team team1;
