@@ -33,3 +33,13 @@ Multiple turns enqueued with weapon's actions and then executed (prints the weap
 
 **Results:**
 Movement calculating algorithms work properly, taking into account walls and tiles that cost more to move into.
+
+## Test of buildings
+
+**Involved Classes:** Game, Map, Building, BuildingPart, BuildingAction, Team, Turn
+
+**Test File:** building_test.cpp
+
+**Results:** Buildings work as expected. You can build them using the building part items, add parts to existing buildings iff it's the right part for
+the building and it's not yet added to it. Adding wrong parts does nothing (currently prints message). Using a building returns the right action which gets
+executed correctly.
