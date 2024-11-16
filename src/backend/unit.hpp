@@ -40,17 +40,17 @@ public:
         return id_;
     }
 
-    const std::vector<std::shared_ptr<Item>>& get_inventory() const {
+    const std::vector<std::shared_ptr<const Item>>& get_inventory() const {
         return inventory_;
     }
 
-    void add_item(std::shared_ptr<Item> item);
+    void add_item(std::shared_ptr<const Item> item);
 
     int get_hp() const {
        return current_hp_;
     }
 
-    bool deal_damage(std::shared_ptr<Weapon>, unsigned int distance_from);
+    bool deal_damage(std::shared_ptr<const Weapon>, unsigned int distance_from);
 
     bool is_dead() const {
         return current_hp_ <= 0;
@@ -60,7 +60,7 @@ public:
 private:
     std::string name_;
 
-    std::vector<std::shared_ptr<Item>> inventory_;
+    std::vector<std::shared_ptr<const Item>> inventory_;
     int current_hp_;
 
     unsigned int id_;
