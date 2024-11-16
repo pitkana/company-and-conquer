@@ -56,7 +56,7 @@ void BuildingAction::execute(Game &game) const {
         if (map.get_building(target())->add_part(building_part_))  { //success
             std::cout << "Added " << building_part_.get_name() << " to building that was already at " << target().toString() << std::endl;
         } else {
-            std::cout << "Part is wrong for the building at " << target() << " or already added to it" << std::endl;
+            std::cout << "Part " << building_part_.get_name() << " is wrong for the building at " << target() << " or already added to it" << std::endl;
         }
         (std::string) "aaa";
 

@@ -15,7 +15,7 @@ public:
     virtual ~Building() = default;
 
     //Return action associated with using this specific building
-    virtual std::shared_ptr<Action> use_building(const coordinates<size_t>& target) const = 0;
+    virtual std::shared_ptr<Action> use_building(coordinates<size_t> target) const = 0;
 
 
     //Check if this specific part is already added to this building
@@ -33,8 +33,8 @@ private:
     // These pure virtual functions should be implemented in derived classes, as they are used within has_part, add_part and remove_part
     // They return a non-const/const pointer to the bool value associated with a specific part (or nullptr if that part is not part of the building)
     // Used for modifying (or reading in has_part's case) the value of that part
-    virtual bool* get_part_bool_ptr(const BuildingPart& part) = 0;
-    virtual const bool* get_part_bool_ptr(const BuildingPart& part) const = 0;
+    inline virtual bool* get_part_bool_ptr(const BuildingPart& part) = 0;
+    inline virtual const bool* get_part_bool_ptr(const BuildingPart& part) const = 0;
 
 protected:
     std::string name_;
@@ -47,7 +47,7 @@ public:
     Turret(): Building("turret") {}
 
     [[nodiscard]]
-    virtual std::shared_ptr<Action> use_building(const coordinates<size_t>& target) const;
+    virtual std::shared_ptr<Action> use_building(coordinates<size_t> target) const;
 
     [[nodiscard]]
     virtual bool is_ready() const;
@@ -60,7 +60,7 @@ public:
 private:
     //Helper function that returns pointer to the specific part's bool variable
     //Makes a lot of functions a lot simpler and easier to change in future
-    virtual bool* get_part_bool_ptr(const BuildingPart& part) {
+    inline virtual bool* get_part_bool_ptr(const BuildingPart& part) {
         switch (part.get_part_type()) {
             case BuildingPartType::TurretLegs:
                 return &has_legs_;
@@ -71,7 +71,7 @@ private:
         }
     }
 
-    virtual const bool* get_part_bool_ptr(const BuildingPart& part) const {
+    inline virtual const bool* get_part_bool_ptr(const BuildingPart& part) const {
         // const_cast to be able to use get_part_bool_ptr non const version to return const pointer. Safe since get_part_bool_ptr does not modify
         // the class, just returns a pointer which get turned into a const pointer by this function.
         return const_cast<Turret*>(this)->get_part_bool_ptr(part);
@@ -91,7 +91,7 @@ public:
     MedicTent(): Building("medic tent") {}
 
     [[nodiscard]]
-    virtual std::shared_ptr<Action> use_building(const coordinates<size_t>& target) const;
+    virtual std::shared_ptr<Action> use_building(coordinates<size_t> target) const;
 
     [[nodiscard]]
     virtual bool is_ready() const;
@@ -103,7 +103,7 @@ public:
 private:
     //Helper function that returns pointer to the specific part's bool variable
     //Makes a lot of functions a lot simpler and easier to change in future
-    virtual bool* get_part_bool_ptr(const BuildingPart& part) {
+    inline virtual bool* get_part_bool_ptr(const BuildingPart& part) {
         switch (part.get_part_type()) {
             case BuildingPartType::MedicTentTent:
                 return &has_tent_;
@@ -114,7 +114,7 @@ private:
         }
     }
 
-    virtual const bool* get_part_bool_ptr(const BuildingPart& part) const {
+    inline virtual const bool* get_part_bool_ptr(const BuildingPart& part) const {
         // const_cast to be able to use get_part_bool_ptr non const version to return const pointer. Safe since get_part_bool_ptr does not modify
         // the class, just returns a pointer which get turned into a const pointer by this function.
         return const_cast<MedicTent*>(this)->get_part_bool_ptr(part);

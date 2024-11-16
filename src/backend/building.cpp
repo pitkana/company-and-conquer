@@ -32,8 +32,8 @@ bool Building::remove_part(const BuildingPart &part) {
 
 /* ----- Turret ----- */
 
-std::shared_ptr<Action> Turret::use_building(const coordinates<size_t> &target) const {
-    return std::make_shared<WeaponAction>(accuracy_, damage_, area_of_effect_, target);
+std::shared_ptr<Action> Turret::use_building(coordinates<size_t> target) const {
+    return std::make_shared<WeaponAction>(accuracy_, damage_, area_of_effect_, std::move(target));
 }
 
 bool Turret::is_ready() const {
@@ -50,8 +50,8 @@ bool Turret::has_barrel() const {
 
 
 /* ----- MedicTent ----- */
-std::shared_ptr<Action> MedicTent::use_building(const coordinates<size_t> &target) const {
-    return std::make_shared<HealingAction>(heal_amount_, area_of_effect_, target);
+std::shared_ptr<Action> MedicTent::use_building(coordinates<size_t> target) const {
+    return std::make_shared<HealingAction>(heal_amount_, area_of_effect_, std::move(target));
 }
 
 bool MedicTent::is_ready() const {

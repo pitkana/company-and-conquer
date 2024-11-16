@@ -8,8 +8,8 @@ class BuildingPart; //forward declaration
 
 class Action {
 public:
-    Action(const coordinates<size_t>& target):
-        target_(target){}
+    Action(coordinates<size_t> target):
+        target_(std::move(target)){}
 
     virtual ~Action() = default;
 
@@ -19,13 +19,13 @@ public:
     virtual void execute(Game& game) const = 0;
 
 protected:
-    const coordinates<size_t>& target_;
+    const coordinates<size_t> target_;
 };
 
 class WeaponAction : public Action {
 public:
-    WeaponAction(int acc, int hp_eff, int area_of_effect, const coordinates<size_t>& target):
-        Action(target), accuracy_(acc), hp_effect_(hp_eff), area_of_effect_(area_of_effect) {}
+    WeaponAction(int acc, int hp_eff, int area_of_effect, coordinates<size_t> target):
+        Action(std::move(target)), accuracy_(acc), hp_effect_(hp_eff), area_of_effect_(area_of_effect) {}
 
     [[nodiscard]]
     int accuracy() const;
@@ -46,8 +46,8 @@ private:
 
 class HealingAction : public Action {
 public:
-    HealingAction(int heal_amount, int area_of_effect, const coordinates<size_t>& target) :
-        Action(target), heal_amount_(heal_amount), area_of_effect_(area_of_effect) {}
+    HealingAction(int heal_amount, int area_of_effect, coordinates<size_t> target) :
+        Action(std::move(target)), heal_amount_(heal_amount), area_of_effect_(area_of_effect) {}
 
     [[nodiscard]]
     int heal_amount() const;
@@ -64,8 +64,8 @@ private:
 
 class BuildingAction : public Action {
 public:
-    BuildingAction(const BuildingPart& part, const coordinates<size_t>& target):
-        Action(target), building_part_(part) {}
+    BuildingAction(const BuildingPart& part, coordinates<size_t> target):
+        Action(std::move(target)), building_part_(part) {}
 
     [[nodiscard]]
     BuildingPartType get_part_type() const;

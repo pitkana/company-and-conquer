@@ -15,14 +15,14 @@ class Building; //forward declaration
 class Item {
 public:
     //Initialize item with a name
-    Item(const std::string& name): name_(name) {}
-    Item(const std::string& name, const std::string& desc): name_(name), description_(desc) {}
+    Item(std::string name): name_(std::move(name)) {}
+    Item(std::string name, std::string desc): name_(std::move(name)), description_(std::move(desc)) {}
 
     virtual ~Item() = default;
 
     // Return the action associated with this item on the coordinates given as parameter
     [[nodiscard]]
-    virtual std::shared_ptr<Action> get_action(const coordinates<size_t>& target) const = 0;
+    virtual std::shared_ptr<Action> get_action(coordinates<size_t> target) const = 0;
 
     // Return name of this item
     [[nodiscard]]
@@ -38,8 +38,8 @@ protected:
 
 class Weapon : public Item {
 public:
-    Weapon(const std::string& name, int accuracy, int damage, int falloff, int area_of_effect = 0):
-           Item(name), accuracy_(accuracy), damage_(damage), falloff_(falloff), area_of_effect_(area_of_effect) 
+    Weapon(std::string name, int accuracy, int damage, int falloff, int area_of_effect = 0):
+           Item(std::move(name)), accuracy_(accuracy), damage_(damage), falloff_(falloff), area_of_effect_(area_of_effect) 
     {
         //Initialize description based on parameters
         std::stringstream desc;
@@ -49,7 +49,7 @@ public:
 
     //Returns an WeaponAction for the damaging action
     [[nodiscard]]
-    virtual std::shared_ptr<Action> get_action(const coordinates<size_t>& target) const;
+    virtual std::shared_ptr<Action> get_action(coordinates<size_t> target) const;
 
     int get_accuracy() const {
         return accuracy_;
@@ -77,8 +77,8 @@ private:
 
 class HealingItem : public Item {
 public:
-    HealingItem(const std::string& name, int heal_amount, int area_of_effect = 0):
-        Item(name), heal_amount_(heal_amount), area_of_effect_(area_of_effect)
+    HealingItem(std::string name, int heal_amount, int area_of_effect = 0):
+        Item(std::move(name)), heal_amount_(heal_amount), area_of_effect_(area_of_effect)
     {
         std::stringstream desc;
         desc << name << ", heal amount: " << heal_amount << ", area of effect: " << area_of_effect;
@@ -87,7 +87,7 @@ public:
 
     //Returns an HealAction for the healing action
     [[nodiscard]]
-    virtual std::shared_ptr<Action> get_action(const coordinates<size_t>& target) const;
+    virtual std::shared_ptr<Action> get_action(coordinates<size_t> target) const;
 
 private:
     const int heal_amount_;
@@ -97,10 +97,10 @@ private:
 
 class BuildingPart : public Item {
 public:
-    BuildingPart(BuildingPartType part_type): Item(name_from_type(), desc_from_type()), part_type_(part_type) {}
+    BuildingPart(BuildingPartType part_type): Item(name_from_type(part_type), desc_from_type(part_type)), part_type_(part_type) {}
 
     [[nodiscard]]
-    virtual std::shared_ptr<Action> get_action(const coordinates<size_t>& target) const;
+    virtual std::shared_ptr<Action> get_action(coordinates<size_t> target) const;
 
     [[nodiscard]]
     BuildingPartType get_part_type() const;
@@ -111,8 +111,8 @@ public:
 
 private:
     [[nodiscard]]
-    std::string name_from_type() const {
-        switch (part_type_) {
+    std::string name_from_type(BuildingPartType part_type) const {
+        switch (part_type) {
             case BuildingPartType::TurretLegs: return "turret legs";
             case BuildingPartType::TurretBarrel: return "turret barrel";
 
@@ -124,8 +124,8 @@ private:
     }
 
     [[nodiscard]]
-    std::string desc_from_type() const {
-        switch (part_type_) {
+    std::string desc_from_type(BuildingPartType part_type) const {
+        switch (part_type) {
             case BuildingPartType::TurretLegs:
             case BuildingPartType::TurretBarrel: return "used for building a gun turret";
 
