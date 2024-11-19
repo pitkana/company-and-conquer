@@ -17,9 +17,7 @@ public:
     }
 
     // Add turn to be executed to the queue
-    void enqueue_turn(const Turn& turn);
-    //moved turn version
-    void enqueue_turn(const Turn&& turn);
+    void enqueue_turn(Turn turn);
 
     //remove last turn to be added and return it in optional
     std::optional<Turn> undo_turn();
@@ -31,8 +29,11 @@ public:
     //add Unit to the team
     void add_unit(Unit unit);
 
-    //Remove unit TODO: Add when way to identify Units exists
-    // void remove_unit();
+    //Remove unit by id, return true if worked, false if unit didn't exist
+    bool remove_unit(int id);
+
+    //Get unit by id, pointer since unit by that id might not exist
+    Unit* get_unit(int id);
 
     //return reference to units vector
     [[nodiscard]]

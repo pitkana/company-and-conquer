@@ -76,8 +76,6 @@ int movement_test() {
   terrains[wall.get_repr()] = wall;
   terrains[swamp.get_repr()] = swamp;
 
-
-
   while (true) {
     std::cout << "A to change terrain, M to calculate movement, Q to quit" << std::endl;
     char input;
@@ -95,7 +93,7 @@ int movement_test() {
       case 'Q':
         return EXIT_SUCCESS;
       default:
-        continue;
+        std::cin.clear();
     }
   }
 }

@@ -1,21 +1,16 @@
 #ifndef MAP
 #define MAP
 #include <vector>
-#include <list>
 #include <memory>
 #include <cstdint>
-#include <unordered_set>
-#include <queue>
-#include <utility>
-#include <limits>
-#include <iostream>
-#include <bitset>
 #include <unordered_map>
 
 
+#include "unit.hpp"
 #include "terrain.hpp"
 #include "matrix.hpp"
 #include "timer.hpp"
+#include "building.hpp"
 
 
 
@@ -47,6 +42,8 @@ class Map
         * so basically the maximum coordinate value. 
         */
         Matrix< std::shared_ptr< Terrain >> all_terrains_;
+        Matrix< std::shared_ptr< Unit >> all_units_;
+        Matrix< std::shared_ptr< Building >> all_buildings_;
 
 
         
@@ -93,6 +90,27 @@ class Map
 
         std::shared_ptr<Terrain> get_terrain(size_t y, size_t x);
 
+        void update_terrain(char terrain, const coordinates<size_t>& coords);
+
+        std::shared_ptr<Terrain> get_terrain(const coordinates<size_t>& coords);
+
+
+        bool has_building(size_t y, size_t x) const;
+        bool has_building(const coordinates<size_t>& coords) const;
+
+        //Adds building to the given coordinates if the terrain doesn't already have a building and can be built on
+        // Returns true if worked, false if not
+        bool add_building(std::shared_ptr<Building> building, size_t y, size_t x);
+        bool add_building(std::shared_ptr<Building> building, const coordinates<size_t>& coords);
+
+        std::shared_ptr<Building> get_building(size_t y, size_t x);
+        std::shared_ptr<Building> get_building(const coordinates<size_t>& coords);
+
+        bool can_build_on(size_t y, size_t x) const;
+        bool can_build_on(const coordinates<size_t>& coords) const;
+
+        bool can_move_to(size_t y, size_t x) const;
+        bool can_move_to(const coordinates<size_t>& coords) const;
 
         // add the new Terrains into the board
         constexpr inline void create_board() noexcept;

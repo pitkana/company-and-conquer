@@ -2,6 +2,7 @@
 
 #include <string>
 #include <cstdint>
+#include <ostream>
 
 template<typename T>
 struct coordinates 
@@ -102,10 +103,14 @@ struct coordinates
     [[nodiscard]]
     inline std::string toString() const
     {
-        return std::to_string(x) + " " + std::to_string(y);
+        return "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
     }
 
-
 };
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const coordinates<T>& coords) {
+    return os << '(' << coords.x << ", " << coords.y << ')';
+}
 
 

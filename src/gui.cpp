@@ -12,7 +12,7 @@
 
 int main() 
 {
-    Game game;
+    Game game(10, 10);
 
     {
         Team team1;

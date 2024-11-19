@@ -4,6 +4,9 @@
 #include <variant>
 
 #include "game.hpp"
+#include "map.hpp"
+#include "action.hpp"
+#include "team.hpp"
 
 
 
@@ -62,3 +65,12 @@ void Game::end_turn(int team_id) {
         execute_action(turn->action);
     }
 }
+
+Map& Game::get_map() {
+    return map_;
+}
+
+const Map& Game::get_map() const {
+    return map_;
+}
+
