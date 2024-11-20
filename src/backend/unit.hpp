@@ -44,7 +44,9 @@ public:
         return inventory_;
     }
 
-    void add_item(std::shared_ptr<const Item> item);
+    bool add_item(std::shared_ptr<const Item> item);
+
+    bool remove_item(std::shared_ptr<const Item> item);
 
     int get_hp() const {
        return current_hp_;
