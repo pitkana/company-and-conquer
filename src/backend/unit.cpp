@@ -9,10 +9,25 @@
 std::default_random_engine generator;
 std::uniform_int_distribution<int> hit_chance(0,100);
 
-void Unit::add_item(std::shared_ptr<const Item> item) {
+bool Unit::add_item(std::shared_ptr<const Item> item) {
     if (inventory_.size() < unit_consts.inventory_size) {
         inventory_.push_back(item);
+        return true;
     }
+    return false;
+}
+
+bool Unit::remove_item(std::shared_ptr<const Item> item)
+{
+    for (auto it = inventory_.begin(); it != inventory_.end(); ++it)
+    {
+        if (*it == item)
+        {
+            inventory_.erase(it);
+            return true;
+        }
+    }
+    return false;
 }
 
 bool Unit::deal_damage(std::shared_ptr<const Weapon> weapon, unsigned int distance_from) {

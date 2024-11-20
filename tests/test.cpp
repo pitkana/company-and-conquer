@@ -1,5 +1,5 @@
-#include "building_test.hpp"
+#include "shop_test.hpp"
 
 int main() {
-  building_test();
+  shop_test();
 }
