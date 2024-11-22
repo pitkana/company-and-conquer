@@ -55,7 +55,7 @@ class Map_Builder {
          * 
          * @returns A pointer to the newly created Map.
          */
-        Map* load(const std::string& map_path) {
+        Map load(const std::string& map_path) {
             std::vector<std::vector<char>> terrain_vec = read_map_file(map_path);
             int height = terrain_vec.size();
             if (height == 0) {
@@ -71,7 +71,7 @@ class Map_Builder {
                 throw Invalid_Map_Exception();
             }
 
-            Map* out = new Map(width,height);
+            Map out = Map(width,height);
 
             /** 
              * Inefficient way of updating terrains because the Map is already initialized with
@@ -80,7 +80,7 @@ class Map_Builder {
             */
             for (int w = 0; w < height; w++) {
                 for (int h = 0; h < width; h++) {
-                    out->update_terrain(terrain_vec[w][h],w,h);
+                    out.update_terrain(terrain_vec[w][h],w,h);
                 }
             }
             return out;
