@@ -6,6 +6,6 @@
 void map_builder_test() {
     Map_Builder builder = Map_Builder();
 
-    Map test_map = builder.load("tests/test_map.txt");
+    Map test_map = builder.load(TESTMAP_PATH);
     test_map.print_map();
 }
