@@ -25,6 +25,14 @@ target_compile_features(test PRIVATE cxx_std_17)
 target_link_libraries(test PRIVATE backend)
 target_include_directories(test PRIVATE ../src/backend)
 set_target_properties(backend PROPERTIES LINKER_LANGUAGE CXX)
+target_link_libraries(test PRIVATE frontend)
+target_include_directories(test PRIVATE ../src/frontend)
+set_target_properties(frontend PROPERTIES LINKER_LANGUAGE CXX)
+
+# For relative paths.
+set(TESTMAP_PATH ${CMAKE_SOURCE_DIR}/tests/test_map.txt)
+add_compile_definitions(TESTMAP_PATH="${TESTMAP_PATH}")
+
 
 
 # get a lot of warnings
