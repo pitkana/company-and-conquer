@@ -2,6 +2,7 @@ project(gui VERSION 0.1.0)
 enable_language(CXX)
 
 add_subdirectory(backend)
+add_subdirectory(frontend)
 
 # Add all .c, - files under src/ directory
 file(GLOB SOURCES_C "*.c")
@@ -19,12 +20,14 @@ set(SOURCES ${SOURCES_C} ${SOURCES_CPP} ${SOURCES_H} ${SOURCES_HPP})
 add_executable(gui)
 
 target_sources(gui PUBLIC ${SOURCES})
-target_link_libraries(gui PRIVATE sfml-graphics)
+target_link_libraries(gui PRIVATE sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
 target_compile_features(gui PRIVATE cxx_std_17)
 target_link_libraries(gui PRIVATE backend)
 target_include_directories(gui PRIVATE backend)
 set_target_properties(backend PROPERTIES LINKER_LANGUAGE CXX)
-
+target_link_libraries(gui PRIVATE frontend)
+target_include_directories(gui PRIVATE frontend)
+set_target_properties(frontend PROPERTIES LINKER_LANGUAGE CXX)
 
 # get a lot of warnings
 if(MSVC)
