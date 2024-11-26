@@ -1,6 +1,5 @@
-#include "vision_test.hpp"
-int main() {
-  vision_test();
+#include "render_map_test.hpp"
 
-  return 0;
+int main() {
+  render_map_test();
 }
