@@ -1,0 +1,62 @@
+#include "iostream"
+#include "map_builder.hpp"
+#include "SFML/Graphics.hpp"
+#include "render_map.hpp"
+
+void render_map_test() {
+    Map_Builder builder = Map_Builder();
+    Map test_map = builder.load(TESTMAP_PATH);
+    test_map.print_map();
+    int window_width = 96 * 5;
+    int window_height = 96 * 6;
+
+    Render_Map game = Render_Map();
+
+    if (!game.load(TEXTURE_PATH,100,test_map)) {
+        return;
+    }
+
+    // create the window
+    sf::RenderWindow window(sf::VideoMode(window_height, window_width), "My window");
+
+    // run the program as long as the window is open
+    while (window.isOpen())
+    {
+        // check all the window's events that were triggered since the last iteration of the loop
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            // "close requested" event: we close the window
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+
+        // clear the window with black color
+        window.clear(sf::Color::Black);
+        float moveSpeed = 3;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
+            game.moveTiles((-1)*moveSpeed,0);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
+            game.moveTiles(0,(-1)*moveSpeed);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
+            game.moveTiles(moveSpeed,0);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
+            game.moveTiles(0,moveSpeed);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F)) {
+            game.zoom(1);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::G)) {
+            game.zoom(-1);
+        }
+
+        // draw everything here...
+        // window.draw(...);
+        // end the current frame
+        window.draw(game);
+        window.display();
+    }
+}
