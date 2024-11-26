@@ -5,10 +5,12 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
+#include <string>
 
 #include "map.hpp"
 #include "team.hpp"
 #include "unit.hpp"
+#include "map_builder.hpp"
 
 class Action;
 

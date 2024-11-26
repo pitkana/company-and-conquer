@@ -1,9 +1,8 @@
 #include "render_window.hpp"
 
-Render_Window::Render_Window(Game* game, const std::string& texture_path, const std::string& map_path) {
+Render_Window::Render_Window(Game* game, const std::string& texture_path) {
     game_ = game;
     text_path_ = texture_path;
-    map_path_ = map_path;
 }
 
 void Render_Window::spawn_window(int window_width, int window_height) {
@@ -29,6 +28,7 @@ void Render_Window::spawn_window(int window_width, int window_height) {
 
         // clear the window with black color
         window.clear(sf::Color::Black);
+
         key_inputs(3,1);
         // draw everything here...
         // window.draw(...);

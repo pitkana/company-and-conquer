@@ -8,8 +8,6 @@
 #include "action.hpp"
 #include "team.hpp"
 
-
-
 Team& Game::get_team_by_id(int team_id) {
     //find the specified team by its team_id using std::find_if
     auto team_it = std::find_if(teams_.begin(), teams_.end(), 
