@@ -11,6 +11,6 @@ void render_window_test() {
     Game g(test_map_height,test_map_width);
     Game* game = &g;
     builder.load(terrain_vec,game->get_map());
-    Render_Window wind(game,TEXTURE_PATH,TESTMAP_PATH);
+    Render_Window wind(game,TEXTURE_PATH);
     wind.spawn_window(700,500);
 }
