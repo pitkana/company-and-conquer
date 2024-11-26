@@ -1,5 +1,5 @@
-#include "shop_test.hpp"
+#include "render_map_test.hpp"
 
 int main() {
-  shop_test();
+  render_map_test();
 }
