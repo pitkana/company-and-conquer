@@ -27,9 +27,10 @@ class Empty_Map_Exception : public std::exception {
  * Map_Builder class is used to read a file and use its data to construct a valid Map object.
  */
 class Map_Builder {
-    private:
+    public:
         //Helper method for reading files.
         //TODO: Add exceptions.
+        //This method used be private.
         std::vector<std::vector<char>> read_map_file(const std::string& path) {
             std::vector<std::vector<char>> out;
             std::ifstream is(path);
@@ -47,7 +48,7 @@ class Map_Builder {
             }
             return out;
         }
-    public:
+
         /**
          * @brief Reads a files and constructs a valid Map object.
          * 
@@ -84,6 +85,32 @@ class Map_Builder {
                 }
             }
             return out;
+        }
+
+        //Overloaded load method will be used in Game class constructor.
+        void load(std::vector<std::vector<char>> terrain_vec, Map& map) {
+            size_t height = terrain_vec.size();
+            if (height == 0) {
+                throw Invalid_Map_Exception();
+            }
+            size_t width = terrain_vec[0].size();
+            bool map_is_rectangle = std::all_of(terrain_vec.begin(),terrain_vec.end(),[width](std::vector<char> line) {
+                size_t s = line.size();
+                return s == width;
+            });
+            if (!map_is_rectangle || map.height() != height || map.width() != width) {
+                throw Invalid_Map_Exception();
+            }
+            /** 
+             * Inefficient way of updating terrains because the Map is already initialized with
+             * default terrain in the constructor. However, the runtime change after optimization
+             * will be trivial since our map sizes will be relatively small.
+            */
+            for (size_t w = 0; w < height; w++) {
+                for (size_t h = 0; h < width; h++) {
+                    map.update_terrain(terrain_vec[w][h],w,h);
+                }
+            }
         }
 };
 
