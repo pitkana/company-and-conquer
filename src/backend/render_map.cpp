@@ -1,5 +1,6 @@
 #include "render_map.hpp"
 
+Render_Map::Render_Map(Tile_Map& tile_map) : tile_map_(tile_map), tileDim_(tile_map.GetTileDim()) {}
 
 bool Render_Map::load(const std::string& tiles) {
     if (!g_texture.loadFromFile(tiles)) {
@@ -9,6 +10,7 @@ bool Render_Map::load(const std::string& tiles) {
     tileDim_ = tile_map_.GetTileDim();
     g_VertexArr.setPrimitiveType(sf::Quads);
     g_VertexArr.resize(4 * map.height() * map.width());
+    draw_map();
     return true;
 }
 
@@ -23,7 +25,7 @@ void Render_Map::draw_map() {
         for (int j = 0; j < mapHeight; j++) {
 
             int32_t tile = map.get_terrain(j,i)->texture();
-
+            std::cout << tile << std::endl;
             int tu = tile % (g_texture.getSize().x / g_texture.getSize().y);
             int tv = tile / (g_texture.getSize().x / g_texture.getSize().y);
 
@@ -41,15 +43,14 @@ void Render_Map::draw_map() {
     }
 }
 
-bool Render_Map::update() {
+void Render_Map::update() {
     std::pair<int,int> map_x0y0 = tile_map_.Getx0y0();
     int map_tile_dim = tile_map_.GetTileDim();
     if (x0y0_.first != map_x0y0.first || x0y0_.second != map_x0y0.second || tileDim_ != map_tile_dim) {
         x0y0_ = map_x0y0;
         tileDim_ = map_tile_dim;
-        return true;
+        draw_map();
     }
-    return false;
 }
 /*
 void Render_Map::moveTiles(float x, float y) {

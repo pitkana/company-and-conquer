@@ -14,7 +14,7 @@
 
 class Render_Map : public sf::Drawable, public sf::Transformable {
 public:
-Render_Map(Tile_Map tile_map);
+Render_Map(Tile_Map& tile_map);
 
     /**
      * @brief Constructs a sf::VertexArray along with dimensions specified in certain Map.
@@ -33,7 +33,7 @@ Render_Map(Tile_Map tile_map);
      * @param x How much the x coordinate of a tile will be changed.
      * @param y How much the y coordinate of a tile will be changed.
      */
-    void moveTiles(float x, float y);
+    //void moveTiles(float x, float y);
 
     //TODO: this method needs to zoom in to center of the screen.
     //TODO: zoom needs to be capped.
@@ -42,7 +42,7 @@ Render_Map(Tile_Map tile_map);
      * 
      * @param z Positive z will zoom in and negative z will zoom out.
      */
-    void zoom(float z);
+    //void zoom(float z);
 
 
     //This method could be used to center to camera at certain units!!
@@ -53,7 +53,7 @@ Render_Map(Tile_Map tile_map);
     }
     */
 
-   void draw_map();
+    void update();
 private:
     sf::VertexArray g_VertexArr; //VertexArray that will be drawn.
     sf::Texture g_texture; //Contains the texture,
@@ -61,17 +61,13 @@ private:
     int tileDim_;
     std::pair<int,int> x0y0_;
 
-
-    bool update();
+    void draw_map();
     /**
      * Inherited method from parent classes.
      */
-    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) {
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const {
         states.transform *= getTransform();
         states.texture = &g_texture;
-        if (update()) {
-            draw_map();
-        }
         target.draw(g_VertexArr,states);
     }
 };

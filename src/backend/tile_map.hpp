@@ -14,7 +14,7 @@ public:
     std::pair<int,int> get_tile_coords(int x, int y) const;
     std::pair<int,int> get_map_coords(int x, int y) const;
     int GetTileDim() const;
-    std::pair<int,int>& Getx0y0() const;
+    std::pair<int,int> Getx0y0() const;
     Map& GetMap() const;
     Game& GetGame() const;
 private:

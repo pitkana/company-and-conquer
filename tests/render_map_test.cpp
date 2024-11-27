@@ -5,14 +5,17 @@
 
 void render_map_test() {
     Map_Builder builder = Map_Builder();
-    Map test_map = builder.load(TESTMAP_PATH);
-    test_map.print_map();
-    int window_width = 96 * 5;
-    int window_height = 96 * 6;
+    std::vector<std::vector<char>> terrain_vec = builder.read_map_file(TESTMAP_PATH);
+    size_t height = terrain_vec.size();
+    size_t width = terrain_vec[0].size();
+    Game game = Game(height,width);
+    builder.load(terrain_vec,game.get_map());
+    int window_width = 500;
+    int window_height = 600;
+    Tile_Map tile_map = Tile_Map(game,100);
+    Render_Map render_game(tile_map);
 
-    Render_Map game = Render_Map();
-
-    if (!game.load(TEXTURE_PATH,100,test_map)) {
+    if (!render_game.load(TEXTURE_PATH)) {
         return;
     }
 
@@ -33,6 +36,7 @@ void render_map_test() {
 
         // clear the window with black color
         window.clear(sf::Color::Black);
+        /*
         float moveSpeed = 3;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
             game.moveTiles((-1)*moveSpeed,0);
@@ -52,11 +56,12 @@ void render_map_test() {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::G)) {
             game.zoom(-1);
         }
+        */
 
         // draw everything here...
         // window.draw(...);
         // end the current frame
-        window.draw(game);
+        window.draw(render_game);
         window.display();
     }
 }
