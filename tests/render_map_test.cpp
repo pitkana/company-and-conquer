@@ -3,6 +3,9 @@
 #include "SFML/Graphics.hpp"
 #include "render_map.hpp"
 
+
+//Also contains tests for Tile_Map class.
+//Use WASD to move map and FG to zoom in and out.
 void render_map_test() {
     Map_Builder builder = Map_Builder();
     std::vector<std::vector<char>> terrain_vec = builder.read_map_file(TESTMAP_PATH);
@@ -32,32 +35,38 @@ void render_map_test() {
             // "close requested" event: we close the window
             if (event.type == sf::Event::Closed)
                 window.close();
+            if (event.type == sf::Event::MouseButtonReleased) {
+                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                std::pair<int,int> matrix_pos = tile_map.get_map_coords(mousePos.x,mousePos.y);
+                std::cout << "Current pixel pos: [" << mousePos.x << "," << mousePos.y << "]" << std::endl;
+                std::cout << "Current tile pos: [" << matrix_pos.first << "," << matrix_pos.second << "]" << std::endl; 
+            }
         }
 
         // clear the window with black color
         window.clear(sf::Color::Black);
-        /*
+        
         float moveSpeed = 3;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-            game.moveTiles((-1)*moveSpeed,0);
+            tile_map.move((-1)*moveSpeed,0);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
-            game.moveTiles(0,(-1)*moveSpeed);
+            tile_map.move(0,(-1)*moveSpeed);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-            game.moveTiles(moveSpeed,0);
+            tile_map.move(moveSpeed,0);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
-            game.moveTiles(0,moveSpeed);
+            tile_map.move(0,moveSpeed);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F)) {
-            game.zoom(1);
+            tile_map.zoom(1);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::G)) {
-            game.zoom(-1);
+            tile_map.zoom(-1);
         }
-        */
-
+        //Update all components
+        render_game.update();
         // draw everything here...
         // window.draw(...);
         // end the current frame
