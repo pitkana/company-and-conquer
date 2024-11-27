@@ -1,10 +1,11 @@
 #ifndef RENDER_WINDOW_HPP
 #define RENDER_WINDOW_HPP
 
-#include "render_map.hpp"
 #include "game.hpp"
 #include "string"
 #include "map.hpp"
+#include "tile_map.hpp"
+#include "render_map.hpp"
 
 /**
  * This class handles all rendering.
@@ -26,15 +27,18 @@ public:
      */
     void spawn_window(int window_width, int window_height);
 
+private:
     /**
      * @brief Keyinputs can be implemented with a bunch of if statements in sfml.
      * 
      * @param moveSpeed Determines how much the tiles will be moved.
      * @param zoom How fast the zoom will be.
      */
-    void key_inputs(float moveSpeed, float zoom);
-private:
-    Render_Map r_map_;
+    void key_inputs(Tile_Map& tile_map,float moveSpeed, float zoom);
+    /**
+     * @brief Events are also handled with bunch of if statements in sfml.
+     */
+    void events(Tile_Map& tile_map, sf::RenderWindow& target, sf::Event event);
     Game* game_;
     std::string text_path_;
 };

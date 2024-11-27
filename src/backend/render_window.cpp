@@ -7,54 +7,64 @@ Render_Window::Render_Window(Game* game, const std::string& texture_path) {
 
 void Render_Window::spawn_window(int window_width, int window_height) {
 
-    if (!r_map_.load(text_path_,100,game_->get_map())) {
+    Tile_Map tile_map(*game_,100);
+    Render_Map r_map(tile_map);
+    if (!r_map.load(text_path_)) {
         return;
     }
-
     // create the window
-    sf::RenderWindow window(sf::VideoMode(window_height, window_width), "My window");
+    sf::RenderWindow window(sf::VideoMode(window_height, window_width), "Game");
 
     // run the program as long as the window is open
     while (window.isOpen())
     {
-        // check all the window's events that were triggered since the last iteration of the loop
+        //Performing all events here.
         sf::Event event;
         while (window.pollEvent(event))
         {
-            // "close requested" event: we close the window
-            if (event.type == sf::Event::Closed)
-                window.close();
+            events(tile_map,window,event);
         }
 
-        // clear the window with black color
         window.clear(sf::Color::Black);
+        key_inputs(tile_map,3,1);
 
-        key_inputs(3,1);
-        // draw everything here...
-        // window.draw(...);
-        // end the current frame
-        window.draw(r_map_); //Draw map.
+        //Every render target needs to be updated after changes.
+        r_map.update();
+        //Every render target will be drawn separately.
+        window.draw(r_map); //Draw map.
         window.display();
     }
 }
 
-void Render_Window::key_inputs(float moveSpeed, float zoom) {
+void Render_Window::key_inputs(Tile_Map& tile_map, float moveSpeed, float zoom) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-        r_map_.moveTiles((-1)*moveSpeed,0);
+        tile_map.move((-1)*moveSpeed,0);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
-        r_map_.moveTiles(0,(-1)*moveSpeed);
+        tile_map.move(0,(-1)*moveSpeed);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-        r_map_.moveTiles(moveSpeed,0);
+        tile_map.move(moveSpeed,0);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
-        r_map_.moveTiles(0,moveSpeed);
+        tile_map.move(0,moveSpeed);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F)) {
-        r_map_.zoom(zoom);
+        tile_map.zoom(1);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::G)) {
-        r_map_.zoom(-1*zoom);
+        tile_map.zoom(-1);
+    }
+}
+
+void Render_Window::events(Tile_Map& tile_map, sf::RenderWindow& target, sf::Event event) {
+    // "close requested" event: we close the window
+    if (event.type == sf::Event::Closed)
+        target.close();
+    if (event.type == sf::Event::MouseButtonReleased) {
+        sf::Vector2i mousePos = sf::Mouse::getPosition(target);
+        std::pair<int,int> matrix_pos = tile_map.get_map_coords(mousePos.x,mousePos.y);
+        std::cout << "Current pixel pos: [" << mousePos.x << "," << mousePos.y << "]" << std::endl;
+        std::cout << "Current tile pos: [" << matrix_pos.first << "," << matrix_pos.second << "]" << std::endl; 
     }
 }
