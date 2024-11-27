@@ -4,6 +4,7 @@
 #include "map.hpp"
 #include "SFML/Graphics.hpp"
 #include "terrain.hpp"
+#include "tile_map.hpp"
 
 /**
  * A class that inherits properties from sfml:s Drawable and Transformable
@@ -13,6 +14,7 @@
 
 class Render_Map : public sf::Drawable, public sf::Transformable {
 public:
+Render_Map(Tile_Map tile_map);
 
     /**
      * @brief Constructs a sf::VertexArray along with dimensions specified in certain Map.
@@ -22,7 +24,7 @@ public:
      * 
      * @returns True or False based on the fact if the read on the texture file is succesful.
      */
-    bool load(const std::string& tiles, int tileSize, Map map);
+    bool load(const std::string& tiles);
 
     //TODO: Movement needs to be capped.
     /**
@@ -51,20 +53,25 @@ public:
     }
     */
 
+   void draw_map();
 private:
     sf::VertexArray g_VertexArr; //VertexArray that will be drawn.
     sf::Texture g_texture; //Contains the texture,
-    sf::Vector2f widthHeight; //Current width and height for each tile.
-    sf::Vector2i x0y0; //Current top-right coordinate of the entire drawn map.
-    int mapWidth;
-    int mapHeight;
+    Tile_Map& tile_map_;
+    int tileDim_;
+    std::pair<int,int> x0y0_;
 
+
+    bool update();
     /**
      * Inherited method from parent classes.
      */
-    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const {
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) {
         states.transform *= getTransform();
         states.texture = &g_texture;
+        if (update()) {
+            draw_map();
+        }
         target.draw(g_VertexArr,states);
     }
 };
