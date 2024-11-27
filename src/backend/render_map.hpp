@@ -11,56 +11,36 @@
  * classes. Render_Map object can be passed as a parameter to sf::RenderWindow::Draw
  * function. 
  */
-
 class Render_Map : public sf::Drawable, public sf::Transformable {
 public:
+/**
+ * @param tile_map Can be used to access the map and the game object.
+ */
 Render_Map(Tile_Map& tile_map);
 
     /**
      * @brief Constructs a sf::VertexArray along with dimensions specified in certain Map.
      * 
      * @param tiles A path to the texture file.
-     * @param tileSize Initial size of each map tile.
      * 
      * @returns True or False based on the fact if the read on the texture file is succesful.
      */
     bool load(const std::string& tiles);
 
-    //TODO: Movement needs to be capped.
     /**
-     * @brief Moves all tiles.
-     * 
-     * @param x How much the x coordinate of a tile will be changed.
-     * @param y How much the y coordinate of a tile will be changed.
+     * @brief Check if changes were made to Tile_Map objects tileDim or x0y0. If yes then update vertex positions.
      */
-    //void moveTiles(float x, float y);
-
-    //TODO: this method needs to zoom in to center of the screen.
-    //TODO: zoom needs to be capped.
-    /**
-     * @brief Zooms in/out by making each map tile bigger/smaller.
-     * 
-     * @param z Positive z will zoom in and negative z will zoom out.
-     */
-    //void zoom(float z);
-
-
-    //This method could be used to center to camera at certain units!!
-    //TODO: Make this method.
-    /*
-    void centerAt(int x, int y) {
-        std::cout << "TODO!!" << std::endl;
-    }
-    */
-
     void update();
 private:
     sf::VertexArray g_VertexArr; //VertexArray that will be drawn.
     sf::Texture g_texture; //Contains the texture,
     Tile_Map& tile_map_;
-    int tileDim_;
+    int tileDim_; //
     std::pair<int,int> x0y0_;
 
+    /**
+     * Sets up the positions and textures for each vertex in g_VertexArr.
+     */
     void draw_map();
     /**
      * Inherited method from parent classes.
@@ -71,9 +51,5 @@ private:
         target.draw(g_VertexArr,states);
     }
 };
-
-
-
-
 
 #endif
