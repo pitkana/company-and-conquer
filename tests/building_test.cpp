@@ -57,7 +57,7 @@ void building_test()
     team1.enqueue_turn(u2_turn);
     team1.enqueue_turn(u3_turn);
 
-    game.end_turn(0);
+    game.end_team_turns(0);
 
     std::cout << "======= Following 4 should not work, since the part is alraedy in the building =======" << std::endl;
     team1.enqueue_turn(u4_turn);
@@ -65,7 +65,7 @@ void building_test()
     team1.enqueue_turn(u6_turn);
     team1.enqueue_turn(u7_turn);
 
-    game.end_turn(0);
+    game.end_team_turns(0);
 
     std::cout << "======= Following 4 should not work, since the part is for wrong building =======" << std::endl;
     team1.enqueue_turn(u8_turn);
@@ -73,11 +73,11 @@ void building_test()
     team1.enqueue_turn(u10_turn);
     team1.enqueue_turn(u11_turn);
 
-    game.end_turn(0);
+    game.end_team_turns(0);
 
     // Use the buildings
     std::cout << "Use the turret and medic tent" << std::endl;
     team1.enqueue_turn(Turn(unit0, {0, 0}, {1, 1}, game.get_map().get_building(5, 5)->use_building({10, 10})));
     team1.enqueue_turn(Turn(unit0, {0, 0}, {1, 1}, game.get_map().get_building(4, 4)->use_building({10, 10})));
-    game.end_turn(0);
+    game.end_team_turns(0);
 }

@@ -1,5 +1,6 @@
-#include "render_map_test.hpp"
-
+#include "action_test.hpp"
 int main() {
-  render_map_test();
+  action_test();
+
+  return 0;
 }

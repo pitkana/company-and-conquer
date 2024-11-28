@@ -43,3 +43,28 @@ Movement calculating algorithms work properly, taking into account walls and til
 **Results:** Buildings work as expected. You can build them using the building part items, add parts to existing buildings iff it's the right part for
 the building and it's not yet added to it. Adding wrong parts does nothing (currently prints message). Using a building returns the right action which gets
 executed correctly.
+
+## Test of undoing actions
+
+**Involved Classes:** Game, Action, Team, Map, Building, Unit, Item
+
+**Test File:** action_test.cpp
+
+**Results:** Undoing actions undoes movement, removes part from building (and the building itself if it's left with no parts), and undoes healing (damage
+cannot be undone since it's only executed when the whole turn ends). Works as expected
+
+## Test of AoE
+
+**Involved Classes:** Map, Game, Unit, Team, Turn, Weapon, Action
+
+**Test File:** action_test.cpp
+
+**Results:** AoE damage is properly applied to units in AoE range and not applied to those not in range
+
+## Test of Shop
+
+**Involved Classes:** Shop, Unit, Team, Weapon, HealingItem
+
+**Test File:** shop_test.cpp
+
+**Results:** The Shop class works as expected. Items can be bought, assigned to Units, retrieved from Units, and refunded back to the Shop. The Shop class forms a team correctly when the form_team() method is called.
