@@ -60,3 +60,11 @@ cannot be undone since it's only executed when the whole turn ends). Works as ex
 **Test File:** action_test.cpp
 
 **Results:** AoE damage is properly applied to units in AoE range and not applied to those not in range
+
+## Test of Shop
+
+**Involved Classes:** Unit, Team, Weapon, HealingItem
+
+**Test File:** shop_test.cpp
+
+**Results:** The Shop class works as expected. Items can be bought, assigned to Units, retrieved from Units, and refunded back to the Shop. The Shop class forms a team correctly when the form_team() method is called.
