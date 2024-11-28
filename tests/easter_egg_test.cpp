@@ -15,4 +15,6 @@ int easter_egg_test()
         name = name_gen.generate(name_lists.english, 0, 4);
     }
     std::cout << "Found Pvt Parts on try " << count << std::endl;
+
+    return EXIT_SUCCESS;
 }

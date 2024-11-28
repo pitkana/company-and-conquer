@@ -89,6 +89,16 @@ public:
     [[nodiscard]]
     virtual std::shared_ptr<Action> get_action(coordinates<size_t> target) const;
 
+    [[nodiscard]]
+    int get_heal_amount() const {
+        return heal_amount_;
+    }
+
+    [[nodiscard]]
+    int get_aoe() const {
+        return area_of_effect_;
+    }
+
 private:
     const int heal_amount_;
     const int area_of_effect_;
@@ -105,7 +115,11 @@ public:
     [[nodiscard]]
     BuildingPartType get_part_type() const;
 
-    //Constructs and returns a shared_ptr to the building that this part type will build
+    /**
+     * @brief Constructs and returns a shared_ptr to a building that this part builds, also initializes it with this part added to it
+     *
+     * @return std::shared_ptr<Building>
+     */
     [[nodiscard]]
     std::shared_ptr<Building> get_building() const;
 

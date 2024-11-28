@@ -20,8 +20,8 @@ class Terrain
         // indeces for accessing <terrain_properties_>
         static const size_t can_shoot_through_ = 0;
         static const size_t can_see_through_ = 1;
-        static const size_t can_walk_through = 2;
-        static const size_t can_build_in = 3;
+        static const size_t can_walk_through_ = 2;
+        static const size_t can_build_in_ = 3;
 
         char character_repr_;
        
@@ -39,8 +39,8 @@ class Terrain
         { 
             terrain_properties_[can_shoot_through_] = can_shoot;
             terrain_properties_[can_see_through_] = can_see;
-            terrain_properties_[can_walk_through] = can_walk;
-            terrain_properties_[can_build_in] = can_build;
+            terrain_properties_[can_walk_through_] = can_walk;
+            terrain_properties_[can_build_in_] = can_build;
             switch (repr) {
             case '#':
                 texture_idx_ = 1;
@@ -55,8 +55,9 @@ class Terrain
         { 
             terrain_properties_[can_shoot_through_] = can_shoot;
             terrain_properties_[can_see_through_] = can_see;
-            terrain_properties_[can_walk_through] = can_walk;
-            terrain_properties_[can_build_in] = can_build;
+            terrain_properties_[can_walk_through_] = can_walk;
+            terrain_properties_[can_build_in_] = can_build;
+
             switch (repr) {
             case '#':
                 texture_idx_ = 1;
@@ -66,7 +67,6 @@ class Terrain
                 break;
             }
         }
-
         Terrain( char repr, size_t movement_cost ) {
             character_repr_ = repr;
             movement_cost_ = movement_cost;
@@ -89,11 +89,21 @@ class Terrain
 
         bool can_move_to() const
         {
-            return ( terrain_properties_[can_walk_through] );
+            return ( terrain_properties_[can_walk_through_] );
+        }
+
+        bool can_see_through() const
+        {
+            return ( terrain_properties_[can_see_through_] );
+        }
+
+        bool can_shoot_through() const
+        {
+            return ( terrain_properties_[can_shoot_through_] );
         }
 
         bool can_build_on() const {
-            return terrain_properties_[can_build_in];
+            return terrain_properties_[can_build_in_];
         }
 
         char get_repr() const {return character_repr_;}

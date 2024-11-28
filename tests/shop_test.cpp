@@ -40,7 +40,7 @@ int shop_test() {
         auto item = it->first;
         if (item != pistol)
         {
-            for (int i = 0; i < shop.get_units().size(); i++)
+            for (size_t i = 0; i < shop.get_units().size(); i++)
             {
                 std::string success = shop.buy_item(item) ? "Succeeded" : "Not enough money";
                 std::cout << "Trying to buy " << item->get_name() << ": " << success << std::endl;

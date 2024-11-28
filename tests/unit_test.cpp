@@ -37,7 +37,7 @@ int unit_test()
         // std::cout << std::holds_alternative<Action::CharacterAction>(unit.GetInventory()[0]->get_action(target)) << std::endl;
     }
 
-    game.end_turn(0);
+    game.end_team_turns(0);
 
     return EXIT_SUCCESS;
 }

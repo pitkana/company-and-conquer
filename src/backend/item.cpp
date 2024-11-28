@@ -14,14 +14,15 @@ const std::string& Item::get_description() const {
     return description_;
 }
 
+
 // Weapon derived class
 std::shared_ptr<Action> Weapon::get_action(coordinates<size_t> target) const {
-    return std::static_pointer_cast<Action>(std::make_shared<WeaponAction>(accuracy_, -damage_, area_of_effect_, std::move(target)));
+    return std::static_pointer_cast<Action>(std::make_shared<WeaponAction>(*this, std::move(target)));
 }
 
 // HealingItem derived class
 std::shared_ptr<Action> HealingItem::get_action(coordinates<size_t> target) const {
-    return std::static_pointer_cast<Action>(std::make_shared<HealingAction>(heal_amount_, area_of_effect_, std::move(target)));
+    return std::static_pointer_cast<Action>(std::make_shared<HealingAction>(*this, std::move(target)));
 }
 
 // BuildingPart derived class

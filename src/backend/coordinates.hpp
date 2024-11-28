@@ -71,25 +71,25 @@ struct coordinates
     [[nodiscard]]
     inline bool operator < ( const coordinates<T>& a ) const noexcept
     {
-        return x < a.x;
+        return y == a.y ? x < a.x : y < a.y;
     }
 
     [[nodiscard]]
     inline bool operator <= ( const coordinates<T>& a ) const noexcept
     {
-        return x <= a.x;
+        return y == a.y ? x <= a.x : y <= a.y;
     }
 
     [[nodiscard]]
     inline bool operator > ( const coordinates<T>& a ) const noexcept
     {
-        return x > a.x;
+        return y == a.y ? x > a.x : y > a.y;
     }
 
     [[nodiscard]]
     inline bool operator >= ( const coordinates<T>& a ) const noexcept
     {
-        return x >= a.x;
+        return y == a.y ? x >= a.x : y >= a.y;
     }
 
 
@@ -104,6 +104,11 @@ struct coordinates
     inline std::string toString() const
     {
         return "(" + std::to_string(x) + ", " + std::to_string(y) + ")";
+    }
+
+    [[nodiscard]]
+    inline size_t distance_to(const coordinates<T>& other) const {
+        return (abs(x - other.x) + abs(y - other.y));
     }
 
 };
