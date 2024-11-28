@@ -29,6 +29,14 @@ public:
     [[nodiscard]]
     virtual bool is_ready() const = 0;
 
+    /**
+     * @brief Returns true if it has no parts added to it (and therefore shouldn't exist). Possible by adding a part and undoing it.
+     *
+     * @return bool
+     */
+    [[nodiscard]]
+    virtual bool has_no_parts() const = 0;
+
 private:
     // These pure virtual functions should be implemented in derived classes, as they are used within has_part, add_part and remove_part
     // They return a non-const/const pointer to the bool value associated with a specific part (or nullptr if that part is not part of the building)
@@ -51,6 +59,8 @@ public:
 
     [[nodiscard]]
     virtual bool is_ready() const;
+    [[nodiscard]]
+    virtual bool has_no_parts() const;
 
     [[nodiscard]]
     bool has_legs() const;
@@ -95,6 +105,9 @@ public:
 
     [[nodiscard]]
     virtual bool is_ready() const;
+    [[nodiscard]]
+    virtual bool has_no_parts() const;
+
     [[nodiscard]]
     bool has_medkit() const;
     [[nodiscard]]

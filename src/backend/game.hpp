@@ -20,7 +20,7 @@ public:
 
     //Add team to teams_
     inline void add_team(Team team) {
-        teams_.push_back(team);
+        teams_.push_back(std::move(team));
     };
 
     //return reference to teams_ vector
@@ -46,16 +46,39 @@ public:
     [[nodiscard]]
     std::vector<Unit*> get_units();
 
+    /**
+     * @brief Adds a turn to specific team's turn queue
+     *
+     * @param turn The turn to be added
+     * @param team_id The team id that the turn gets added to
+     * @return void
+     */
+    void add_turn(Turn turn, int team_id);
 
     //return all units as values in an unordered_map, keys being their team's id
     //pointers since you cant store references in map
     [[nodiscard]]
     std::unordered_map<int, std::vector<Unit>*> get_units_map();
 
-    void execute_action(std::shared_ptr<Action> action);
+    /**
+     * @brief Executes a turn's movement and action. Action only if the action is not random
+     *
+     * @param turn The turn to be executed
+     * @return void
+     */
+    void execute_turn_movement(Turn& turn);
+    /**
+     * @brief Executes the action of a turn (not movement!) even if random
+     *
+     * @param turn the turn whose action will be executed
+     * @return void
+     */
+    void execute_turn_action(Turn& turn);
+
+    void undo_turn(int team_id);
 
     //End the turn, thus executing all of the selected actions
-    void end_turn(int team_id);
+    void end_team_turns(int team_id);
 
     Map& get_map();
     const Map& get_map() const;
