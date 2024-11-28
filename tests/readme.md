@@ -63,7 +63,7 @@ cannot be undone since it's only executed when the whole turn ends). Works as ex
 
 ## Test of Shop
 
-**Involved Classes:** Unit, Team, Weapon, HealingItem
+**Involved Classes:** Shop, Unit, Team, Weapon, HealingItem
 
 **Test File:** shop_test.cpp
 
