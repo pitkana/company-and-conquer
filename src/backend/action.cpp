@@ -8,35 +8,68 @@ const coordinates<size_t>& Action::target() const {
 
 /* ----- WeaponAction ----- */
 
-int WeaponAction::accuracy() const {
-    return accuracy_;
-}
+void WeaponAction::execute(Game &game, coordinates<size_t> unit_location) {
+    if (!has_been_executed_) {
+        if (weapon_.get_aoe() == 0) { //Single target attack
+            Unit* target_unit = game.get_map().get_unit(target_.y, target_.x);
+            if (target_unit == nullptr) return;
 
-int WeaponAction::hp_effect() const {
-    return hp_effect_;
-}
+            target_unit->deal_damage(weapon_, unit_location.distance_to(target()));
 
-int WeaponAction::area_of_effect() const {
-    return area_of_effect_;
-}
+        } else { // Area of effect attack
+            Map& map = game.get_map();
+            std::vector<coordinates<size_t>> affected_coords = map.get_aoe_affected_coords(target_, weapon_.get_aoe());
+            for (const auto& coords : affected_coords) {
+                Unit* target_unit = map.get_unit(coords);
+                if (target_unit == nullptr) continue;
 
-void WeaponAction::execute(Game &game) const {
-    std::cout << "Dealing " << hp_effect() << " damage to enemy at " << target().toString() 
-              << " with accuracy " << accuracy() << " %" << std::endl;
+                // Distance is calculated from the origin of the AoE (aka target), not from the unit that executes this action
+                target_unit->deal_damage(weapon_, target_.distance_to(coords));
+            }
+        }
+    }
+
+    has_been_executed_ = true;
 }
 
 /* ----- HealingAction ----- */
 
-int HealingAction::heal_amount() const {
-    return heal_amount_;
+void HealingAction::execute(Game &game, coordinates<size_t> unit_location) {
+    if (!has_been_executed_) {
+        if (healing_item_.get_aoe() == 0) { // Single target healing
+            Unit* target_unit = game.get_map().get_unit(target_.y, target_.x);
+            if (target_unit == nullptr) return;
+
+            int healed_amount = target_unit->heal(healing_item_);
+            healed_amounts_.emplace_back(target_unit, healed_amount);
+
+        } else { // AoE healing
+            Map& map = game.get_map();
+            std::vector<coordinates<size_t>> affected_coords = map.get_aoe_affected_coords(target_, healing_item_.get_aoe());
+            for (const auto& coords : affected_coords) {
+                Unit* target_unit = map.get_unit(coords);
+                if (target_unit == nullptr) continue;
+
+                int healed_amount = target_unit->heal(healing_item_);
+                healed_amounts_.emplace_back(target_unit, healed_amount);
+            }
+        }
+    }
+    has_been_executed_ = true;
 }
 
-int HealingAction::area_of_effect() const {
-    return area_of_effect_;
-}
+void HealingAction::undo(Game& game) {
+    if (has_been_executed_) {
+        for (const auto [target_unit, healed_amount] : healed_amounts_) {
+            if (target_unit == nullptr) continue;
 
-void HealingAction::execute(Game &game) const {
-    std::cout << "Healing unit at " << target() << std::endl;
+            // Undo the healed amount on target and set it back to 0
+            target_unit->change_hp_by(-healed_amount);
+        }
+        healed_amounts_.clear();
+    }
+
+    has_been_executed_ = false;
 }
 
 /* ----- BuildingAction ----- */
@@ -49,21 +82,42 @@ const BuildingPart& BuildingAction::get_part() const {
     return building_part_;
 }
 
-void BuildingAction::execute(Game &game) const {
-    Map& map = game.get_map();
-    if (map.has_building(target())) {
-        // Try to add part, fails if part is wrong for the building or this part is already added to building
-        if (map.get_building(target())->add_part(building_part_))  { //success
-            std::cout << "Added " << building_part_.get_name() << " to building that was already at " << target().toString() << std::endl;
-        } else {
-            std::cout << "Part " << building_part_.get_name() << " is wrong for the building at " << target() << " or already added to it" << std::endl;
-        }
-        (std::string) "aaa";
+void BuildingAction::execute(Game &game, coordinates<size_t> unit_location) {
+    if (!has_been_executed_) {
+        Map& map = game.get_map();
+        if (map.has_building(target())) {
+            // Try to add part, fails if part is wrong for the building or this part is already added to building
+            if (map.get_building(target())->add_part(building_part_))  { //success
+                std::cout << "Added " << building_part_.get_name() << " to building that was already at " << target().toString() << std::endl;
+            } else {
+                std::cout << "Part " << building_part_.get_name() << " is wrong for the building at " << target() << " or already added to it" << std::endl;
+            }
 
-    } else if (map.can_build_on(target())) {
-        map.add_building(building_part_.get_building(), target());
-        std::cout << "Built building using " << building_part_.get_name() << " at " << target() << std::endl;
-    } else {
-        std::cout << "No building to add to or build at " << target() << std::endl;
+        } else if (map.can_build_on(target())) {
+            map.add_building(building_part_.get_building(), target());
+            std::cout << "Built building using " << building_part_.get_name() << " at " << target() << std::endl;
+        } else {
+            std::cout << "No building to add to or build at " << target() << std::endl;
+        }
     }
+
+    has_been_executed_ = true;
+}
+
+void BuildingAction::undo(Game &game) {
+    if (has_been_executed_) {
+        Map& map = game.get_map();
+
+        // If a building exists on the target (it should), remove this part from it. If it has no parts as a consequence, remove the building from map
+        if (map.has_building(target())) {
+            std::shared_ptr<Building> building = map.get_building(target());
+            building->remove_part(building_part_);
+
+            if (building->has_no_parts()) {
+                map.remove_building(target());
+            }
+        }
+    }
+
+    has_been_executed_ = false;
 }

@@ -1,5 +1,6 @@
-#include "shop_test.hpp"
-
+#include "action_test.hpp"
 int main() {
-  shop_test();
+  action_test();
+
+  return 0;
 }

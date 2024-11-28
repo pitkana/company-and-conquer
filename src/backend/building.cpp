@@ -4,6 +4,7 @@
 #include "building.hpp"
 #include "action.hpp"
 #include "item.hpp"
+#include "const_items.hpp"
 
 
 bool Building::has_part(const BuildingPart &part) const {
@@ -33,11 +34,15 @@ bool Building::remove_part(const BuildingPart &part) {
 /* ----- Turret ----- */
 
 std::shared_ptr<Action> Turret::use_building(coordinates<size_t> target) const {
-    return std::make_shared<WeaponAction>(accuracy_, damage_, area_of_effect_, std::move(target));
+    return std::make_shared<WeaponAction>(*(ConstItem::turret_weapon), std::move(target));
 }
 
 bool Turret::is_ready() const {
     return has_barrel() && has_legs();
+}
+
+bool Turret::has_no_parts() const {
+    return !has_barrel() && !has_legs();
 }
 
 bool Turret::has_legs() const {
@@ -51,11 +56,15 @@ bool Turret::has_barrel() const {
 
 /* ----- MedicTent ----- */
 std::shared_ptr<Action> MedicTent::use_building(coordinates<size_t> target) const {
-    return std::make_shared<HealingAction>(heal_amount_, area_of_effect_, std::move(target));
+    return std::make_shared<HealingAction>(*(ConstItem::medic_tent_heal_item), std::move(target));
 }
 
 bool MedicTent::is_ready() const {
     return has_medkit() && has_tent();
+}
+
+bool MedicTent::has_no_parts() const {
+    return !has_medkit() && !has_tent();
 }
 
 bool MedicTent::has_tent() const {

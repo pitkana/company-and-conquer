@@ -1,12 +1,18 @@
 #include <memory>
+#include <algorithm>
 #include <queue>
 #include <utility>
+#include <set>
+#include <vector>
 #include <limits>
 #include <iostream>
 #include <unordered_map>
+#include <functional>
 #include <list>
+#include <cmath>
 
 #include "map.hpp"
+#include "helper_tools.hpp"
 
 Map::Map( const size_t width, const size_t height ) : all_terrains_( height, width ), all_units_(height, width), all_buildings_(height, width)
 {
@@ -41,9 +47,14 @@ void Map::update_terrain(char terrain, size_t y, size_t x)
         all_terrains_(y, x) = background_;
     }
 }
+
+
+
 void Map::update_terrain(char terrain, const coordinates<size_t>& coords) {
     update_terrain(terrain, coords.y, coords.x);
 }
+
+
 
 
 std::shared_ptr<Terrain> Map::get_terrain(size_t y, size_t x) 
@@ -53,7 +64,6 @@ std::shared_ptr<Terrain> Map::get_terrain(size_t y, size_t x)
 std::shared_ptr<Terrain> Map::get_terrain(const coordinates<size_t>& coords) {
     return get_terrain(coords.y, coords.x);
 }
-
 
 
 bool Map::has_building(size_t y, size_t x) const {
@@ -75,6 +85,19 @@ bool Map::add_building(std::shared_ptr<Building> building, const coordinates<siz
     return add_building(building, coords.y, coords.x);
 }
 
+bool Map::remove_building(size_t y, size_t x) {
+    if (has_building(y, x)) {
+        all_buildings_(y, x) = nullptr;
+        return true;
+    }
+
+    return false;
+}
+
+bool Map::remove_building(const coordinates<size_t> &coords) {
+    return remove_building(coords.y, coords.x);
+}
+
 std::shared_ptr<Building> Map::get_building(size_t y, size_t x) {
     return all_buildings_(y, x);
 }
@@ -89,11 +112,72 @@ bool Map::can_build_on(const coordinates<size_t> &coords) const {
     return can_build_on(coords.y, coords.x);
 }
 
-bool Map::can_move_to(size_t y, size_t x) const {
+bool Map::can_move_to_terrain(size_t y, size_t x) const {
     return all_terrains_(y, x)->can_move_to();
 }
-bool Map::can_move_to(const coordinates<size_t> &coords) const {
-    return can_move_to(coords.y, coords.x);
+bool Map::can_move_to_terrain(const coordinates<size_t> &coords) const {
+    return can_move_to_terrain(coords.y, coords.x);
+}
+
+bool Map::has_unit(size_t y, size_t x) const {
+    return all_units_(y, x) != nullptr;
+}
+bool Map::has_unit(const coordinates<size_t>& coords) const {
+    return has_unit(coords.y, coords.x);
+}
+
+
+bool Map::add_unit(size_t y, size_t x, Unit* unit) {
+    if (has_unit(y, x) || !can_move_to_terrain(y, x)) {
+        return false;
+    }
+
+    all_units_(y, x) = unit;
+    return true;
+}
+
+bool Map::add_unit(const coordinates<size_t>& coords, Unit* unit) {
+    return add_unit(coords.y, coords.x, unit);
+}
+
+Unit* Map::get_unit(size_t y, size_t x) {
+    return all_units_(y, x);
+}
+
+Unit* Map::get_unit(const coordinates<size_t>& coords) {
+    return get_unit(coords.y, coords.x);
+}
+
+
+bool Map::remove_unit(size_t y, size_t x){
+    if (has_unit(y, x)) {
+        all_units_(y, x) = nullptr;
+        return true;
+    }
+    return false;
+}
+
+bool Map::remove_unit(const coordinates<size_t>& coords){
+    return remove_unit(coords.y, coords.x);
+}
+
+bool Map::move_unit(size_t origin_y, size_t origin_x, size_t dest_y, size_t dest_x) {
+    // Can only move a unit if a unit exists at origin and there is not unit at destination
+    // and the destination coordinates can be moved to
+    if (!(has_unit(origin_y, origin_x) && !has_unit(dest_y, dest_x) && can_move_to_terrain(dest_y, dest_x))) {
+        return false;
+    }
+
+    //Move unit to destination and remove from origin
+    Unit* origin_unit = get_unit(origin_y, origin_x);
+    all_units_(dest_y, dest_x) = origin_unit;
+    remove_unit(origin_y, origin_x);
+
+    return true;
+}
+
+bool Map::move_unit(const coordinates<size_t>& origin, const coordinates<size_t>& dest) {
+    return move_unit(origin.y, origin.x, dest.y, dest.x);
 }
 
 
@@ -168,6 +252,144 @@ std::vector< std::shared_ptr<Terrain> > Map::get_neighbors( const coordinates<si
     return possible_locations;
 }
 
+
+
+
+std::vector< coordinates<size_t> > Map::max_visible_locations( const coordinates<size_t>& location, const uint32_t visibility_range )
+{
+    // use the andres algorithm for creating the circle of the maximum distance the 
+    // unit can see
+    std::vector< coordinates<size_t> > visible_tiles;
+
+    size_t x = location.x;
+    size_t y = location.y; 
+    uint32_t d = visibility_range - 1;
+    uint32_t a = visibility_range - 1;
+    uint32_t b = 0;
+
+    while ( a >= b ) {
+        visible_tiles.emplace_back( x + b, y + a );
+        visible_tiles.emplace_back( x + a, y + b );
+        visible_tiles.emplace_back( x - b, y + a );
+        visible_tiles.emplace_back( x - a, y + b );
+        visible_tiles.emplace_back( x + b, y - a );
+        visible_tiles.emplace_back( x + a, y - b );
+        visible_tiles.emplace_back( x - b, y - a );
+        visible_tiles.emplace_back( x - a, y - b );
+
+        if ( d >= 2*b ) {
+            d = d - 2 * b - 1;
+            b = b + 1;
+        }
+        else if ( d < 2 * ( visibility_range - a ) ) {
+            d = d + 2 * a - 1;
+            a = a - 1;
+        }
+        else {
+            d = d + 2 * ( a - b - 1 );
+            a = a - 1;
+            b = b + 1;
+        }
+    }
+
+    return visible_tiles;
+}
+
+
+std::vector< coordinates<size_t> > Map::tiles_unit_sees( const coordinates<size_t>& location, const uint32_t visibility_range )
+{
+    return line_of_sight_check(location, visibility_range, [this](int64_t y, int64_t x) -> bool {
+        return this->get_terrain(y, x)->can_see_through();
+    });
+}
+
+std::vector<coordinates<size_t>> Map::get_aoe_affected_coords(const coordinates<size_t>& location, const uint32_t range) {
+    return line_of_sight_check(location, range + 1, [this](int64_t y, int64_t x) -> bool {
+        return this->get_terrain(y, x)->can_shoot_through();
+    });
+}
+
+std::vector< coordinates<size_t> > Map::line_of_sight_check( const coordinates<size_t>& location, const uint32_t range, const std::function<bool(int64_t y, int64_t x)>& predicate) {
+    std::vector< coordinates<size_t> > max_range_coords = max_visible_locations( location, range );
+
+    // Set to avoid duplicate coordinates and size is small enough that insert time is okay
+    std::set< coordinates<size_t> > visible_coords = { {location.x, location.y} }; // contains the starting location
+
+    // this utilises Bresentham's line drawing algorithm which is 
+    // modified to work on all directions
+    int64_t x0 = location.x;
+    int64_t y0 = location.y;
+    int64_t x1 = 0;
+    int64_t y1 = 0;
+
+    int64_t dx = 0;
+    int64_t sx = 0;
+    int64_t dy = 0;
+    int64_t sy = 0;
+    int64_t error = 0;
+    int64_t e2 = 0;
+
+    for ( const coordinates<size_t>& a_side : max_range_coords ) {
+        x0 = location.x;
+        y0 = location.y;
+
+        x1 = a_side.x;
+        y1 = a_side.y;
+        
+        dx = std::abs( x1 - x0 );
+        sx = ( x0 < x1 ) ? 1 : -1;
+        dy = (-1) * std::abs( y1 - y0 );
+        sy = ( y0 < y1 ) ? 1 : -1;
+        error = dx + dy;
+
+        while ( true ) {
+
+            if ( x0 == x1 && y0 == y1 ) {
+                break;
+            }
+            
+            
+
+            e2 = 2 * error;
+
+            if ( e2 >= dy ) {
+                error += dy;
+                x0 += sx;
+            }
+            if ( e2 <= dx ) {
+                error += dx;
+                y0 += sy;
+            }
+
+
+            // check that the tile that we're trying to look for is not out of range,
+            // this can happen if the <location + visibility_range> is more than the map width or length or less than 0.
+            if ( y0 < 0 || y0 >= height() || x0 < 0 || x0 >= width() ) {
+                break;
+            }
+            // check that you can see through the tile, if not, then we stop looping since we also cant see the following tiles
+            if (predicate(y0, x0) == false) {
+                break;
+            }
+            // this is for the special case that if there's a corner in which the absolute corner tile is visible but the ones next to it are not,
+            // we have to check for this case in both y and x axis.
+            // if ( get_terrain( Helper::clamp( y0 - sy, 0, height() - 1 ), x0)->can_see_through() == false 
+            //     && get_terrain( y0, Helper::clamp( x0 - sx, 0, width() - 1) )->can_see_through() == false) {
+            //     break;
+            // }
+            if (predicate(Helper::clamp(y0 - sy, 0, height() - 1), x0) == false &&
+                predicate(y0, Helper::clamp(x0 - sx, 0, width() - 1)) == false) {
+                break;
+            }
+            
+            visible_coords.emplace( x0, y0 );
+        }
+    }
+
+    //return result as a vector using vectors constructor that takes iterators
+    return {visible_coords.begin(), visible_coords.end()};
+
+}
 
 std::vector< coordinates<size_t> > Map::get_neighbouring_coordinates( const coordinates<size_t>& location )
 {
@@ -378,4 +600,35 @@ void Map::print_map() const {
     }
 
     std::cout << std::endl;
+}
+
+void Map::print_units() const {
+    for (size_t y = 0; y < height(); ++y) {
+        for (size_t x = 0; x < width(); ++x) {
+            if (has_unit(y, x)) {
+                std::cout << '@';
+            } else {
+                std::cout << '.';
+            }
+        }
+        std::cout << '\n';
+    }
+
+    std::cout << std::endl;
+
+}
+
+void Map::print_buildings() const {
+    for (size_t y = 0; y < height(); ++y) {
+        for (size_t x = 0; x < width(); ++x) {
+             if (has_building(y, x)) {
+                 std::cout << '@';
+             } else {
+                 std::cout << '.';
+             }
+         }
+        std::cout << '\n';
+    }
+    std::cout << std::endl;
+
 }

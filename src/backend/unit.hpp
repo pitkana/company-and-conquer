@@ -26,8 +26,8 @@ class Unit
 
 public:
     Unit(const std::string &name) :
-        name_(name) {
-        inventory_.reserve(unit_consts.inventory_size);
+        name_(name){
+        // inventory_.reserve(unit_consts.inventory_size);
         current_hp_ = unit_consts.max_hp;
         id_ = count_++;
     }
@@ -52,7 +52,23 @@ public:
        return current_hp_;
     }
 
-    bool deal_damage(std::shared_ptr<const Weapon>, unsigned int distance_from);
+    /**
+     * @brief Changes this units hp by the amount specified
+     *
+     * @param amount the amount of hp to change by, positive to heal, negative to deal damage
+     * @return int, the amount of hp that was changed (not necessarily same as amount, since hp cant go over max)
+     */
+    int change_hp_by(int amount);
+
+    bool deal_damage(const Weapon& weapon, unsigned int distance_from);
+
+    /**
+     * @brief Heals this unit by the amount specified by parameter item
+     *
+     * @param heal_item
+     * @return int, how much was actually healed
+     */
+    int heal(const HealingItem& heal_item);
 
     bool is_dead() const {
         return current_hp_ <= 0;
