@@ -108,7 +108,7 @@ class Map_Builder {
             */
             for (size_t w = 0; w < height; w++) {
                 for (size_t h = 0; h < width; h++) {
-                    map.update_terrain(terrain_vec[w][h],w,h);
+                    map.update_terrain(terrain_vec[w][h], w, h);
                 }
             }
         }
