@@ -1,1 +1,1 @@
-void render_window_test();
+void rendering_engine_test();

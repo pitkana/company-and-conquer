@@ -9,7 +9,9 @@
 #include "turn.hpp"
 #include <random>
 
+#include "renderer.hpp"
 
+/*
 int main() 
 {
     Game game(10, 10);
@@ -40,4 +42,18 @@ int main()
     }
 
     game.end_turn(0);
+}
+*/
+
+
+
+int main()
+{
+    //start(1000, 1000);
+    Renderer renderer(1000, 1000);
+    renderer.initialise_level(0);
+    renderer.start();
+    
+
+    return 0;
 }

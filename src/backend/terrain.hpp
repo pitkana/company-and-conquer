@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <iterator>
 #include <bitset>
+#include <random>
+#include <functional>
 
 #include "helper_tools.hpp"
 #include "coordinates.hpp"
@@ -28,7 +30,6 @@ class Terrain
         int32_t texture_idx_ = 0;
         size_t movement_cost_ = 1;
         std::bitset<4> terrain_properties_ = std::bitset<4>{}.set(); // special version of std::vector that should be implemented as a bitset
-
 
 
     public:
