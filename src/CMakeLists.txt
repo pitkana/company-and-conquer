@@ -20,7 +20,7 @@ set(SOURCES ${SOURCES_C} ${SOURCES_CPP} ${SOURCES_H} ${SOURCES_HPP})
 add_executable(gui)
 
 target_sources(gui PUBLIC ${SOURCES})
-target_link_libraries(gui PRIVATE sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
+target_link_libraries(gui PUBLIC sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
 target_compile_features(gui PRIVATE cxx_std_17)
 target_link_libraries(gui PRIVATE backend)
 target_include_directories(gui PRIVATE backend)
@@ -29,9 +29,12 @@ target_link_libraries(gui PRIVATE frontend)
 target_include_directories(gui PRIVATE frontend)
 set_target_properties(frontend PROPERTIES LINKER_LANGUAGE CXX)
 
+
 # For relative paths.
 set(TESTMAP_PATH ${CMAKE_SOURCE_DIR}/tests/test_map.txt)
 add_compile_definitions(TESTMAP_PATH="${TESTMAP_PATH}")
+set(TESTMAP_PATH1 ${CMAKE_SOURCE_DIR}/tests/test_map1.txt)
+add_compile_definitions(TESTMAP_PATH1="${TESTMAP_PATH1}")
 set(TEXTURE_PATH ${CMAKE_SOURCE_DIR}/textures/tiles.png)
 add_compile_definitions(TEXTURE_PATH="${TEXTURE_PATH}")
 

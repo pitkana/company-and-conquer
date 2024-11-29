@@ -18,7 +18,7 @@ class Action;
 class Game {
 public:
 
-    Game(size_t map_height, size_t map_width): map_(map_height, map_width) {}
+    Game(size_t map_height, size_t map_width) : map_(map_height, map_width) {}
 
     //Add team to teams_
     inline void add_team(Team team) {

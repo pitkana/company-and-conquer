@@ -1,6 +1,8 @@
 #ifndef RENDER_MAP
 #define RENDER_MAP
 
+#include <memory>
+
 #include "map.hpp"
 #include "SFML/Graphics.hpp"
 #include "terrain.hpp"
@@ -13,10 +15,10 @@
  */
 class Render_Map : public sf::Drawable, public sf::Transformable {
 public:
-/**
- * @param tile_map Can be used to access the map and the game object.
- */
-Render_Map(Tile_Map& tile_map);
+    /**
+     * @param tile_map Can be used to access the map and the game object.
+     */
+    Render_Map(std::shared_ptr<Tile_Map>& tile_map);
 
     /**
      * @brief Constructs a sf::VertexArray along with dimensions specified in certain Map.
@@ -27,16 +29,27 @@ Render_Map(Tile_Map& tile_map);
      */
     bool load(const std::string& tiles);
 
+
+    // void load_new_map(Tile_Map& tile_map);
+
+    void move(float x, float y);
+
+    void zoom(int z);
+
     /**
      * @brief Check if changes were made to Tile_Map objects tileDim or x0y0. If yes then update vertex positions.
      */
     void update();
+
+    std::weak_ptr<Tile_Map> get_tile_map();
+    void set_tile_map(std::shared_ptr<Tile_Map>& tile_map);
+
 private:
     sf::VertexArray g_VertexArr; //VertexArray that will be drawn.
     sf::Texture g_texture; //Contains the texture,
-    Tile_Map& tile_map_;
+    std::shared_ptr<Tile_Map> tile_map_;
     int tileDim_; //
-    std::pair<int,int> x0y0_;
+    std::pair<float,float> x0y0_;
 
     /**
      * Sets up the positions and textures for each vertex in g_VertexArr.

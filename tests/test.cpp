@@ -1,5 +1,5 @@
-#include "render_window_test.hpp"
+#include "rendering_engine_test.hpp"
 
 int main() {
-  render_window_test();
+  rendering_engine_test();
 }

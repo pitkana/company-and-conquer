@@ -142,6 +142,7 @@ void Game::end_team_turns(int team_id) {
     }
 }
 
+
 Map& Game::get_map() {
     return map_;
 }

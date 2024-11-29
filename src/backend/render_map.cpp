@@ -1,13 +1,13 @@
 #include "render_map.hpp"
 
-Render_Map::Render_Map(Tile_Map& tile_map) : tile_map_(tile_map), tileDim_(tile_map.GetTileDim()) {}
+Render_Map::Render_Map(std::shared_ptr<Tile_Map>& tile_map) : tile_map_(tile_map), tileDim_(tile_map->GetTileDim()) { }
 
 bool Render_Map::load(const std::string& tiles) {
     if (!g_texture.loadFromFile(tiles)) {
         return false;
     }
-    Map& map = tile_map_.GetMap();
-    tileDim_ = tile_map_.GetTileDim();
+    Map& map = tile_map_->GetMap();
+    tileDim_ = tile_map_->GetTileDim();
     g_VertexArr.setPrimitiveType(sf::Quads);
     g_VertexArr.resize(4 * map.height() * map.width());
     draw_map();
@@ -15,12 +15,14 @@ bool Render_Map::load(const std::string& tiles) {
 }
 
 void Render_Map::draw_map() {
-    Map& map = tile_map_.GetMap();
+    Map& map = tile_map_->GetMap();
     int texW = g_texture.getSize().y;
+    
     int mapWidth = map.width();
     int mapHeight = map.height();
-    int x0 = x0y0_.first;
-    int y0 = x0y0_.second;
+
+    float x0 = x0y0_.first;
+    float y0 = x0y0_.second;
     for (int i = 0; i <  mapWidth; i++) {
         for (int j = 0; j < mapHeight; j++) {
             int32_t tile = map.get_terrain(j,i)->texture();
@@ -41,12 +43,49 @@ void Render_Map::draw_map() {
     }
 }
 
+/*
+void Render_Map::load_new_map(Tile_Map& tile_map)
+{
+    tile_map_ = tile_map;
+    tileDim_ = tile_map.GetTileDim();
+}
+*/
+
+void Render_Map::move(float x, float y) 
+{
+    x0y0_.first = x0y0_.first + x;
+    x0y0_.second = x0y0_.second + y;
+
+    draw_map();
+}
+
+void Render_Map::zoom(int z) 
+{
+    tileDim_ = tileDim_ + z;
+
+    if ( tileDim_ < 0 ) {
+        tileDim_ = 0;
+    }
+
+    draw_map();
+}
+
 void Render_Map::update() {
-    std::pair<int,int> map_x0y0 = tile_map_.Getx0y0();
-    int map_tile_dim = tile_map_.GetTileDim();
+    std::pair<int,int> map_x0y0 = tile_map_->Getx0y0();
+    int map_tile_dim = tile_map_->GetTileDim();
     if (x0y0_.first != map_x0y0.first || x0y0_.second != map_x0y0.second || tileDim_ != map_tile_dim) {
         x0y0_ = map_x0y0;
         tileDim_ = map_tile_dim;
         draw_map();
     }
+}
+
+std::weak_ptr<Tile_Map> Render_Map::get_tile_map()
+{
+    return tile_map_;
+}
+
+void Render_Map::set_tile_map(std::shared_ptr<Tile_Map>& tile_map)
+{
+    tile_map_ = tile_map;
 }
