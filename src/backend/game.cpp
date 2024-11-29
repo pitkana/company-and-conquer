@@ -49,18 +49,46 @@ std::unordered_map<int, std::vector<Unit>*> Game::get_units_map() {
     return units_map;
 }
 
-void Game::execute_action(std::shared_ptr<Action> action) {
-    assert(action); //assert that action is not null
-    action->execute(*this);
+void Game::add_turn(Turn turn, int team_id) {
+    Team& team = get_team_by_id(team_id);
+
+    // Execute the movement of the turn instantly
+    execute_turn_movement(turn);
+
+    // Only execute the action instantly if it's not random, otherwise it gets executed at the end of the turn when it cant be undone
+    if (!turn.action->contains_randomness()) {
+        execute_turn_action(turn);
+    }
+
+    team.enqueue_turn(std::move(turn));
 }
 
-void Game::end_turn(int team_id) {
+void Game::execute_turn_movement(Turn& turn) {
+    map_.move_unit(turn.unit_origin, turn.movement_destination);
+}
+
+void Game::execute_turn_action(Turn& turn) {
+    //Action is always executed after movement
+    turn.action->execute(*this, turn.movement_destination);
+}
+
+void Game::undo_turn(int team_id) {
+    Team& team = get_team_by_id(team_id);
+
+    std::optional<Turn> turn = team.undo_turn();
+    // If no turns were queued, return early
+    if (!turn.has_value()) {
+        return;
+    }
+    map_.move_unit(turn->movement_destination, turn->unit_origin);
+    turn->action->undo(*this);
+}
+
+void Game::end_team_turns(int team_id) {
     Team& team = get_team_by_id(team_id);
     //loop until no more turns left, moving the unit and executing actions
-    while (const std::optional<Turn> turn = team.dequeue_turn()) {
-        //Placeholder for when this function is implemented
-        //move_unit(turn->unit, turn->unit_origin, turn->movement_destination);
-        execute_action(turn->action);
+    while (std::optional<Turn> turn = team.dequeue_turn()) {
+        execute_turn_action(*turn);
     }
 }
 

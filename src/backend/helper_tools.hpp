@@ -24,6 +24,22 @@ constexpr inline T clamp( const T& value, const T& smallest, const T& largest ) 
     return std::min(largest, std::max(value, smallest));
 }
 
+template <typename T, typename D, typename E>
+constexpr inline T clamp( const T& value, const D& smallest, const E& largest ) noexcept
+{
+    T aux = value;
+
+    if ( aux > largest ) {
+        aux = largest;
+    }
+    
+    else if ( aux < smallest ) {
+        aux = smallest;
+    }
+
+    return aux;
+}
+
 
 
 

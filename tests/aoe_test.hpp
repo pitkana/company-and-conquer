@@ -1,0 +1,1 @@
+int aoe_test();
