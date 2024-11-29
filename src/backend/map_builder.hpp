@@ -88,7 +88,7 @@ class Map_Builder {
         }
 
         //Overloaded load method will be used in Game class constructor.
-        void load(std::vector<std::vector<char>> terrain_vec, const Map& map) {
+        void load(std::vector<std::vector<char>> terrain_vec, Map& map) {
             size_t height = terrain_vec.size();
             if (height == 0) {
                 throw Invalid_Map_Exception();
@@ -108,7 +108,7 @@ class Map_Builder {
             */
             for (size_t w = 0; w < height; w++) {
                 for (size_t h = 0; h < width; h++) {
-                    map.update_terrain(terrain_vec[w][h],w,h);
+                    map.update_terrain(terrain_vec[w][h], w, h);
                 }
             }
         }
