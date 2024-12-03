@@ -6,9 +6,20 @@ const coordinates<size_t>& Action::target() const {
     return target_;
 }
 
+/* ----- MovementAction ----- */
+void MovementAction::execute(Game& game, coordinates<size_t> unit_location [[maybe_unused]]) {
+    game.get_map().move_unit(source_location_, target_);
+}
+
+void MovementAction::undo(Game &game) {
+    game.get_map().move_unit(target_, source_location_);
+}
+
 /* ----- WeaponAction ----- */
 
 void WeaponAction::execute(Game &game, coordinates<size_t> unit_location) {
+    if (executing_unit_.is_dead()) return;
+
     if (!has_been_executed_) {
         if (weapon_.get_aoe() == 0) { //Single target attack
             Unit* target_unit = game.get_map().get_unit(target_.y, target_.x);
@@ -35,6 +46,8 @@ void WeaponAction::execute(Game &game, coordinates<size_t> unit_location) {
 /* ----- HealingAction ----- */
 
 void HealingAction::execute(Game &game, coordinates<size_t> unit_location) {
+    if (executing_unit_.is_dead()) return;
+
     if (!has_been_executed_) {
         if (healing_item_.get_aoe() == 0) { // Single target healing
             Unit* target_unit = game.get_map().get_unit(target_.y, target_.x);
@@ -83,6 +96,8 @@ const BuildingPart& BuildingAction::get_part() const {
 }
 
 void BuildingAction::execute(Game &game, coordinates<size_t> unit_location) {
+    if (executing_unit_.is_dead()) return;
+
     if (!has_been_executed_) {
         Map& map = game.get_map();
         if (map.has_building(target())) {

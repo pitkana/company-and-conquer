@@ -10,6 +10,7 @@
 
 class Action; //forward declaration
 class Building; //forward declaration
+class Unit;
 
 //Item base class
 class Item {
@@ -22,7 +23,7 @@ public:
 
     // Return the action associated with this item on the coordinates given as parameter
     [[nodiscard]]
-    virtual std::shared_ptr<Action> get_action(coordinates<size_t> target) const = 0;
+    virtual std::shared_ptr<Action> get_action(coordinates<size_t> target, Unit& executing_unit) const = 0;
 
     // Return name of this item
     [[nodiscard]]
@@ -30,6 +31,10 @@ public:
 
     [[nodiscard]]
     const std::string& get_description() const;
+
+    virtual inline constexpr bool is_weapon() const = 0;
+    virtual inline constexpr bool is_healing_item() const = 0;
+    virtual inline constexpr bool is_building_part() const = 0;
 
 protected:
     std::string name_;
@@ -49,7 +54,7 @@ public:
 
     //Returns an WeaponAction for the damaging action
     [[nodiscard]]
-    virtual std::shared_ptr<Action> get_action(coordinates<size_t> target) const;
+    virtual std::shared_ptr<Action> get_action(coordinates<size_t> target, Unit& executing_unit) const;
 
     int get_accuracy() const {
         return accuracy_;
@@ -66,6 +71,10 @@ public:
     int get_aoe() const {
         return area_of_effect_;
     }
+
+    virtual inline constexpr bool is_weapon() const { return true; }
+    virtual inline constexpr bool is_healing_item() const { return false; }
+    virtual inline constexpr bool is_building_part() const { return false; }
 
 private:
     const int accuracy_;
@@ -87,7 +96,7 @@ public:
 
     //Returns an HealAction for the healing action
     [[nodiscard]]
-    virtual std::shared_ptr<Action> get_action(coordinates<size_t> target) const;
+    virtual std::shared_ptr<Action> get_action(coordinates<size_t> target, Unit& executing_unit) const;
 
     [[nodiscard]]
     int get_heal_amount() const {
@@ -98,6 +107,11 @@ public:
     int get_aoe() const {
         return area_of_effect_;
     }
+
+    virtual inline constexpr bool is_weapon() const { return false; }
+    virtual inline constexpr bool is_healing_item() const { return true; }
+    virtual inline constexpr bool is_building_part() const { return false; }
+
 
 private:
     const int heal_amount_;
@@ -110,7 +124,7 @@ public:
     BuildingPart(BuildingPartType part_type): Item(name_from_type(part_type), desc_from_type(part_type)), part_type_(part_type) {}
 
     [[nodiscard]]
-    virtual std::shared_ptr<Action> get_action(coordinates<size_t> target) const;
+    virtual std::shared_ptr<Action> get_action(coordinates<size_t> target, Unit& executing_unit) const;
 
     [[nodiscard]]
     BuildingPartType get_part_type() const;
@@ -122,6 +136,10 @@ public:
      */
     [[nodiscard]]
     std::shared_ptr<Building> get_building() const;
+
+    virtual inline constexpr bool is_weapon() const { return false; }
+    virtual inline constexpr bool is_healing_item() const { return false; }
+    virtual inline constexpr bool is_building_part() const { return true; }
 
 private:
     [[nodiscard]]

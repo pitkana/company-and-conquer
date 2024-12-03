@@ -1,6 +1,6 @@
-#include "action_test.hpp"
+#include "vision_test.hpp"
 int main() {
-  action_test();
+  vision_test();
 
   return 0;
 }

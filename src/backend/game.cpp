@@ -32,7 +32,9 @@ int Game::get_unit_amount() const {
 }
 
 std::vector<Unit*> Game::get_units() {
-    std::vector<Unit*> units(get_unit_amount());
+    std::vector<Unit*> units;
+    units.reserve(get_unit_amount());
+
     for (Team& team : get_teams()) {
         for (Unit& unit : team.get_units()) {
             units.push_back(&unit);
@@ -40,6 +42,37 @@ std::vector<Unit*> Game::get_units() {
     }
 
     return units;
+}
+
+Unit* Game::get_unit(int id) {
+    std::vector<Unit*> all_units = get_units();
+    auto it = std::find_if(all_units.begin(), all_units.end(), [id](Unit* unit) {
+        return unit->get_id() == id;
+    });
+
+    assert(it != all_units.end() && "Specified unit does not exist");
+    return *it;
+}
+
+int Game::get_unit_team_id(int unit_id) const {
+    for (const Team& team : teams_) {
+        const std::vector<Unit>& team_units = team.get_units();
+
+        // Search for unit with given ID inside of each team
+        auto it = std::find_if(team_units.begin(), team_units.end(), [unit_id](const Unit& unit) {
+            return unit.get_id() == unit_id;
+        });
+
+        //If unit is found, return team's id
+        if (it == team_units.end()) continue;
+        return team.get_id();
+    }
+
+    assert(false && "Unit with specified ID does not exist in this game");
+}
+
+coordinates<size_t> Game::get_unit_location(int id) {
+    return map_.get_unit_location(get_unit(id));
 }
 
 std::unordered_map<int, std::vector<Unit>*> Game::get_units_map() {
@@ -51,46 +84,63 @@ std::unordered_map<int, std::vector<Unit>*> Game::get_units_map() {
     return units_map;
 }
 
-void Game::add_turn(Turn turn, int team_id) {
-    Team& team = get_team_by_id(team_id);
+void Game::add_action(std::shared_ptr<Action> action, int team_id) {
+    Unit& executing_unit = action->get_unit();
 
-    // Execute the movement of the turn instantly
-    execute_turn_movement(turn);
-
-    // Only execute the action instantly if it's not random, otherwise it gets executed at the end of the turn when it cant be undone
-    if (!turn.action->contains_randomness()) {
-        execute_turn_action(turn);
+    // Check if the unit has already performed this kind of action in this turn
+    if (action->is_movement()) {
+        if (executing_unit.has_moved) return;
+        executing_unit.has_moved = true;
+    } else {
+        if (executing_unit.has_added_action) return;
+        executing_unit.has_added_action = true;
     }
 
-    team.enqueue_turn(std::move(turn));
+    Team& team = get_team_by_id(team_id);
+    // Only execute the action instantly if it's not random, otherwise it gets executed at the end of the turn when it cant be undone
+    if (!action->contains_randomness()) {
+        execute_action(action);
+    }
+    team.enqueue_action(std::move(action));
 }
 
-void Game::execute_turn_movement(Turn& turn) {
-    map_.move_unit(turn.unit_origin, turn.movement_destination);
+
+void Game::execute_action(std::shared_ptr<Action> action) {
+    if (action == nullptr) return;
+    action->execute(*this, get_unit_location(action->get_unit().get_id()));
 }
 
-void Game::execute_turn_action(Turn& turn) {
-    //Action is always executed after movement
-    turn.action->execute(*this, turn.movement_destination);
-}
-
-void Game::undo_turn(int team_id) {
+void Game::undo_action(int team_id) {
     Team& team = get_team_by_id(team_id);
 
-    std::optional<Turn> turn = team.undo_turn();
-    // If no turns were queued, return early
-    if (!turn.has_value()) {
+    std::shared_ptr<Action> action = team.undo_action();
+    // If no actions were queued, return early
+    if (action == nullptr) {
         return;
     }
-    map_.move_unit(turn->movement_destination, turn->unit_origin);
-    turn->action->undo(*this);
+
+    Unit& executing_unit = action->get_unit();
+
+    // Reset the units flags for performing this action when its undone
+    if (action->is_movement()) {
+        executing_unit.has_moved = false;
+    } else {
+        executing_unit.has_added_action = false;
+    }
+
+    action->undo(*this);
 }
 
 void Game::end_team_turns(int team_id) {
     Team& team = get_team_by_id(team_id);
     //loop until no more turns left, moving the unit and executing actions
-    while (std::optional<Turn> turn = team.dequeue_turn()) {
-        execute_turn_action(*turn);
+    while (std::shared_ptr<Action> action = team.dequeue_action()) {
+        execute_action(action);
+    }
+
+    // Reset the whole team's action flags since their turn is over
+    for (Unit& unit : get_team_by_id(team_id).get_units()) {
+        unit.clear_action_flags();
     }
 }
 
