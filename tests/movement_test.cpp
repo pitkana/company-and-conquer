@@ -63,6 +63,36 @@ void print_movement(Map& map) {
   }
 }
 
+void print_fastest_movement(Map& map) {
+  while (true) {
+    std::cout << "Enter coordinates in form 'x y'" << std::endl;
+    size_t x, y;
+    std::cin >> x >> y;
+    if (std::cin.fail()) {std::cin.clear();return;}
+
+    std::cout << "Enter coordinates in form 'x y'" << std::endl;
+    size_t tx, ty;
+    std::cin >> tx >> ty;
+    if (std::cin.fail()) {std::cin.clear();return;}
+
+    coordinates<size_t> movement = map.fastest_movement_to_target({x, y}, {tx, ty}, 4);
+
+    for (size_t y = 0; y < height; ++y) {
+      for (size_t x = 0; x < width; ++x) {
+        if (movement.y == y && movement.x == x) {
+          std::cout << '@';
+        } else {
+          std::cout << map.get_terrain(y, x)->get_repr();
+        }
+      }
+      std::cout << '\n';
+    }
+    std::cout << std::endl;
+    return;
+  }
+
+}
+
 
 int movement_test() {
 
@@ -77,7 +107,7 @@ int movement_test() {
   terrains[swamp.get_repr()] = swamp;
 
   while (true) {
-    std::cout << "A to change terrain, M to calculate movement, Q to quit" << std::endl;
+    std::cout << "A to change terrain, M to calculate movement, S for shortest path, Q to quit" << std::endl;
     char input;
     std::cin >> input;
     if (std::cin.fail()) {std::cin.clear(); continue;}
@@ -89,6 +119,9 @@ int movement_test() {
         break;
       case 'M':
         print_movement(map);
+        break;
+      case 'S':
+        print_fastest_movement(map);
         break;
       case 'Q':
         return EXIT_SUCCESS;

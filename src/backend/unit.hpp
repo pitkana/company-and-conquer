@@ -26,11 +26,7 @@ class Unit
 
 public:
     Unit(const std::string &name) :
-        name_(name){
-        // inventory_.reserve(unit_consts.inventory_size);
-        current_hp_ = unit_consts.max_hp;
-        id_ = count_++;
-    }
+        name_(name), current_hp_(unit_consts.max_hp), id_(count_++){}
 
     const std::string& get_name() const {
         return name_;
@@ -43,6 +39,11 @@ public:
     const std::vector<std::shared_ptr<const Item>>& get_inventory() const {
         return inventory_;
     }
+
+    // Returns vector of ptrs to items that are of the specific type
+    std::vector<std::shared_ptr<const Weapon>> get_weapons() const;
+    std::vector<std::shared_ptr<const HealingItem>> get_healing_items() const;
+    std::vector<std::shared_ptr<const BuildingPart>> get_building_parts() const;
 
     bool add_item(std::shared_ptr<const Item> item);
 
@@ -74,7 +75,19 @@ public:
         return current_hp_ <= 0;
     }
 
+    void clear_action_flags() {
+        has_moved = false;
+        has_added_action = false;
+    }
 
+    bool has_weapon() const;
+    bool has_healing_item() const;
+    bool has_building_part() const;
+
+
+public:
+    bool has_moved = false;
+    bool has_added_action = false;
 private:
     std::string name_;
 

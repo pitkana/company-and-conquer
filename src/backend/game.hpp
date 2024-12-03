@@ -46,36 +46,38 @@ public:
     [[nodiscard]]
     std::vector<Unit*> get_units();
 
+    [[nodiscard]]
+    Unit* get_unit(int id);
+
+    [[nodiscard]]
+    int get_unit_team_id(int unit_id) const;
+
+    [[nodiscard]]
+    coordinates<size_t> get_unit_location(int id);
+
     /**
-     * @brief Adds a turn to specific team's turn queue
+     * @brief Adds an action to specific team's action queue
      *
-     * @param turn The turn to be added
-     * @param team_id The team id that the turn gets added to
+     * @param action The action to be added
+     * @param team_id The team id that the action gets added to
      * @return void
      */
-    void add_turn(Turn turn, int team_id);
-
+    void add_action(std::shared_ptr<Action> action, int team_id);
+    
     //return all units as values in an unordered_map, keys being their team's id
     //pointers since you cant store references in map
     [[nodiscard]]
     std::unordered_map<int, std::vector<Unit>*> get_units_map();
 
     /**
-     * @brief Executes a turn's movement and action. Action only if the action is not random
+     * @brief Executes the action given as parameter
      *
-     * @param turn The turn to be executed
+     * @param action the action that gets executed
      * @return void
      */
-    void execute_turn_movement(Turn& turn);
-    /**
-     * @brief Executes the action of a turn (not movement!) even if random
-     *
-     * @param turn the turn whose action will be executed
-     * @return void
-     */
-    void execute_turn_action(Turn& turn);
+    void execute_action(std::shared_ptr<Action> action);
 
-    void undo_turn(int team_id);
+    void undo_action(int team_id);
 
     //End the turn, thus executing all of the selected actions
     void end_team_turns(int team_id);

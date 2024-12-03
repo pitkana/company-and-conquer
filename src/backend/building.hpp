@@ -6,24 +6,31 @@
 #include "coordinates.hpp"
 #include "building_part_type.hpp"
 #include "item.hpp"
+#include "const_items.hpp"
 
 class Action; //forward declaration
+class Unit;
 
 class Building {
 public:
-    Building(const std::string& name): name_(name) {}
+    Building(const std::string& name, std::shared_ptr<const Item> building_item): name_(name), building_item_(building_item) {}
     virtual ~Building() = default;
 
     //Return action associated with using this specific building
-    virtual std::shared_ptr<Action> use_building(coordinates<size_t> target) const = 0;
+    std::shared_ptr<Action> use_building(coordinates<size_t> target, Unit& executing_unit) const;
 
 
     //Check if this specific part is already added to this building
     [[nodiscard]]
     virtual bool has_part(const BuildingPart& part) const;
+
+    // Check if the parameter part fits this building 
+    [[nodiscard]]
+    bool takes_part(const BuildingPart& part) const;
     // Returns false if couldn't add/remove the part, true if could
     virtual bool add_part(const BuildingPart& part);
     virtual bool remove_part(const BuildingPart& part);
+
 
     // Check if this building is fully built
     [[nodiscard]]
@@ -37,6 +44,8 @@ public:
     [[nodiscard]]
     virtual bool has_no_parts() const = 0;
 
+    std::shared_ptr<const Item> get_item() const;
+
 private:
     // These pure virtual functions should be implemented in derived classes, as they are used within has_part, add_part and remove_part
     // They return a non-const/const pointer to the bool value associated with a specific part (or nullptr if that part is not part of the building)
@@ -46,16 +55,13 @@ private:
 
 protected:
     std::string name_;
-
+    const std::shared_ptr<const Item> building_item_;
 };
 
 
 class Turret : public Building {
 public:
-    Turret(): Building("turret") {}
-
-    [[nodiscard]]
-    virtual std::shared_ptr<Action> use_building(coordinates<size_t> target) const;
+    Turret(): Building("turret", ConstItem::turret_weapon) {}
 
     [[nodiscard]]
     virtual bool is_ready() const;
@@ -98,10 +104,7 @@ private:
 
 class MedicTent : public Building {
 public:
-    MedicTent(): Building("medic tent") {}
-
-    [[nodiscard]]
-    virtual std::shared_ptr<Action> use_building(coordinates<size_t> target) const;
+    MedicTent(): Building("medic tent", ConstItem::medic_tent_heal_item) {}
 
     [[nodiscard]]
     virtual bool is_ready() const;

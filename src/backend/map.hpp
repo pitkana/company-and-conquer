@@ -85,10 +85,16 @@ class Map
         Map( const size_t size );
 
         [[nodiscard]]
-        constexpr inline size_t width() const;
+        constexpr inline size_t width() const 
+        {
+            return all_terrains_.width();
+        }
 
         [[nodiscard]]
-        constexpr inline size_t height() const;
+        constexpr inline size_t height() const 
+        {
+            return all_terrains_.height();
+        }
 
         void update_terrain(char terrain, size_t y, size_t x);
 
@@ -113,17 +119,28 @@ class Map
         std::shared_ptr<Building> get_building(size_t y, size_t x);
         std::shared_ptr<Building> get_building(const coordinates<size_t>& coords);
 
+        bool has_weapon_building(size_t y, size_t x);
+        bool has_weapon_building(const coordinates<size_t>& coords);
+
+        bool has_healing_building(size_t y, size_t x);
+        bool has_healing_building(const coordinates<size_t>& coords);
+
         bool can_build_on(size_t y, size_t x) const;
         bool can_build_on(const coordinates<size_t>& coords) const;
 
         bool can_move_to_terrain(size_t y, size_t x) const;
         bool can_move_to_terrain(const coordinates<size_t>& coords) const;
 
+        bool can_move_to_coords(size_t y, size_t x) const;
+        bool can_move_to_coords(const coordinates<size_t> coords) const;
+
         bool has_unit(size_t y, size_t x) const;
         bool has_unit(const coordinates<size_t>& coords) const;
 
         Unit* get_unit(size_t y, size_t x);
         Unit* get_unit(const coordinates<size_t>& coords);
+
+        coordinates<size_t> get_unit_location(Unit* unit_ptr) const;
 
         bool add_unit(size_t y, size_t x, Unit* unit);
         bool add_unit(const coordinates<size_t>& coords, Unit* unit);
@@ -227,6 +244,10 @@ class Map
 
         // Breadth-first-search based algorithm on finding movement tiles
         std::vector< coordinates< size_t > > possible_tiles_to_move_to3( const coordinates<size_t>& location, uint8_t movement_range );
+
+        coordinates<size_t> get_closest_accessible_tile(const coordinates<size_t>& location);
+
+        coordinates<size_t> fastest_movement_to_target(const coordinates<size_t>& location, coordinates<size_t> target, uint8_t movement_range);
         
         void print_map() const;
 

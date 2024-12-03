@@ -5,25 +5,25 @@
 #include "unit.hpp"
 
 
-void Team::enqueue_turn(Turn turn) {
-    turns_.push_back(std::move(turn));
+void Team::enqueue_action(std::shared_ptr<Action> action) {
+    turns_.push_back(std::move(action));
 }
 
-std::optional<Turn> Team::undo_turn() {
+std::shared_ptr<Action> Team::undo_action() {
     if (turns_.empty()) {
-        return std::nullopt;
+        return nullptr;
     }
 
-    Turn last = turns_.back();
+    std::shared_ptr<Action> last = turns_.back();
     turns_.pop_back();
     return last;
 }
 
-std::optional<Turn> Team::dequeue_turn() {
+std::shared_ptr<Action> Team::dequeue_action() {
     if (turns_.empty()) {
-        return std::nullopt;
+        return nullptr;
     }
-    Turn first = turns_.front();
+    std::shared_ptr<Action> first = turns_.front();
     turns_.pop_front();
     return first;
 }

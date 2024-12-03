@@ -57,3 +57,59 @@ int Unit::heal(const HealingItem &heal_item) {
 
     return change_hp_by(heal_item.get_heal_amount());
 }
+
+bool Unit::has_weapon() const {
+    for (const auto& item : inventory_) {
+        if (item->is_weapon()) return true;
+    }
+
+    return false;
+}
+
+bool Unit::has_healing_item() const {
+    for (const auto& item : inventory_) {
+        if (item->is_healing_item()) return true;
+    }
+
+    return false;
+}
+
+bool Unit::has_building_part() const {
+    for (const auto& item : inventory_) {
+        if (item->is_building_part()) return true;
+    }
+
+    return false;
+}
+
+std::vector<std::shared_ptr<const Weapon>> Unit::get_weapons() const {
+    std::vector<std::shared_ptr<const Weapon>> weapons;
+    for (const std::shared_ptr<const Item>& item : inventory_) {
+        if (!item->is_weapon()) continue;
+        weapons.push_back(std::dynamic_pointer_cast<const Weapon>(item));
+    }
+
+    return weapons;
+}
+
+std::vector<std::shared_ptr<const HealingItem>> Unit::get_healing_items() const {
+    std::vector<std::shared_ptr<const HealingItem>> healing_items;
+    for (const std::shared_ptr<const Item>& item : inventory_) {
+        if (!item->is_healing_item()) continue;
+        healing_items.push_back(std::dynamic_pointer_cast<const HealingItem>(item));
+    }
+
+    return healing_items;
+
+}
+
+std::vector<std::shared_ptr<const BuildingPart>> Unit::get_building_parts() const {
+    std::vector<std::shared_ptr<const BuildingPart>> building_parts;
+    for (const std::shared_ptr<const Item>& item : inventory_) {
+        if (!item->is_building_part()) continue;
+        building_parts.push_back(std::dynamic_pointer_cast<const BuildingPart>(item));
+    }
+
+    return building_parts;
+
+}
