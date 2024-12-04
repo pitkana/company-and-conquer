@@ -52,6 +52,8 @@ std::shared_ptr<Terrain> Map::get_terrain(size_t y, size_t x)
 {
     return all_terrains_(y, x);
 }
+
+
 std::shared_ptr<Terrain> Map::get_terrain(const coordinates<size_t>& coords) {
     return get_terrain(coords.y, coords.x);
 }
@@ -60,9 +62,12 @@ std::shared_ptr<Terrain> Map::get_terrain(const coordinates<size_t>& coords) {
 bool Map::has_building(size_t y, size_t x) const {
     return all_buildings_(y, x) != nullptr;
 }
+
+
 bool Map::has_building(const coordinates<size_t> &coords) const {
     return has_building(coords.y, coords.x);
 }
+
 
 bool Map::add_building(std::shared_ptr<Building> building, size_t y, size_t x) {
     if (!has_building(y, x) && get_terrain(y, x)->can_build_on()) {
@@ -72,6 +77,8 @@ bool Map::add_building(std::shared_ptr<Building> building, size_t y, size_t x) {
 
     return false;
 }
+
+
 bool Map::add_building(std::shared_ptr<Building> building, const coordinates<size_t> &coords) {
     return add_building(building, coords.y, coords.x);
 }
@@ -92,6 +99,8 @@ bool Map::remove_building(const coordinates<size_t> &coords) {
 std::shared_ptr<Building> Map::get_building(size_t y, size_t x) {
     return all_buildings_(y, x);
 }
+
+
 std::shared_ptr<Building> Map::get_building(const coordinates<size_t> &coords) {
     return get_building(coords.y, coords.x);
 }
@@ -117,6 +126,8 @@ bool Map::has_healing_building(const coordinates<size_t>& coords) {
 bool Map::can_build_on(size_t y, size_t x) const {
     return all_terrains_(y, x)->can_build_on();
 }
+
+
 bool Map::can_build_on(const coordinates<size_t> &coords) const {
     return can_build_on(coords.y, coords.x);
 }
