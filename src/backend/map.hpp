@@ -31,7 +31,7 @@ class Map
         const std::shared_ptr< Terrain > swamp_ = std::shared_ptr< Terrain>( new Terrain('-', 3) );
         const std::shared_ptr< Terrain> window_ = std::make_shared<Terrain>('O', false, true, false, false);
 
-        std::unordered_map<char, std::shared_ptr< Terrain >> all_tile_types_ = { 
+        std::unordered_map<char, std::shared_ptr<Terrain> > all_tile_types_ = { 
             {'.', this->background_ }, 
             {'#', this->wall_ }, 
             {'-', this->swamp_ },
@@ -217,7 +217,6 @@ class Map
         std::vector< coordinates<size_t> > max_visible_locations( const coordinates<size_t>& location, const uint32_t visibility_range );
 
 
-        std::vector< coordinates<size_t> > tiles_unit_sees( const coordinates<size_t>& location, const uint32_t visibility_range );
 
         std::vector<coordinates<size_t>> get_aoe_affected_coords(const coordinates<size_t>& location, const uint32_t range);
 
@@ -231,6 +230,15 @@ class Map
          */
         std::vector< coordinates<size_t> > line_of_sight_check( const coordinates<size_t>& location, const uint32_t range, const std::function<bool(int64_t y, int64_t x)>& predicate);
         
+
+        /**
+         * @brief Used for the fog of war feature
+         * 
+         * @param location the units location
+         * @param visibility_range The distance to which the unit can see
+         * @return std::vector< coordinates<size_t> > the tiles that the unit sees
+         */
+        std::vector< coordinates<size_t> > tiles_unit_sees( const coordinates<size_t>& location, const uint32_t visibility_range );
 
         /**
          * @brief get all the possible tiles that the unit can move to from the current location
