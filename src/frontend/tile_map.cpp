@@ -10,13 +10,12 @@ Tile_Map::Tile_Map(std::shared_ptr<Game>& game, std::pair<float, float> x0y0, in
     game_ = game;
 }
 
-
+/*
 void Tile_Map::move(float x, float y) {
     x0y0_.first = x0y0_.first + x;
     x0y0_.second = x0y0_.second + y;
 }
 
-/*
 void Tile_Map::zoom(int z) {
     tileDim_ = tileDim_ + z;
 

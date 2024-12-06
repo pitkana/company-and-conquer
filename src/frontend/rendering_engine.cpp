@@ -52,12 +52,14 @@ void Rendering_Engine::key_inputs(Tile_Map& tile_map, float moveSpeed, float zoo
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
         r_map.move(0,moveSpeed);
     }
+/*
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F)) {
         r_map.zoom(1);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::G)) {
         r_map.zoom(-1);
     }
+*/
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)) {
         /*
         Map_Builder builder_ = Map_Builder{};
