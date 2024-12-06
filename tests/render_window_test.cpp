@@ -5,5 +5,14 @@
 void rendering_engine_test() {
     Renderer renderer(700,700);
     renderer.initialise_level(0);
+    Game& test_game = renderer.get_game();
+    Map& test_map = test_game.get_map();
+    Team team1;
+    Unit unit1("0");
+    team1.add_unit(unit1);
+    test_game.add_team(team1);
+    Team& t = test_game.get_teams()[0];
+    Unit* u = &t.get_units()[0];
+    test_map.add_unit(0,0,u);
     renderer.start();
 }

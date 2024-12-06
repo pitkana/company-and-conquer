@@ -17,6 +17,8 @@ Renderer::Renderer( size_t width, size_t height ) : width_(width), height_(heigh
     tile_map_ = std::make_shared<Tile_Map>( game_, 100 );
 
     r_map_ = std::make_shared<Render_Map>( tile_map_ );
+
+    r_units_ = std::make_shared<Render_Units>( tile_map_ );
 }
 
 
@@ -46,6 +48,7 @@ void Renderer::initialise_level( size_t level_idx )
     // add it into the renderable
     tile_map_->SetGame( game_ );
     r_map_->set_tile_map( tile_map_ );
+    r_units_->set_tile_map( tile_map_ );
 
 
 }
@@ -53,6 +56,10 @@ void Renderer::initialise_level( size_t level_idx )
 
 void Renderer::start()
 {
-    window_ = Rendering_Engine(game_, TEXTURE_PATH);
-    window_.render( width_, height_, *renderable_, *r_map_, *tile_map_, *this);
+    window_ = Rendering_Engine(game_, TEXTURE_PATH, UNITS_TEXTURE_PATH);
+    window_.render( width_, height_, *renderable_, *r_map_, *tile_map_, *r_units_, *this );
+}
+
+Game& Renderer::get_game() const {
+    return *game_;
 }

@@ -3,14 +3,17 @@
 
 
 
-Rendering_Engine::Rendering_Engine(std::shared_ptr<Game>& game, const std::string& texture_path) : game_(game), text_path_(texture_path) { }
+Rendering_Engine::Rendering_Engine(std::shared_ptr<Game>& game, const std::string& map_texture_path, const std::string& unit_texture_path) : game_(game), map_text_path_(map_texture_path), unit_text_path_(unit_texture_path) { }
 
 
 
-void Rendering_Engine::render(size_t window_width, size_t window_height, sf::RenderWindow& window, Render_Map& r_map, Tile_Map& tile_map, Renderer& renderer)
+void Rendering_Engine::render(size_t window_width, size_t window_height, sf::RenderWindow& window, Render_Map& r_map, Tile_Map& tile_map, Render_Units& r_units, Renderer& renderer)
 {
     
-    if (!r_map.load(text_path_)) {
+    if (!r_map.load(map_text_path_)) {
+        return;
+    }
+    if (!r_units.load(unit_text_path_)) {
         return;
     }
 
@@ -33,11 +36,19 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
 
         //Every render target needs to be updated after changes.
         r_map.update();
+        r_units.update();
         //Every render target will be drawn separately.
         window.draw(r_map); //Draw map.
+        window.draw(r_units);
         window.display();
     }
 }
+
+Game& Rendering_Engine::get_game() const {
+    return *game_;
+}
+
+
 /**
  * sf::Transformable apparently has a move method. Maybe we should use that.  
  */
@@ -77,7 +88,7 @@ void Rendering_Engine::key_inputs(Tile_Map& tile_map, float moveSpeed, float zoo
 
         renderer.initialise_level(1);
         // the below should be implemented in Renderer
-        if (!r_map.load(text_path_)) {
+        if (!r_map.load(map_text_path_)) {
             return;
         }
         
