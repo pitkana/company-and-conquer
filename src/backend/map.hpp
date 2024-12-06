@@ -31,7 +31,7 @@ class Map
         const std::shared_ptr< Terrain > swamp_ = std::shared_ptr< Terrain>( new Terrain('-', 3) );
         const std::shared_ptr< Terrain> window_ = std::make_shared<Terrain>('O', false, true, false, false);
 
-        std::unordered_map<char, std::shared_ptr< Terrain >> all_tile_types_ = { 
+        std::unordered_map<char, std::shared_ptr<Terrain> > all_tile_types_ = { 
             {'.', this->background_ }, 
             {'#', this->wall_ }, 
             {'-', this->swamp_ },
@@ -85,10 +85,16 @@ class Map
         Map( const size_t size );
 
         [[nodiscard]]
-        constexpr inline size_t width() const;
+        constexpr inline size_t width() const 
+        {
+            return all_terrains_.width();
+        }
 
         [[nodiscard]]
-        constexpr inline size_t height() const;
+        constexpr inline size_t height() const 
+        {
+            return all_terrains_.height();
+        }
 
         void update_terrain(char terrain, size_t y, size_t x);
 
@@ -113,17 +119,28 @@ class Map
         std::shared_ptr<Building> get_building(size_t y, size_t x);
         std::shared_ptr<Building> get_building(const coordinates<size_t>& coords);
 
+        bool has_weapon_building(size_t y, size_t x);
+        bool has_weapon_building(const coordinates<size_t>& coords);
+
+        bool has_healing_building(size_t y, size_t x);
+        bool has_healing_building(const coordinates<size_t>& coords);
+
         bool can_build_on(size_t y, size_t x) const;
         bool can_build_on(const coordinates<size_t>& coords) const;
 
         bool can_move_to_terrain(size_t y, size_t x) const;
         bool can_move_to_terrain(const coordinates<size_t>& coords) const;
 
+        bool can_move_to_coords(size_t y, size_t x) const;
+        bool can_move_to_coords(const coordinates<size_t> coords) const;
+
         bool has_unit(size_t y, size_t x) const;
         bool has_unit(const coordinates<size_t>& coords) const;
 
         Unit* get_unit(size_t y, size_t x);
         Unit* get_unit(const coordinates<size_t>& coords);
+
+        coordinates<size_t> get_unit_location(Unit* unit_ptr) const;
 
         bool add_unit(size_t y, size_t x, Unit* unit);
         bool add_unit(const coordinates<size_t>& coords, Unit* unit);
@@ -200,7 +217,6 @@ class Map
         std::vector< coordinates<size_t> > max_visible_locations( const coordinates<size_t>& location, const uint32_t visibility_range );
 
 
-        std::vector< coordinates<size_t> > tiles_unit_sees( const coordinates<size_t>& location, const uint32_t visibility_range );
 
         std::vector<coordinates<size_t>> get_aoe_affected_coords(const coordinates<size_t>& location, const uint32_t range);
 
@@ -216,6 +232,15 @@ class Map
         
 
         /**
+         * @brief Used for the fog of war feature
+         * 
+         * @param location the units location
+         * @param visibility_range The distance to which the unit can see
+         * @return std::vector< coordinates<size_t> > the tiles that the unit sees
+         */
+        std::vector< coordinates<size_t> > tiles_unit_sees( const coordinates<size_t>& location, const uint32_t visibility_range );
+
+        /**
          * @brief get all the possible tiles that the unit can move to from the current location
          * 
          * @param location Original the units current location
@@ -227,6 +252,10 @@ class Map
 
         // Breadth-first-search based algorithm on finding movement tiles
         std::vector< coordinates< size_t > > possible_tiles_to_move_to3( const coordinates<size_t>& location, uint8_t movement_range );
+
+        coordinates<size_t> get_closest_accessible_tile(const coordinates<size_t>& location);
+
+        coordinates<size_t> fastest_movement_to_target(const coordinates<size_t>& location, coordinates<size_t> target, uint8_t movement_range);
         
         void print_map() const;
 

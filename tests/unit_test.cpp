@@ -6,7 +6,6 @@
 #include "game.hpp"
 #include "action.hpp"
 #include "coordinates.hpp"
-#include "turn.hpp"
 #include <random>
 
 int unit_test() 
@@ -33,7 +32,7 @@ int unit_test()
         int damage = (std::rand() % 8) + 1;
         std::shared_ptr<Weapon> gun = std::make_shared<Weapon>("Rifle", accuracy, damage, 0);
         unit.add_item(std::static_pointer_cast<Item>(gun));
-        team1.enqueue_turn(Turn(unit, origin, dest, unit.get_inventory()[0]->get_action(target)));
+        team1.enqueue_action(unit.get_inventory()[0]->get_action(target, unit));
         // std::cout << std::holds_alternative<Action::CharacterAction>(unit.GetInventory()[0]->get_action(target)) << std::endl;
     }
 
