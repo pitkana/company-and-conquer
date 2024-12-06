@@ -4,8 +4,8 @@
 #include <memory>
 #include <utility>
 
-
 #include "game.hpp"
+#include "coordinates.hpp"
 
 
 /**
@@ -25,7 +25,7 @@ public:
      * @param x How much the x coordinate of a tile will be changed.
      * @param y How much the y coordinate of a tile will be changed.
      */
-    // void move(float x, float y);
+    void move(float x, float y);
     //TODO: this method needs to zoom in to center of the screen.
     //TODO: zoom needs to be capped.
     /**
@@ -43,17 +43,26 @@ public:
     }
     */
 
-   
+   void center_at(const coordinates<size_t>& coords, int window_width, int window_height); 
 
     /**
      * @brief Transforms matrix (indexes?) into pixels coordinates.
      * 
      */
     std::pair<int, int> get_tile_coords(int x, int y) const;
+    std::pair<int, int> get_tile_coords(const coordinates<size_t>& coords) const;
     /**
      * @brief Transfroms pixel coordinates into matrix (indexes?)
      */
-    std::pair<int,int> get_map_coords(int x, int y) const;
+    coordinates<size_t> get_map_coords(int pixel_x, int pixel_y) const;
+
+    bool is_inside_map_tile(int x, int y) const;
+
+    bool is_inside_map_tile(const coordinates<size_t>& coords) const;
+
+    bool is_inside_map_pixel(int pixel_x, int pixel_y) const;
+
+
     int GetTileDim() const;
     /**
      * @brief Gets the top-left pixel coordinates of the entire map.

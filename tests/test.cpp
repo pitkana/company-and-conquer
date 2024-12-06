@@ -3,7 +3,7 @@
 
 
 int main() {
-  render_map_test();
+  rendering_engine_test();
 
   return 0;
 

@@ -1,4 +1,4 @@
-#include "renderer.hpp""
+#include "renderer.hpp"
 
 //Use WASD to move map and FG to zoom in and out.
 //Clicking tile will print the coordinates of that tile.

@@ -38,9 +38,9 @@ void render_map_test() {
                 window.close();
             if (event.type == sf::Event::MouseButtonReleased) {
                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-                std::pair<int,int> matrix_pos = tile_map->get_map_coords(mousePos.x,mousePos.y);
-                std::cout << "Current pixel pos: [" << mousePos.x << "," << mousePos.y << "]" << std::endl;
-                std::cout << "Current tile pos: [" << matrix_pos.first << "," << matrix_pos.second << "]" << std::endl; 
+                //std::pair<int,int> matrix_pos = tile_map->get_map_coords(mousePos.x,mousePos.y);
+                //std::cout << "Current pixel pos: [" << mousePos.x << "," << mousePos.y << "]" << std::endl;
+                //std::cout << "Current tile pos: [" << matrix_pos.first << "," << matrix_pos.second << "]" << std::endl; 
             }
         }
 

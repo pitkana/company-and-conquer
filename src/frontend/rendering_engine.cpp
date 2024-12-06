@@ -29,28 +29,30 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
         
 
         window.clear(sf::Color::Black);
-        key_inputs(tile_map, 0.1, 1, r_map, renderer);
+        key_inputs(tile_map, 1, 1, r_map, renderer);
 
         //Every render target needs to be updated after changes.
-        //r_map.update();
+        r_map.update();
         //Every render target will be drawn separately.
         window.draw(r_map); //Draw map.
         window.display();
     }
 }
-
+/**
+ * sf::Transformable apparently has a move method. Maybe we should use that.  
+ */
 void Rendering_Engine::key_inputs(Tile_Map& tile_map, float moveSpeed, float zoom, Render_Map& r_map, Renderer& renderer) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-        r_map.move((-1)*moveSpeed,0);
+        tile_map.move((-1)*moveSpeed,0);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
-        r_map.move(0,(-1)*moveSpeed);
+        tile_map.move(0,(-1)*moveSpeed);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-        r_map.move(moveSpeed,0);
+        tile_map.move(moveSpeed,0);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
-        r_map.move(0,moveSpeed);
+        tile_map.move(0,moveSpeed);
     }
 /*
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F)) {
@@ -86,10 +88,24 @@ void Rendering_Engine::events(Tile_Map& tile_map, sf::RenderWindow& target, sf::
     // "close requested" event: we close the window
     if (event.type == sf::Event::Closed)
         target.close();
-    if (event.type == sf::Event::MouseButtonReleased) {
+    if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
         sf::Vector2i mousePos = sf::Mouse::getPosition(target);
-        std::pair<int,int> matrix_pos = tile_map.get_map_coords(mousePos.x,mousePos.y);
         std::cout << "Current pixel pos: [" << mousePos.x << "," << mousePos.y << "]" << std::endl;
-        std::cout << "Current tile pos: [" << matrix_pos.first << "," << matrix_pos.second << "]" << std::endl; 
+        if (tile_map.is_inside_map_pixel(mousePos.x,mousePos.y))
+        {
+            coordinates<size_t> matrix_pos = tile_map.get_map_coords(mousePos.x,mousePos.y);
+            std::pair<int,int> tile_pixel_pos = tile_map.get_tile_coords(matrix_pos);
+            std::cout << "Current tile pixel pos: [" << tile_pixel_pos.first << "," << tile_pixel_pos.second << "]" << std::endl;
+            std::cout << "Current tile coords:" << matrix_pos << std::endl;
+            std::cout << "Terrain: " << tile_map.GetMap().get_terrain(matrix_pos)->get_repr() << std::endl;
+        }
+    }
+    if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Right) {
+        sf::Vector2i mousePos = sf::Mouse::getPosition(target);
+        if (tile_map.is_inside_map_pixel(mousePos.x,mousePos.y))
+        {
+            coordinates<size_t> matrix_pos = tile_map.get_map_coords(mousePos.x,mousePos.y);
+            tile_map.center_at(matrix_pos,700,700);
+        }
     }
 }
