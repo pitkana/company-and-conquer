@@ -48,8 +48,6 @@ class Map
         //Raw pointer since the map doesn't have ownership of units
         Matrix< Unit* > all_units_;
         Matrix< std::shared_ptr< Building >> all_buildings_;
-
-
         
         // we define the directions from the Helper tools that we'll use in directions handling
         std::vector< Helper::Directions > directions_ = { 
@@ -141,6 +139,7 @@ class Map
         Unit* get_unit(const coordinates<size_t>& coords);
 
         coordinates<size_t> get_unit_location(Unit* unit_ptr) const;
+        coordinates<size_t> get_building_location(std::shared_ptr<Building> building_ptr) const;
 
         bool add_unit(size_t y, size_t x, Unit* unit);
         bool add_unit(const coordinates<size_t>& coords, Unit* unit);

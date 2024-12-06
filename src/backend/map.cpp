@@ -190,6 +190,21 @@ coordinates<size_t> Map::get_unit_location(Unit *unit_ptr) const {
     return {0, 0};
 }
 
+coordinates<size_t> Map::get_building_location(std::shared_ptr<Building> building_ptr) const {
+    assert(building_ptr != nullptr);
+
+    for (size_t y = 0; y < height(); ++y) {
+        for (size_t x = 0; x < width(); ++x) {
+            if (all_buildings_(y, x) == building_ptr) {
+                return {x, y};
+            }
+        }
+    }
+
+    assert(false && "The specified building does not exist in this map");
+    return {0, 0};
+}
+
 bool Map::remove_unit(size_t y, size_t x){
     if (has_unit(y, x)) {
         all_units_(y, x) = nullptr;
