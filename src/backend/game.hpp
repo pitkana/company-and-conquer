@@ -62,9 +62,9 @@ public:
      *
      * @param action The action to be added
      * @param team_id The team id that the action gets added to
-     * @return void
+     * @return True or false if adding action was succesful.
      */
-    void add_action(std::shared_ptr<Action> action, int team_id);
+    bool add_action(std::shared_ptr<Action> action, int team_id);
     
     //return all units as values in an unordered_map, keys being their team's id
     //pointers since you cant store references in map

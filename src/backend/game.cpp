@@ -82,15 +82,15 @@ std::unordered_map<int, std::vector<Unit>*> Game::get_units_map() {
     return units_map;
 }
 
-void Game::add_action(std::shared_ptr<Action> action, int team_id) {
+bool Game::add_action(std::shared_ptr<Action> action, int team_id) {
     Unit& executing_unit = action->get_unit();
 
     // Check if the unit has already performed this kind of action in this turn
     if (action->is_movement()) {
-        if (executing_unit.has_moved) return;
+        if (executing_unit.has_moved) return false;
         executing_unit.has_moved = true;
     } else {
-        if (executing_unit.has_added_action) return;
+        if (executing_unit.has_added_action) return false;
         executing_unit.has_added_action = true;
     }
 
@@ -100,6 +100,7 @@ void Game::add_action(std::shared_ptr<Action> action, int team_id) {
         execute_action(action);
     }
     team.enqueue_action(std::move(action));
+    return true;
 }
 
 
