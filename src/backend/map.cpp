@@ -352,6 +352,12 @@ std::vector<coordinates<size_t>> Map::get_aoe_affected_coords(const coordinates<
 
 std::vector< coordinates<size_t> > Map::line_of_sight_check( const coordinates<size_t>& location, const uint32_t range, const std::function<bool(int64_t y, int64_t x)>& predicate) {
     std::vector< coordinates<size_t> > max_range_coords = max_visible_locations( location, range );
+    std::vector< coordinates<size_t> > max_range_coords1 = max_visible_locations( location, range - 1 ); // used to fix the error where there would be left some holes in the circle
+
+    // add the smaller circle into the bigger one to fix the error, 
+    // the formula should've accounted for this but apparently it did not.
+    max_range_coords.insert( max_range_coords.end(), max_range_coords1.begin(), max_range_coords1.end() );
+
 
     // Set to avoid duplicate coordinates and size is small enough that insert time is okay
     std::set< coordinates<size_t> > visible_coords = { {location.x, location.y} }; // contains the starting location
