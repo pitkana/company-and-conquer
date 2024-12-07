@@ -116,6 +116,7 @@ class Map
 
         std::shared_ptr<Building> get_building(size_t y, size_t x);
         std::shared_ptr<Building> get_building(const coordinates<size_t>& coords);
+        std::vector<std::shared_ptr<Building>> get_all_buildings() const;
 
         bool has_weapon_building(size_t y, size_t x);
         bool has_weapon_building(const coordinates<size_t>& coords);

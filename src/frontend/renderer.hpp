@@ -11,6 +11,7 @@
 #include "map_builder.hpp"
 #include "rendering_engine.hpp"
 #include "render_units.hpp"
+#include "render_buildings.hpp"
 
 
 class Renderer
@@ -36,6 +37,7 @@ class Renderer
         std::shared_ptr<Tile_Map> tile_map_;
         std::shared_ptr<Render_Map> r_map_;
         std::shared_ptr<Render_Units> r_units_;
+        std::shared_ptr<Render_Buildings> r_buildings_;
         std::shared_ptr<sf::RenderWindow> renderable_; // contains the actual window into which we'll render stuff
 };
 

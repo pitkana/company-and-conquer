@@ -70,6 +70,7 @@ bool Map::has_building(const coordinates<size_t> &coords) const {
 
 
 bool Map::add_building(std::shared_ptr<Building> building, size_t y, size_t x) {
+    assert(building != nullptr);
     if (!has_building(y, x) && get_terrain(y, x)->can_build_on()) {
         all_buildings_(y, x) = building;
         return true;
@@ -103,6 +104,19 @@ std::shared_ptr<Building> Map::get_building(size_t y, size_t x) {
 
 std::shared_ptr<Building> Map::get_building(const coordinates<size_t> &coords) {
     return get_building(coords.y, coords.x);
+}
+
+std::vector<std::shared_ptr<Building>> Map::get_all_buildings() const {
+    std::vector<std::shared_ptr<Building>> out;
+    for (size_t y = 0; y < height(); ++y) {
+        for (size_t x = 0; x < width(); ++x) {
+            std::shared_ptr<Building> b_ptr = all_buildings_(y,x);
+            if (b_ptr != nullptr) {
+                out.push_back(b_ptr);
+            }
+        }
+    }
+    return out;
 }
 
 bool Map::has_weapon_building(size_t y, size_t x) {

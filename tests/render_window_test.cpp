@@ -14,5 +14,9 @@ void rendering_engine_test() {
     Team& t = test_game.get_teams()[0];
     Unit* u = &t.get_units()[0];
     test_map.add_unit(0,0,u);
+    std::shared_ptr<Building> tent = std::make_shared<MedicTent>();
+    std::shared_ptr<Building> turret = std::make_shared<Turret>();;
+    test_map.add_building(tent,2,2);
+    test_map.add_building(turret,2,1);
     renderer.start();
 }

@@ -9,6 +9,7 @@
 #include "tile_map.hpp"
 #include "render_map.hpp"
 #include "render_units.hpp"
+#include "render_buildings.hpp"
 
 
 
@@ -26,7 +27,7 @@ public:
      * @param game A pointer to the game object
      * @param texture_path A path to the texture file.
      */
-    Rendering_Engine(std::shared_ptr<Game>& game, const std::string& map_texture_path, const std::string& unit_texture_path);
+    Rendering_Engine(std::shared_ptr<Game>& game, const std::string& map_texture_path, const std::string& unit_texture_path, const std::string& buildings_texture_path);
 
     /**
      * @brief draws stuff to sfml window it.
@@ -34,7 +35,7 @@ public:
      * @param window_width The width of the sfml window in pixels.
      * @param window_height The height of the sfml window in pixels.
      */
-    void render(size_t window_width, size_t window_height, sf::RenderWindow& window, Render_Map& r_map, Tile_Map& tile_map, Render_Units& r_units, Renderer& renderer);
+    void render(size_t window_width, size_t window_height, sf::RenderWindow& window, Render_Map& r_map, Tile_Map& tile_map, Render_Units& r_units, Render_Buildings& r_buildings, Renderer& renderer);
 
     /**
      * @brief Used for updating the map, for example when we go to the next level
@@ -65,6 +66,7 @@ private:
     std::shared_ptr<Game> game_;
     std::string map_text_path_;
     std::string unit_text_path_;
+    std::string building_text_path_;
 };
 
 

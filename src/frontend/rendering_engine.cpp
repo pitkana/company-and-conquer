@@ -3,17 +3,19 @@
 
 
 
-Rendering_Engine::Rendering_Engine(std::shared_ptr<Game>& game, const std::string& map_texture_path, const std::string& unit_texture_path) : game_(game), map_text_path_(map_texture_path), unit_text_path_(unit_texture_path) { }
+Rendering_Engine::Rendering_Engine(std::shared_ptr<Game>& game, const std::string& map_texture_path, const std::string& unit_texture_path, const std::string& buildings_texture_path) : game_(game), map_text_path_(map_texture_path), unit_text_path_(unit_texture_path), building_text_path_(buildings_texture_path) { }
 
-
-
-void Rendering_Engine::render(size_t window_width, size_t window_height, sf::RenderWindow& window, Render_Map& r_map, Tile_Map& tile_map, Render_Units& r_units, Renderer& renderer)
+void Rendering_Engine::render(size_t window_width, size_t window_height, sf::RenderWindow& window, Render_Map& r_map, Tile_Map& tile_map, Render_Units& r_units, Render_Buildings& r_buildings, Renderer& renderer)
 {
     
     if (!r_map.load(map_text_path_)) {
         return;
     }
     if (!r_units.load(unit_text_path_)) {
+        return;
+    }
+
+    if (!r_buildings.load(building_text_path_)) {
         return;
     }
 
@@ -37,9 +39,11 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
         //Every render target needs to be updated after changes.
         r_map.update();
         r_units.update();
+        r_buildings.update();
         //Every render target will be drawn separately.
         window.draw(r_map); //Draw map.
         window.draw(r_units);
+        window.draw(r_buildings);
         window.display();
     }
 }
