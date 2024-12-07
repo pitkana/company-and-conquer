@@ -41,7 +41,9 @@ add_compile_definitions(TEXTURE_PATH="${TEXTURE_PATH}")
     # Units
 set(UNITS_TEXTURE_PATH ${CMAKE_SOURCE_DIR}/textures/units.png)
 add_compile_definitions(UNITS_TEXTURE_PATH="${UNITS_TEXTURE_PATH}")
-
+    # Buildings
+set(BUILDINGS_TEXTURE_PATH ${CMAKE_SOURCE_DIR}/textures/buildings.png)
+add_compile_definitions(BUILDINGS_TEXTURE_PATH="${BUILDINGS_TEXTURE_PATH}")
 
 # get a lot of warnings
 if(MSVC)

@@ -14,6 +14,8 @@ target_link_libraries(frontend PRIVATE sfml-system sfml-window sfml-graphics sfm
 
 target_include_directories(frontend PRIVATE ${SFML_SOURCE_DIR}/include)
 
+# For relative paths.
+    # Maps
 set(TESTMAP_PATH ${CMAKE_SOURCE_DIR}/tests/test_map.txt)
 add_compile_definitions(TESTMAP_PATH="${TESTMAP_PATH}")
 set(TESTMAP_PATH1 ${CMAKE_SOURCE_DIR}/tests/test_map1.txt)
@@ -23,3 +25,7 @@ add_compile_definitions(TEXTURE_PATH="${TEXTURE_PATH}")
     # Units
 set(UNITS_TEXTURE_PATH ${CMAKE_SOURCE_DIR}/textures/units.png)
 add_compile_definitions(UNITS_TEXTURE_PATH="${UNITS_TEXTURE_PATH}")
+    # Buildings
+set(BUILDINGS_TEXTURE_PATH ${CMAKE_SOURCE_DIR}/textures/buildings.png)
+add_compile_definitions(BUILDINGS_TEXTURE_PATH="${BUILDINGS_TEXTURE_PATH}")
+    
