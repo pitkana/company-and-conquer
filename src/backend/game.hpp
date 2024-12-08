@@ -21,6 +21,8 @@ public:
 
     Game(size_t map_height, size_t map_width) : map_(map_height, map_width) {}
 
+    Game(Map& map): map_(map) {}
+
     //Add team to teams_
     inline void add_team(Team team) {
         teams_.push_back(std::move(team));
