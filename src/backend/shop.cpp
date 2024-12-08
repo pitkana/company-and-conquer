@@ -8,15 +8,15 @@
 #include "shop.hpp"
 #include "name_gen.hpp"
 
-Shop::Shop(std::map<std::shared_ptr<Item>, int> catalogue, int team_size, int budget,
-    std::vector<std::shared_ptr<Item>> stockpile) : catalogue_(catalogue), budget_(budget), items_owned_(stockpile) {
+Shop::Shop(std::map<std::shared_ptr<const Item>, int> catalogue, int team_size, int budget,
+    std::vector<std::shared_ptr<const Item>> stockpile) : catalogue_(catalogue), budget_(budget), items_owned_(stockpile) {
     NameGen name_gen = NameGen();
     for (int i = 0; i < team_size; i++) {
          units_.push_back(Unit(name_gen.generate(name_lists.english, 2, 4)));
     }
 }
 
-bool Shop::buy_item(std::shared_ptr<Item> item) {
+bool Shop::buy_item(std::shared_ptr<const Item> item) {
     auto find_price = catalogue_.find(item);
     if (find_price == catalogue_.end())
     {
@@ -33,7 +33,7 @@ bool Shop::buy_item(std::shared_ptr<Item> item) {
     }
 }
 
-bool Shop::refund_item(std::shared_ptr<Item> item)
+bool Shop::refund_item(std::shared_ptr<const Item> item)
 {
     for (auto it_owned = items_owned_.begin(); it_owned != items_owned_.end(); it_owned++)
     {
@@ -56,7 +56,7 @@ bool Shop::refund_item(std::shared_ptr<Item> item)
     return false;
 }
 
-bool Shop::assign_to_unit(std::shared_ptr<Item> item, Unit* unit)
+bool Shop::assign_to_unit(std::shared_ptr<const Item> item, Unit* unit)
 {
     for (auto it = items_owned_.begin(); it != items_owned_.end(); it++)
     {
@@ -73,7 +73,7 @@ bool Shop::assign_to_unit(std::shared_ptr<Item> item, Unit* unit)
     return false;
 }
 
-bool Shop::retrieve_from_unit(std::shared_ptr<Item> item, Unit* unit)
+bool Shop::retrieve_from_unit(std::shared_ptr<const Item> item, Unit* unit)
 {
     if (unit->remove_item(item))
     {

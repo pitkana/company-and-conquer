@@ -12,7 +12,7 @@ int shop_test() {
     std::shared_ptr<Weapon> pistol = std::make_shared<Weapon>("Pistol", 60, 40, 10);
     std::shared_ptr<HealingItem> bandage = std::make_shared<HealingItem>("Bandage", 30, 0);
 
-    std::map<std::shared_ptr<Item>, int> catalogue{{std::static_pointer_cast<Item>(rifle), 100}, {std::static_pointer_cast<Item>(bandage), 50}, {std::static_pointer_cast<Item>(pistol), 75}};
+    std::map<std::shared_ptr<const Item>, int> catalogue{{std::static_pointer_cast<Item>(rifle), 100}, {std::static_pointer_cast<Item>(bandage), 50}, {std::static_pointer_cast<Item>(pistol), 75}};
 
     Shop shop = Shop(catalogue, 5, 600);
 

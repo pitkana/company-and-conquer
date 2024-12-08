@@ -68,3 +68,12 @@ cannot be undone since it's only executed when the whole turn ends). Works as ex
 **Test File:** shop_test.cpp
 
 **Results:** The Shop class works as expected. Items can be bought, assigned to Units, retrieved from Units, and refunded back to the Shop. The Shop class forms a team correctly when the form_team() method is called.
+
+## Test of loading scenarios
+
+**Involved Classes:** Scenario, ScenarioLoader, Game, Map, Team, Shop
+
+**Test File:** scenario_test.cpp
+
+**Results:** Loading scenarios from YAML files works as intended. Gives sensible error messages pertaining to which part
+of the YAML was invalid.
