@@ -25,15 +25,6 @@ Map::Map( const size_t size ) : all_terrains_(size), all_units_(size), all_build
     this->create_board();
 }
 
-constexpr inline size_t Map::width() const 
-{
-    return all_terrains_.width();
-}
-
-constexpr inline size_t Map::height() const 
-{
-    return all_terrains_.height();
-}
 
 void Map::update_terrain(char terrain, size_t y, size_t x)
 {
@@ -61,6 +52,8 @@ std::shared_ptr<Terrain> Map::get_terrain(size_t y, size_t x)
 {
     return all_terrains_(y, x);
 }
+
+
 std::shared_ptr<Terrain> Map::get_terrain(const coordinates<size_t>& coords) {
     return get_terrain(coords.y, coords.x);
 }
@@ -69,9 +62,12 @@ std::shared_ptr<Terrain> Map::get_terrain(const coordinates<size_t>& coords) {
 bool Map::has_building(size_t y, size_t x) const {
     return all_buildings_(y, x) != nullptr;
 }
+
+
 bool Map::has_building(const coordinates<size_t> &coords) const {
     return has_building(coords.y, coords.x);
 }
+
 
 bool Map::add_building(std::shared_ptr<Building> building, size_t y, size_t x) {
     if (!has_building(y, x) && get_terrain(y, x)->can_build_on()) {
@@ -81,6 +77,8 @@ bool Map::add_building(std::shared_ptr<Building> building, size_t y, size_t x) {
 
     return false;
 }
+
+
 bool Map::add_building(std::shared_ptr<Building> building, const coordinates<size_t> &coords) {
     return add_building(building, coords.y, coords.x);
 }
@@ -101,13 +99,35 @@ bool Map::remove_building(const coordinates<size_t> &coords) {
 std::shared_ptr<Building> Map::get_building(size_t y, size_t x) {
     return all_buildings_(y, x);
 }
+
+
 std::shared_ptr<Building> Map::get_building(const coordinates<size_t> &coords) {
     return get_building(coords.y, coords.x);
+}
+
+bool Map::has_weapon_building(size_t y, size_t x) {
+    const std::shared_ptr<Building>& building = get_building(y, x);
+    return building != nullptr && building->get_item()->is_weapon();
+}
+
+bool Map::has_weapon_building(const coordinates<size_t>& coords) {
+    return has_weapon_building(coords.y, coords.x);
+}
+
+bool Map::has_healing_building(size_t y, size_t x) {
+    const std::shared_ptr<Building>& building = get_building(y, x);
+    return building != nullptr && building->get_item()->is_healing_item();
+}
+
+bool Map::has_healing_building(const coordinates<size_t>& coords) {
+    return has_healing_building(coords.y, coords.x);
 }
 
 bool Map::can_build_on(size_t y, size_t x) const {
     return all_terrains_(y, x)->can_build_on();
 }
+
+
 bool Map::can_build_on(const coordinates<size_t> &coords) const {
     return can_build_on(coords.y, coords.x);
 }
@@ -117,6 +137,13 @@ bool Map::can_move_to_terrain(size_t y, size_t x) const {
 }
 bool Map::can_move_to_terrain(const coordinates<size_t> &coords) const {
     return can_move_to_terrain(coords.y, coords.x);
+}
+
+bool Map::can_move_to_coords(size_t y, size_t x) const {
+    return can_move_to_terrain(y, x) && !has_unit(y, x);
+}
+bool Map::can_move_to_coords(const coordinates<size_t> coords) const {
+    return can_move_to_coords(coords.y, coords.x);
 }
 
 bool Map::has_unit(size_t y, size_t x) const {
@@ -148,6 +175,20 @@ Unit* Map::get_unit(const coordinates<size_t>& coords) {
     return get_unit(coords.y, coords.x);
 }
 
+coordinates<size_t> Map::get_unit_location(Unit *unit_ptr) const {
+    assert(unit_ptr != nullptr);
+
+    for (size_t y = 0; y < height(); ++y) {
+        for (size_t x = 0; x < width(); ++x) {
+            if (all_units_(y, x) == unit_ptr) {
+                return {x, y};
+            }
+        }
+    }
+
+    assert(false && "The specified unit does not exist in this map");
+    return {0, 0};
+}
 
 bool Map::remove_unit(size_t y, size_t x){
     if (has_unit(y, x)) {
@@ -311,6 +352,12 @@ std::vector<coordinates<size_t>> Map::get_aoe_affected_coords(const coordinates<
 
 std::vector< coordinates<size_t> > Map::line_of_sight_check( const coordinates<size_t>& location, const uint32_t range, const std::function<bool(int64_t y, int64_t x)>& predicate) {
     std::vector< coordinates<size_t> > max_range_coords = max_visible_locations( location, range );
+    std::vector< coordinates<size_t> > max_range_coords1 = max_visible_locations( location, range - 1 ); // used to fix the error where there would be left some holes in the circle
+
+    // add the smaller circle into the bigger one to fix the error, 
+    // the formula should've accounted for this but apparently it did not.
+    max_range_coords.insert( max_range_coords.end(), max_range_coords1.begin(), max_range_coords1.end() );
+
 
     // Set to avoid duplicate coordinates and size is small enough that insert time is okay
     std::set< coordinates<size_t> > visible_coords = { {location.x, location.y} }; // contains the starting location
@@ -457,7 +504,7 @@ std::vector< coordinates<size_t> > Map::possible_tiles_to_move_to( const coordin
 
     auto Relax = [&vertex_attributes, this]( const a_vertex& curr, const coordinates<size_t>& a_neighbour, size_t weight ) -> void
     {
-        if ( ( curr.first + weight < vertex_attributes( a_neighbour.y, a_neighbour.x ).first ) && (this->all_terrains_[a_neighbour]->can_move_to()) ) {
+        if ( ( curr.first + weight < vertex_attributes( a_neighbour.y, a_neighbour.x ).first ) && (can_move_to_coords(a_neighbour)) ) {
             //vertex_attributes( a_neighbour.y, a_neighbour.x ) = { vertex_attributes( curr.y, curr.x ).first + weight, curr };
             vertex_attributes( a_neighbour.y, a_neighbour.x ).first = curr.first + weight;
             vertex_attributes( a_neighbour.y, a_neighbour.x ).second = curr.second;
@@ -557,7 +604,7 @@ std::vector< coordinates< size_t > > Map::possible_tiles_to_move_to3( const coor
                 // Get this neighbour's terrain, check if the neighbour was already visited or if you can move to it.
                 // If visited or can't move, skip it, otherwise visit it and mark it as visited
                 const std::shared_ptr<Terrain>& neighbour_terrain = all_terrains_[neighbour];
-                if (visited[neighbour.y * width() + neighbour.x]|| !neighbour_terrain->can_move_to()) continue;
+                if (visited[neighbour.y * width() + neighbour.x]|| !can_move_to_coords(neighbour)) continue;
                 visited[neighbour.y * width() + neighbour.x] = true;
 
                 // If it costs only 1 movement action to move into this tile, add it to the queue straight away.
@@ -588,6 +635,146 @@ std::vector< coordinates< size_t > > Map::possible_tiles_to_move_to3( const coor
     }
 
     return result;
+}
+
+coordinates<size_t> Map::get_closest_accessible_tile(const coordinates<size_t>& location) {
+    std::deque<coordinates<size_t>> q;
+    q.push_back(location);
+    std::vector<bool> visited(width() * height(), false);
+
+    while (!q.empty()) {
+        coordinates<size_t> current = q.front();
+        q.pop_front();
+
+        if (can_move_to_coords(current))
+            return current;
+
+        for (const coordinates<size_t>& neighbour : get_neighbouring_coordinates(current)) {
+            q.push_back(neighbour);
+        }
+
+    }
+
+    assert(false && "There is not a single tile on the map that you can move to");
+
+    return {0, 0};
+}
+
+coordinates<size_t> Map::fastest_movement_to_target(const coordinates<size_t>& location, coordinates<size_t> target, uint8_t movement_range) {
+    assert(can_move_to_terrain(target) && "Target coordinates cannot be moved to");
+    Timer timer;
+
+    // If there is somebody on the target tile, get closest other tile
+    if (has_unit(target)) {
+        target = get_closest_accessible_tile(target);
+    }
+
+    // this will contain the distance and predecessor of a vertex as: <distance, location of predecessor>
+    struct a_vertex
+    {
+        size_t first;
+        coordinates<size_t> second;
+
+        inline bool operator < ( const a_vertex& a ) const noexcept
+        {
+            return first < a.first;
+        }
+        inline bool operator > ( const a_vertex& a ) const noexcept
+        {
+            return first > a.first;
+        }
+    };
+    // cant use unordered_set with coordinates without making a hash function so I used a vector.
+    std::vector<bool> is_processed( width() * height(), false ); 
+
+    // this will contain the distance and predecessor of each vertex as: <distance, location of predecessor>
+    Matrix< a_vertex > vertex_attributes(height(), width(), { std::numeric_limits<size_t>::max(), coordinates<size_t>{0, 0} });
+    vertex_attributes( location.y, location.x ) = { 0, location };
+
+
+    auto Relax = [&vertex_attributes, this]( const a_vertex& curr, const coordinates<size_t>& a_neighbour, size_t weight ) -> void
+    {
+        if ( ( curr.first + weight < vertex_attributes( a_neighbour.y, a_neighbour.x ).first ) && (can_move_to_coords(a_neighbour)) ) {
+            //vertex_attributes( a_neighbour.y, a_neighbour.x ) = { vertex_attributes( curr.y, curr.x ).first + weight, curr };
+            vertex_attributes( a_neighbour.y, a_neighbour.x ).first = curr.first + weight;
+            vertex_attributes( a_neighbour.y, a_neighbour.x ).second = curr.second;
+        }
+    };
+
+    
+    a_vertex curr;
+    coordinates<size_t> aux; // well use this in the following loop
+
+    // very interesting template constructor for std::priority_queue, we need it to make it possible to use std::pair in it
+    // it basically orders the pairs by the first element into a min-heap
+    std::priority_queue< a_vertex, std::vector<a_vertex>, std::greater<a_vertex> > distances;
+    distances.push( vertex_attributes( location.y, location.x ) );
+
+    std::vector< coordinates<size_t> > tiles_that_are_close_enough;
+
+    while ( !(distances.empty()) ) {
+        curr = distances.top();
+        distances.pop();
+
+
+        // add the tile's coordinates into the return container only if their distance 
+        // is equal or less than the given <movement_range>
+        tiles_that_are_close_enough.emplace_back( curr.second.x, curr.second.y );
+        
+
+        // check if we've already computed the current vertex
+        if ( !(is_processed[ curr.second.y * width() + curr.second.x ]) ) {
+
+            // the tile is only connected to 4 other tiles in the main directions
+            for ( const coordinates<int32_t>& a_direction : directions_vectors_ ) {
+
+                // check if the direction is valid before doing the relaxation of path
+                // created this <valid_direction> method to not put all the if-statements into one clutter
+                if ( valid_direction( curr.second, a_direction ) ) {
+
+                    // for different directions we have a different increment in the indexing
+                    aux = curr.second + a_direction;
+
+                    // check if we've already processed the tile
+                    if ( !(is_processed[ aux.y * width() + aux.x ] )) {   
+                        Relax( curr, aux, all_terrains_( aux.y, aux.x )->movement_cost() );
+
+                        distances.emplace( vertex_attributes( aux.y, aux.x ).first, aux );
+                        if (target == aux) {
+                            std::vector<coordinates<size_t>> path;
+                            coordinates<size_t> current = aux;
+
+                            while (current != location) {
+                                path.push_back(current);
+                                current = vertex_attributes(current).second;
+                            }
+
+                            size_t i = path.size();
+                            int range_left = movement_range;
+                            while (i > 0) {
+                                i--;
+                                range_left -= all_terrains_(path[i])->movement_cost();
+
+                                // If no move range to move or this is the last coordinate in the path, return
+                                if (range_left <= 0 || i == 0) {
+                                    return path[i];
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+
+            is_processed[ curr.second.y * width() + curr.second.x ] = true;
+        }
+
+        
+    }
+
+    assert(false && "this probably shouldnt be reached ever");
+    return {0, 0};
+
 }
 
 

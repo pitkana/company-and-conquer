@@ -36,48 +36,53 @@ void building_test()
     Unit& unit2 = *team1.get_unit(2);
     Unit& unit3 = *team1.get_unit(3);
 
-    Turn u0_turn = Turn(unit0, {0, 0}, {1, 1}, unit0.get_inventory().front()->get_action({5, 5}));
-    Turn u1_turn = Turn(unit1, {0, 0}, {1, 1}, unit1.get_inventory().front()->get_action({5, 5}));
-    
-    Turn u2_turn = Turn(unit2, {0, 0}, {1, 1}, unit2.get_inventory().front()->get_action({4, 4}));
-    Turn u3_turn = Turn(unit3, {0, 0}, {1, 1}, unit3.get_inventory().front()->get_action({4, 4}));
+    game.get_map().add_unit(0, 0, &unit0);
+    game.get_map().add_unit(0, 1, &unit1);
+    game.get_map().add_unit(0, 2, &unit2);
+    game.get_map().add_unit(0, 3, &unit3);
 
-    Turn u4_turn = Turn(unit3, {0, 0}, {1, 1}, unit3.get_inventory().front()->get_action({4, 4}));
-    Turn u5_turn = Turn(unit2, {0, 0}, {1, 1}, unit2.get_inventory().front()->get_action({4, 4}));
-    Turn u6_turn = Turn(unit0, {0, 0}, {1, 1}, unit0.get_inventory().front()->get_action({5, 5}));
-    Turn u7_turn = Turn(unit1, {0, 0}, {1, 1}, unit1.get_inventory().front()->get_action({5, 5}));
-    Turn u8_turn = Turn(unit3, {0, 0}, {1, 1}, unit3.get_inventory().front()->get_action({5, 5}));
-    Turn u9_turn = Turn(unit2, {0, 0}, {1, 1}, unit2.get_inventory().front()->get_action({5, 5}));
-    Turn u10_turn = Turn(unit0, {0, 0}, {1, 1}, unit0.get_inventory().front()->get_action({4, 4}));
-    Turn u11_turn = Turn(unit1, {0, 0}, {1, 1}, unit1.get_inventory().front()->get_action({4, 4}));
+    std::shared_ptr<Action> u0_action = unit0.get_inventory().front()->get_action({5, 5}, unit0);
+    std::shared_ptr<Action> u1_action = unit1.get_inventory().front()->get_action({5, 5}, unit1);
+    
+    std::shared_ptr<Action> u2_action = unit2.get_inventory().front()->get_action({4, 4}, unit2);
+    std::shared_ptr<Action> u3_action = unit3.get_inventory().front()->get_action({4, 4}, unit3);
+
+    std::shared_ptr<Action> u4_action = unit3.get_inventory().front()->get_action({4, 4}, unit3);
+    std::shared_ptr<Action> u5_action = unit2.get_inventory().front()->get_action({4, 4}, unit2);
+    std::shared_ptr<Action> u6_action = unit0.get_inventory().front()->get_action({5, 5}, unit0);
+    std::shared_ptr<Action> u7_action = unit1.get_inventory().front()->get_action({5, 5}, unit1);
+    std::shared_ptr<Action> u8_action = unit3.get_inventory().front()->get_action({5, 5}, unit3);
+    std::shared_ptr<Action> u9_action = unit2.get_inventory().front()->get_action({5, 5}, unit2);
+    std::shared_ptr<Action> u10_action = unit0.get_inventory().front()->get_action({4, 4}, unit0);
+    std::shared_ptr<Action> u11_action = unit1.get_inventory().front()->get_action({4, 4}, unit1);
 
     std::cout << "Following 4 should work" << std::endl;
-    team1.enqueue_turn(u0_turn);
-    team1.enqueue_turn(u1_turn);
-    team1.enqueue_turn(u2_turn);
-    team1.enqueue_turn(u3_turn);
+    team1.enqueue_action(u0_action);
+    team1.enqueue_action(u1_action);
+    team1.enqueue_action(u2_action);
+    team1.enqueue_action(u3_action);
 
     game.end_team_turns(0);
 
     std::cout << "======= Following 4 should not work, since the part is alraedy in the building =======" << std::endl;
-    team1.enqueue_turn(u4_turn);
-    team1.enqueue_turn(u5_turn);
-    team1.enqueue_turn(u6_turn);
-    team1.enqueue_turn(u7_turn);
+    team1.enqueue_action(u4_action);
+    team1.enqueue_action(u5_action);
+    team1.enqueue_action(u6_action);
+    team1.enqueue_action(u7_action);
 
     game.end_team_turns(0);
 
     std::cout << "======= Following 4 should not work, since the part is for wrong building =======" << std::endl;
-    team1.enqueue_turn(u8_turn);
-    team1.enqueue_turn(u9_turn);
-    team1.enqueue_turn(u10_turn);
-    team1.enqueue_turn(u11_turn);
+    team1.enqueue_action(u8_action);
+    team1.enqueue_action(u9_action);
+    team1.enqueue_action(u10_action);
+    team1.enqueue_action(u11_action);
 
     game.end_team_turns(0);
 
     // Use the buildings
     std::cout << "Use the turret and medic tent" << std::endl;
-    team1.enqueue_turn(Turn(unit0, {0, 0}, {1, 1}, game.get_map().get_building(5, 5)->use_building({10, 10})));
-    team1.enqueue_turn(Turn(unit0, {0, 0}, {1, 1}, game.get_map().get_building(4, 4)->use_building({10, 10})));
+    team1.enqueue_action(game.get_map().get_building(5, 5)->use_building({10, 10}, unit0));
+    team1.enqueue_action(game.get_map().get_building(4, 4)->use_building({10, 10}, unit0));
     game.end_team_turns(0);
 }

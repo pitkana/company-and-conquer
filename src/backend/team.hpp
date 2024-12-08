@@ -2,10 +2,8 @@
 
 #include <vector>
 #include <deque>
-#include <optional>
 
 #include "action.hpp"
-#include "turn.hpp"
 #include "unit.hpp"
 
 class Team {
@@ -17,14 +15,14 @@ public:
     }
 
     // Add turn to be executed to the queue
-    void enqueue_turn(Turn turn);
+    void enqueue_action(std::shared_ptr<Action> action);
 
-    //remove last turn to be added and return it in optional
-    std::optional<Turn> undo_turn();
+    //remove last turn to be added and return, nullptr if queue was empty
+    std::shared_ptr<Action> undo_action();
 
-    //remove first turn to be added and return it in optional
+    //remove first turn to be added and return, nullptr if queue was empty
     [[nodiscard]]
-    std::optional<Turn> dequeue_turn();
+    std::shared_ptr<Action> dequeue_action();
 
     //add Unit to the team
     void add_unit(Unit unit);
@@ -53,7 +51,7 @@ public:
 
 private:
     std::vector<Unit> units_;
-    std::deque<Turn> turns_;
+    std::deque<std::shared_ptr<Action>> turns_;
     int team_id_;
 
     //gives team a unique id, incremented once for each team constructed

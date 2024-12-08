@@ -8,7 +8,6 @@
 #include "game.hpp"
 #include "action.hpp"
 #include "coordinates.hpp"
-#include "turn.hpp"
 
 void action_test() 
 {
@@ -50,7 +49,9 @@ void action_test()
         } else {
             unit.add_item(ConstItem::medic_tent_heal_item);
         }
-        game.add_turn(Turn(unit, locations[i++], dest, unit.get_inventory()[0]->get_action(target)), 0);
+        // game.add_turn(Turn(unit, locations[i++], dest, unit.get_inventory()[0]->get_action(target)), 0);
+        game.add_action(std::make_shared<MovementAction>(locations[i++], dest, unit), 0);
+        game.add_action(unit.get_inventory()[0]->get_action(target, unit), 0);
     } }
     std::cout << "\nLocations after moving" << std::endl;
     game.get_map().print_units();
@@ -58,8 +59,8 @@ void action_test()
     std::cout << "\nBuildings before undoing everything" << std::endl;
     game.get_map().print_buildings();
 
-    for (int i = 0; i < 10; i++) {
-        game.undo_turn(0);
+    for (int i = 0; i < 20; i++) {
+        game.undo_action(0);
     }
 
     std::cout << "\nBuildings after undoing everything" << std::endl;
@@ -72,8 +73,9 @@ void action_test()
     Unit jack = Unit("Jack");
     game.get_map().add_unit(5, 5, &jack);
     std::cout << "Jack's hp:" << jack.get_hp() << std::endl;
-    game.add_turn(Turn(*team1.get_unit(0), locations[0], {5, 5}, ConstItem::medic_tent_heal_item->get_action({5, 5})), 0);
-    game.undo_turn(0);
+    // game.add_turn(Turn(*team1.get_unit(0), locations[0], {5, 5}, ConstItem::medic_tent_heal_item->get_action({5, 5})), 0);
+    game.add_action(ConstItem::medic_tent_heal_item->get_action({5, 5}, *team1.get_unit(0)), 0);
+    game.undo_action(0);
     std::cout << "Jack's hp:" << jack.get_hp() << std::endl;
 
     }
@@ -103,7 +105,8 @@ void action_test()
         game.get_map().add_unit(10, i + 5, unit);
         aoe_test_units.push_back(unit);
     }
-    game.add_turn(Turn(*team1.get_unit(11), {5, 10}, {10, 7}, ConstItem::grenade->get_action({10, 10})), 1);
+    // game.add_turn(Turn(*team1.get_unit(11), {5, 10}, {10, 7}, ConstItem::grenade->get_action({10, 10})), 1);
+    game.add_action(ConstItem::grenade->get_action({10, 10}, *team1.get_unit(11)), 1);
 
     std::cout << "===== AoE test =====" << std::endl;
     std::cout << "Unit locations:" << std::endl;

@@ -16,18 +16,18 @@ const std::string& Item::get_description() const {
 
 
 // Weapon derived class
-std::shared_ptr<Action> Weapon::get_action(coordinates<size_t> target) const {
-    return std::static_pointer_cast<Action>(std::make_shared<WeaponAction>(*this, std::move(target)));
+std::shared_ptr<Action> Weapon::get_action(coordinates<size_t> target, Unit& executing_unit) const {
+    return std::static_pointer_cast<Action>(std::make_shared<WeaponAction>(*this, std::move(target), executing_unit));
 }
 
 // HealingItem derived class
-std::shared_ptr<Action> HealingItem::get_action(coordinates<size_t> target) const {
-    return std::static_pointer_cast<Action>(std::make_shared<HealingAction>(*this, std::move(target)));
+std::shared_ptr<Action> HealingItem::get_action(coordinates<size_t> target, Unit& executing_unit) const {
+    return std::static_pointer_cast<Action>(std::make_shared<HealingAction>(*this, std::move(target), executing_unit));
 }
 
 // BuildingPart derived class
-std::shared_ptr<Action> BuildingPart::get_action(coordinates<size_t> target) const {
-    return std::static_pointer_cast<Action>(std::make_shared<BuildingAction>(*this, std::move(target)));
+std::shared_ptr<Action> BuildingPart::get_action(coordinates<size_t> target, Unit& executing_unit) const {
+    return std::static_pointer_cast<Action>(std::make_shared<BuildingAction>(*this, std::move(target), executing_unit));
 }
 
 BuildingPartType BuildingPart::get_part_type() const {
