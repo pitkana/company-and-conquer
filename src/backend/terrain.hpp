@@ -40,8 +40,8 @@ class Terrain
         { 
             terrain_properties_[can_shoot_through_] = can_shoot;
             terrain_properties_[can_see_through_] = can_see;
-            terrain_properties_[can_walk_through] = can_walk;
-            terrain_properties_[can_build_in] = can_build;
+            terrain_properties_[can_walk_through_] = can_walk;
+            terrain_properties_[can_build_in_] = can_build;
             switch (repr) {
             case '#':
                 texture_idx_ = 1;
@@ -56,8 +56,8 @@ class Terrain
         { 
             terrain_properties_[can_shoot_through_] = can_shoot;
             terrain_properties_[can_see_through_] = can_see;
-            terrain_properties_[can_walk_through] = can_walk;
-            terrain_properties_[can_build_in] = can_build;
+            terrain_properties_[can_walk_through_] = can_walk;
+            terrain_properties_[can_build_in_] = can_build;
             switch (repr) {
             case '#':
                 texture_idx_ = 1;
