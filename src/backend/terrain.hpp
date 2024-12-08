@@ -58,7 +58,6 @@ class Terrain
             terrain_properties_[can_see_through_] = can_see;
             terrain_properties_[can_walk_through_] = can_walk;
             terrain_properties_[can_build_in_] = can_build;
-<<<<<<< HEAD
 
             switch (repr) {
             case '#':
@@ -69,18 +68,6 @@ class Terrain
                 break;
             }
         }
-=======
-            switch (repr) {
-            case '#':
-                texture_idx_ = 1;
-                break;
-            case '-':
-                texture_idx_ = 2;
-                break;
-            }
-        }
-
->>>>>>> c7af46ae40455f719fe73d5b2d14d61945444f6a
         Terrain( char repr, size_t movement_cost ) {
             character_repr_ = repr;
             movement_cost_ = movement_cost;
