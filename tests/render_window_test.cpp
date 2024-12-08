@@ -1,7 +1,10 @@
 #include "renderer.hpp"
 
-//Use WASD to move map and FG to zoom in and out.
+//Use WASD to move map.
 //Clicking tile will print the coordinates of that tile.
+//Left click unit to make that unit priority unit. After that you can move to another tile by pressing right click on that tile.
+//Press space to end turn.
+//Log messages will appear in terminal.
 void rendering_engine_test() {
     Renderer renderer(700,700);
     renderer.initialise_level(0);

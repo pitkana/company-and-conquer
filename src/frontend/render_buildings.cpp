@@ -32,24 +32,8 @@ void Render_Buildings::update() {
         draw_buildings();
     }
 }
-/*
-void Render_Units::draw_units() {
-    Game& game = tile_map_.GetGame();
-    Map& map = tile_map_.GetMap();
-    for (auto& team : game.get_teams()) {
-        for (auto& unit : team.get_units()) {
-            Unit* ptr = &unit;
-            coordinates<size_t> coords = map.get_unit_coords(&unit);
-            if (coords.x > -1 && coords.y > -1) {
-                std::pair<int,int> pixel_coords = tile_map_.get_tile_coords(coords.y,coords.x);
-                std::cout << "x0,y0: " << x0y0_.first << "," << x0y0_.second << std::endl;
-                std::cout << "Sprite center: " << pixel_coords.first + tileDim_ / 2 << "," << pixel_coords.second + tileDim_ / 2 << std::endl;
-                sf::Vector2i spr_coords = sf::Vector2i(x0y0_.first + coords.x*tileDim_ + tileDim_ / 2,x0y0_.second + coords.y*tileDim_ + tileDim_ / 2);
-            } //else { could do something here... }
-        }
-    }
-}
-*/
+
+
 void Render_Buildings::draw_buildings() {
     Map& map = tile_map_->GetMap();
     for (auto& building_spr : building_sprite_map_) {

@@ -9,8 +9,14 @@ public:
     Game_Manager(std::weak_ptr<Game> game) : game_(game) {}
 
     bool init_game() {
+        Game& game = *game_.lock();
+        game.get_output_stream() << "Initiating game\n";
         priority_team_ = next_team();
-        return priority_team_ == nullptr;
+        bool valid_team = priority_team_ != nullptr;
+        if (valid_team) {
+            game.get_output_stream() << "Team " << priority_team_->get_id() << " turn\n";
+        } 
+        return valid_team;
     }
 
     bool action_ontheway() const {
@@ -28,6 +34,8 @@ public:
         }
 
         Unit* unit_ptr = game_.lock()->get_map().get_unit(origin);
+
+        if (unit_ptr->is_dead()) return false;
 
         Unit* team_unit_ptr = priority_team_->get_unit(unit_ptr->get_id());
 
@@ -67,6 +75,8 @@ public:
     void next_turn() {
         game_.lock()->end_team_turns(priority_team_->get_id());
         priority_team_ = next_team();
+        if (priority_team_ == nullptr) return;
+        game_.lock()->get_output_stream() << "Team " << priority_team_->get_id() << " turn\n";
     }
 
 private:

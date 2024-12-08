@@ -152,3 +152,15 @@ const Map& Game::get_map() const {
     return map_;
 }
 
+std::string Game::get_output() const {
+    return std::string(output_.str());
+}
+
+std::stringstream& Game::get_output_stream() {
+    return output_;
+}
+
+void Game::clear_output() {
+    output_.str("");
+    output_.clear();
+}

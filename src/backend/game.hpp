@@ -88,9 +88,14 @@ public:
     Map& get_map();
     const Map& get_map() const;
 
+    std::string get_output() const;
+
+    std::stringstream& get_output_stream();
+
+    void clear_output();
+
 private:
     std::vector<Team> teams_;
     Map map_;
     std::stringstream output_;
-
 };

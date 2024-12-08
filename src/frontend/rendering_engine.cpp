@@ -51,6 +51,12 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
             r_aux_.hide_cursor_highlight();
         }
 
+        std::string output = game_->get_output();
+        if (output.size() > 0) {
+            std::cout << output << std::endl;
+            game_->clear_output();
+        }
+
         //Every render target needs to be updated after changes.
         r_map.update();
         r_units.update();
@@ -62,6 +68,8 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
         window.draw(r_buildings);
         window.draw(r_aux_);
         window.display();
+        //std::cout << game_->get_output() << std::endl;
+        //game_->clear_output();
     }
 }
 
