@@ -15,12 +15,14 @@ set(SOURCES ${SOURCES_C} ${SOURCES_CPP} ${SOURCES_H} ${SOURCES_HPP})
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
 # add the executable target
-add_executable(test)
+add_executable(test
+        scenario_test.cpp)
 
 target_sources(test PUBLIC ${SOURCES})
 target_include_directories(test PUBLIC .)
 target_include_directories(test PUBLIC ../src/)
 target_link_libraries(test PRIVATE sfml-graphics)
+target_link_libraries(test PRIVATE yaml-cpp::yaml-cpp)
 target_compile_features(test PRIVATE cxx_std_17)
 target_link_libraries(test PRIVATE backend)
 target_include_directories(test PRIVATE ../src/backend)

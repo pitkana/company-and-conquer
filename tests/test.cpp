@@ -1,6 +1,5 @@
-#include "vision_test.hpp"
-int main() {
-  vision_test();
+#include "scenario_test.hpp"
 
-  return 0;
+int main() {
+  scenario_test();
 }
