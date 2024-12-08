@@ -13,6 +13,7 @@ target_link_libraries(frontend PRIVATE backend)
 target_link_libraries(frontend PRIVATE sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
 
 target_include_directories(frontend PRIVATE ${SFML_SOURCE_DIR}/include)
+target_include_directories(frontend PRIVATE ${CMAKE_SOURCE_DIR}/libs/SFMLButton/include)
 
 set(TESTMAP_PATH ${CMAKE_SOURCE_DIR}/tests/test_map.txt)
 add_compile_definitions(TESTMAP_PATH="${TESTMAP_PATH}")

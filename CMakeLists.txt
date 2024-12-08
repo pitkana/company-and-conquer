@@ -19,6 +19,7 @@ FetchContent_MakeAvailable(SFML)
 
 add_subdirectory(src)
 add_subdirectory(tests)
+add_subdirectory(libs/SFMLButton)
 
 message(STATUS "BUILD directory is ${CMAKE_BINARY_DIR}")
 message(STATUS "SRC directory is ${CMAKE_SOURCE_DIR}")
