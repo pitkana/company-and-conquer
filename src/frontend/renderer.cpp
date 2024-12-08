@@ -21,6 +21,8 @@ Renderer::Renderer( size_t width, size_t height ) : width_(width), height_(heigh
     r_units_ = std::make_shared<Render_Units>( tile_map_ );
 
     r_buildings_ = std::make_shared<Render_Buildings>( tile_map_ );
+
+    r_aux_ = std::make_shared<Render_Aux>( tile_map_ ); 
 }
 
 
@@ -41,7 +43,7 @@ void Renderer::initialise_level( size_t level_idx )
     size_t test_map_width = terrain_vec[0].size();
 
     // create the new Game object with the new level
-    game_ = std::make_shared<Game>( test_map_height, test_map_width );
+    game_ = std::make_shared<Game>( test_map_width, test_map_height );
 
     // store the <terrain_vec> data into the new game object
     builder_.load(terrain_vec, game_->get_map());
@@ -52,14 +54,15 @@ void Renderer::initialise_level( size_t level_idx )
     r_map_->set_tile_map( tile_map_ );
     r_units_->set_tile_map( tile_map_ );
     r_buildings_->set_tile_map( tile_map_ );
+    r_aux_->set_tile_map( tile_map_ );
 
 }
 
 
 void Renderer::start()
 {
-    window_ = Rendering_Engine(game_, TEXTURE_PATH, UNITS_TEXTURE_PATH, BUILDINGS_TEXTURE_PATH);
-    window_.render( width_, height_, *renderable_, *r_map_, *tile_map_, *r_units_, *r_buildings_, *this );
+    window_ = Rendering_Engine(game_, TEXTURE_PATH, UNITS_TEXTURE_PATH, BUILDINGS_TEXTURE_PATH, AUX_TEXTURE_PATH);
+    window_.render( width_, height_, *renderable_, *r_map_, *tile_map_, *r_units_, *r_buildings_, *r_aux_, *this );
 }
 
 Game& Renderer::get_game() const {

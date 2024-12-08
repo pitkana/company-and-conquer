@@ -6,6 +6,7 @@
 #include <vector>
 #include <unordered_map>
 #include <string>
+#include <sstream>
 
 #include "map.hpp"
 #include "team.hpp"
@@ -90,5 +91,6 @@ public:
 private:
     std::vector<Team> teams_;
     Map map_;
+    std::stringstream output_;
 
 };

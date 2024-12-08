@@ -38,6 +38,7 @@ class Renderer
         std::shared_ptr<Render_Map> r_map_;
         std::shared_ptr<Render_Units> r_units_;
         std::shared_ptr<Render_Buildings> r_buildings_;
+        std::shared_ptr<Render_Aux> r_aux_;
         std::shared_ptr<sf::RenderWindow> renderable_; // contains the actual window into which we'll render stuff
 };
 

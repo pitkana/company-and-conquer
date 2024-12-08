@@ -17,6 +17,8 @@ bool Render_Aux::load(const std::string& aux_texture_path) {
     highlight_cursor_.setOrigin(x0y0_.first,x0y0_.second);
     highlight_cursor_.setTexture(highlight_text);
     highlight_cursor_.scale(scale,scale);
+    hide_cursor_highlight();
+    hide_unit_highlight();
     return true;
 }
 
@@ -49,7 +51,7 @@ void Render_Aux::draw_highlight(const coordinates<size_t>& coords, sf::Sprite& h
     highlight_sprite.setTextureRect(sf::IntRect(highlight_text.getSize().y*texture_idx,0,highlight_text.getSize().y,highlight_text.getSize().y));
     switch (texture_idx) {
     case 1:
-        highlight_sprite.setPosition(x0y0_.first+coords.x*tileDim_-tileDim_/2,x0y0_.second+coords.y*tileDim_-tileDim_/2);
+        highlight_sprite.setPosition(x0y0_.first+coords.x*tileDim_,x0y0_.second+coords.y*tileDim_-tileDim_/2);
         break;
     case 2:
         highlight_sprite.setPosition(x0y0_.first+coords.x*tileDim_,x0y0_.second+coords.y*tileDim_);
