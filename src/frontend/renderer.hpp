@@ -19,6 +19,13 @@ class Renderer
 
         void initialise_level( size_t level_idx);
 
+        inline size_t width() const {
+            return width_;
+        }
+
+        inline size_t height() const {
+            return height_;
+        }
 
         void start();
 

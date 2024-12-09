@@ -81,4 +81,17 @@ void Button::setLabelColor(sf::Color color, sf::Color hover, sf::Color press)
     this->labelColorSet.press = press;
 }
 
+
+void Button::set_activation_function(std::function<void (const std::shared_ptr<Game>&, size_t, size_t)> func) {
+    activation_function = func;
+}
+
+bool Button::activate(const std::shared_ptr<Game>& game, size_t y, size_t x) {
+    if (!activation_function)
+        return false;
+
+    activation_function(game, y, x);
+    return true;
+}
+
 unsigned int Button::count = 0;

@@ -3,6 +3,7 @@
 
 #include <memory>
 
+#include "GUI.hpp"
 #include "game.hpp"
 #include "string"
 #include "map.hpp"
@@ -51,13 +52,19 @@ private:
      * @param moveSpeed Determines how much the tiles will be moved.
      * @param zoom How fast the zoom will be.
      */
-    void key_inputs(Tile_Map& tile_map, float moveSpeed, float zoom, Render_Map& r_map, Renderer& renderer);
+    void key_inputs(Render_Map& r_map, Renderer& renderer);
     /**
      * @brief Events are also handled with bunch of if statements in sfml.
      */
-    void events(Tile_Map& tile_map, sf::RenderWindow& target, sf::Event event);
+    void events(const Render_Map& render_map, sf::RenderWindow& target, sf::Event event);
     std::shared_ptr<Game> game_;
     std::string text_path_;
+
+    GUI gui_;
+
+
+    static inline const float move_speed = 5;
+    static inline const float zoom_speed = 1;
 };
 
 

@@ -118,7 +118,7 @@ void RectButton::getButtonStatus(sf::RenderWindow& window, sf::Event& event)
 
 ////////////////////////////////////////////////////////////
 
-void RectButton::draw(sf::RenderWindow& window)
+void RectButton::draw(sf::RenderTarget& window) const
 {
     window.draw(button);
 

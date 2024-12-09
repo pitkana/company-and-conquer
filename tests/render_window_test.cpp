@@ -1,4 +1,3 @@
-#include "rendering_engine_test.hpp"
 #include "rendering_engine.hpp"
 #include "map_builder.hpp"
 #include "game.hpp"
@@ -10,9 +9,9 @@ void rendering_engine_test() {
     std::vector<std::vector<char>> terrain_vec = builder.read_map_file(TESTMAP_PATH);
     size_t test_map_height = terrain_vec.size();
     size_t test_map_width = terrain_vec[0].size();
-    Game g(test_map_height,test_map_width);
-    Game* game = &g;
+    std::shared_ptr<Game> game = std::make_shared<Game>(test_map_height,test_map_width);
     builder.load(terrain_vec,game->get_map());
     Rendering_Engine wind(game,TEXTURE_PATH);
+
     wind.spawn_window(700,500);
 }

@@ -49,7 +49,7 @@ class EllipseButton: public Button
         ~EllipseButton();
 
         void getButtonStatus(sf::RenderWindow& window, sf::Event& event);
-        void draw(sf::RenderWindow& window);
+        void draw(sf::RenderTarget& window) const;
         void setButtonLabel(float charSize, std::string label);
         void setButtonLabel(float charSize);
 

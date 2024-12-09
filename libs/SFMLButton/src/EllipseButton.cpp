@@ -110,7 +110,7 @@ void EllipseButton::getButtonStatus(sf::RenderWindow& window, sf::Event& event)
 
 ////////////////////////////////////////////////////////////
 
-void EllipseButton::draw(sf::RenderWindow& window)
+void EllipseButton::draw(sf::RenderTarget& window) const
 {
     window.draw(button);
 

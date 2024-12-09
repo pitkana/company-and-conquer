@@ -34,7 +34,9 @@ public:
 
     void move(float x, float y);
 
-    void zoom(int z);
+    void zoom(int z, size_t window_width, size_t window_height);
+
+    std::pair<int, int> get_map_coords(int x, int y) const;
 
     /**
      * @brief Check if changes were made to Tile_Map objects tileDim or x0y0. If yes then update vertex positions.

@@ -50,7 +50,6 @@ void Renderer::initialise_level( size_t level_idx )
 
 }
 
-
 void Renderer::start()
 {
     window_ = Rendering_Engine(game_, TEXTURE_PATH);

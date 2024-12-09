@@ -31,13 +31,18 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <functional>
+#include <memory>
 
 ////////////////////////////////////////////////////////////
 
-const sf::Color defaultColor = sf::Color(255,255,255);
+const sf::Color defaultColor = sf::Color(255,255,255, 0);
 const sf::Color defaultHover = sf::Color(191, 191, 191);
 const sf::Color defaultPress = sf::Color(153, 153, 153);
 const sf::Color disabled = sf::Color(60,60,60);
+
+
+class Game;
 
 struct ColorSet
 {
@@ -72,7 +77,7 @@ class Button
     public:
 
         virtual void getButtonStatus(sf::RenderWindow& window, sf::Event& event) = 0;
-        virtual void draw(sf::RenderWindow& window) = 0;
+        virtual void draw(sf::RenderTarget& window) const = 0;
         virtual void setButtonLabel(float charsize, std::string label) = 0;
         virtual void setButtonLabel(float charsize) = 0;
         virtual void setButtonFont(sf::Font& font);
@@ -80,6 +85,9 @@ class Button
         void setButtonColor(sf::Color color, sf::Color hover, sf::Color press);
         void setLabelColor(sf::Color color);
         void setLabelColor(sf::Color color, sf::Color hover, sf::Color press);
+
+        void set_activation_function(std::function<void(const std::shared_ptr<Game>&, size_t, size_t)>);
+        bool activate(const std::shared_ptr<Game>& game, size_t y, size_t x);
 
         bool isHover = false;
         bool isPressed = false;
@@ -100,6 +108,10 @@ class Button
         std::string label;
         ColorSet buttonColorSet;
         ColorSet labelColorSet = ColorSet(sf::Color::Black) ;
+
+        std::function<void(const std::shared_ptr<Game>&, size_t, size_t)> activation_function;
+
+
 
     //end of protected
 };
