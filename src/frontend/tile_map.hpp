@@ -16,9 +16,11 @@ public:
     Tile_Map(std::shared_ptr<Game>& game, int tileDim);
     Tile_Map(std::shared_ptr<Game>& game, std::pair<float, float> x0y0, int tileDim);
 
+    bool is_tile_drawn(size_t x, size_t y) const;
+
+    const bool fog_of_war = true;
 
     //TODO: Movement needs to be capped.
-    
     /**
      * @brief Moves all tiles.
      * 

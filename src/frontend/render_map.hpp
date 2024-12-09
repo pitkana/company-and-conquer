@@ -41,6 +41,8 @@ public:
      */
     void update();
 
+    void update_textures();
+
     std::weak_ptr<Tile_Map> get_tile_map();
     void set_tile_map(std::shared_ptr<Tile_Map>& tile_map);
 

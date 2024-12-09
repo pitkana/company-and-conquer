@@ -323,8 +323,6 @@ std::vector< std::shared_ptr<Terrain> > Map::get_neighbors( const coordinates<si
 }
 
 
-
-
 std::vector< coordinates<size_t> > Map::max_visible_locations( const coordinates<size_t> location, const uint32_t visibility_range )
 {
     // use the andres algorithm for creating the circle of the maximum distance the 

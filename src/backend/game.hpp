@@ -66,11 +66,16 @@ public:
      * @brief Used map_ to calculate all visible coords for the active team.
      * This method will be used by rendering classes.
      * 
-     * @param team Active team.
-     * 
      * @returns Visibles coords in a vector.
      */
-    std::vector<coordinates<size_t>> get_visible_tiles(const Team& team);
+    std::vector<coordinates<size_t>> get_visible_tiles() const;
+
+    /**
+     * @brief Used map_ to calculate all visible coords for the active team.
+     * This method will be called on on the start of the game, after turn changes
+     * and after movement_action is executed.
+     */
+    void update_visible_tiles();
     /**
      * @brief Adds an action to specific team's action queue
      *
@@ -133,6 +138,7 @@ private:
     Map map_;
     std::stringstream output_;
     int active_team_idx_ = -1;
+    std::vector<coordinates<size_t>> visible_coords;
 
     /**
      * @returns Increments active_team_it_. If end then jump to begin.

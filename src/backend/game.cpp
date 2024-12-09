@@ -82,17 +82,21 @@ std::unordered_map<int, std::vector<Unit>*> Game::get_units_map() {
     return units_map;
 }
 
-std::vector<coordinates<size_t>> Game::get_visible_tiles(const Team& team) {
-    const std::vector<Unit>& active_units = team.get_units();
+void Game::update_visible_tiles() {
+    std::vector<Unit>& active_units = teams_[active_team_idx_].get_units();
     std::vector<coordinates<size_t>> visible_coords_vec;
-    for (auto unit : active_units) {
+    for (auto& unit : active_units) {
         coordinates<size_t> unit_location = map_.get_unit_location(&unit);
         std::vector<coordinates<size_t>> visible_coords_unit = map_.max_visible_locations(unit_location,5);
         visible_coords_vec.insert(visible_coords_vec.end(),visible_coords_unit.begin(),visible_coords_unit.end());
     }
     std::sort(visible_coords_vec.begin(),visible_coords_vec.end());
     std::unique(visible_coords_vec.begin(),visible_coords_vec.end());
-    return visible_coords_vec;
+    visible_coords = visible_coords_vec;
+}
+
+std::vector<coordinates<size_t>> Game::get_visible_tiles() const {
+    return visible_coords;
 }
 
 bool Game::add_action(std::shared_ptr<Action> action, int team_id) {
@@ -113,6 +117,7 @@ bool Game::add_action(std::shared_ptr<Action> action, int team_id) {
         execute_action(action);
     }
     team.enqueue_action(std::move(action));
+    update_visible_tiles();
     return true;
 }
 
@@ -139,7 +144,7 @@ void Game::undo_action(int team_id) {
     } else {
         executing_unit.has_added_action = false;
     }
-
+    update_visible_tiles();
     action->undo(*this);
 }
 
@@ -181,6 +186,7 @@ void Game::clear_output() {
 bool Game::init_game() {
     output_ << "Initiating game\n";
     next_team();
+    update_visible_tiles();
     bool valid_team = active_team_idx_ != -1;
     if (valid_team) output_ << "Team " << teams_[active_team_idx_].get_id() << " turn\n";
     return valid_team;
@@ -194,6 +200,7 @@ void Game::next_turn() {
     next_team();
     if (active_team_idx_ == -1) return;
     output_ << "Team " << teams_[active_team_idx_].get_id() << " turn\n";
+    update_visible_tiles();
 }
 
 void Game::next_team() {

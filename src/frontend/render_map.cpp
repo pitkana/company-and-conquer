@@ -25,7 +25,7 @@ void Render_Map::draw_map() {
     float y0 = x0y0_.second;
     for (int i = 0; i <  mapWidth; i++) {
         for (int j = 0; j < mapHeight; j++) {
-            int32_t tile = map.get_terrain(j,i)->texture();
+            int32_t tile = (tile_map_->is_tile_drawn(i,j)) ? map.get_terrain(j,i)->texture() + 1 : 0;
             int tu = tile % (g_texture.getSize().x / g_texture.getSize().y);
             int tv = tile / (g_texture.getSize().x / g_texture.getSize().y);
             int tile_idx = (i*mapHeight+j)*4;
@@ -79,8 +79,8 @@ void Render_Map::update() {
     if (x0y0_.first != map_x0y0.first || x0y0_.second != map_x0y0.second || tileDim_ != map_tile_dim) {
         x0y0_ = map_x0y0;
         tileDim_ = map_tile_dim;
-        draw_map();
     }
+    draw_map();
 }
 
 std::weak_ptr<Tile_Map> Render_Map::get_tile_map()
