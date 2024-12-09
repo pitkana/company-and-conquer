@@ -4,104 +4,76 @@
 #include "game.hpp"
 #include "action.hpp"
 
+/**
+ * @brief Used through the UI to manage turns in Game class.
+ */
 class Game_Manager {
 public:
-    Game_Manager(std::weak_ptr<Game> game) : game_(game) {}
+    Game_Manager(std::weak_ptr<Game> game);
 
-    bool init_game() {
-        Game& game = *game_.lock();
-        game.get_output_stream() << "Initiating game\n";
-        priority_team_ = next_team();
-        bool valid_team = priority_team_ != nullptr;
-        if (valid_team) {
-            game.get_output_stream() << "Team " << priority_team_->get_id() << " turn\n";
-        } 
-        return valid_team;
-    }
+    /**
+     * @brief Initiates the first turn.
+     * 
+     * @returns True if successful. False if game_ does not contain teams.
+     */
+    bool init_game();
 
-    bool action_ontheway() const {
-        return action_origin.x != invalid_coord.x && action_origin.y != invalid_coord.y && priority_unit_ != nullptr;
-    }
+    /**
+     * @returns True if action is queued.
+     */
+    bool action_ontheway() const;
 
-    void terminate_action() {
-        action_origin = invalid_coord;
-        priority_unit_ = nullptr;
-    }
+    /**
+     * @brief Clears current action.
+     */
+    void terminate_action();
 
-    bool init_priority(coordinates<size_t> origin) {
-        if (!game_.lock()->get_map().has_unit(origin) || priority_team_ == nullptr) {
-            return false;
-        }
+    /**
+     * @brief Initiates priority for unit located in origin.
+     * 
+     * @returns True if successful. False if origin does not have an unit or the unit is dead or if the unit is not in priority team.
+     */
+    bool init_priority(const coordinates<size_t>& origin);
 
-        Unit* unit_ptr = game_.lock()->get_map().get_unit(origin);
+    const coordinates<size_t>& get_priority_coords() const;
 
-        if (unit_ptr->is_dead()) return false;
+    /**
+     * @returns Pointer to the team whose turn is it. Nullptr if init_game has not been called successfully.
+     */
+    Team* get_priority_team() const;
 
-        Unit* team_unit_ptr = priority_team_->get_unit(unit_ptr->get_id());
+    /**
+     * @brief Enqueues movement action for priority_unit_ from action_origin_ to target.
+     * 
+     * @returns bool based on the fact if enqueing was succesful.
+     */
+    bool enqueue_movement_action(coordinates<size_t> target);
 
-        if (unit_ptr == team_unit_ptr) {
-            action_origin = origin;
-            priority_unit_ = unit_ptr;
-            return true;
-        }
+    /**
+     * @brief Enqueues item action for priority_unit_ from action_origin_ to target.
+     * 
+     * @returns bool based on the fact if enqueing was succesful.
+     */
+    bool enqueue_item_action(coordinates<size_t> target);
 
-        return false;
-    }
-
-    coordinates<size_t> get_priority_coords() const { return action_origin; }
-
-    Team* get_priority_team() const { return priority_team_; }
-
-    bool enqueue_movement_action(coordinates<size_t> target) {
-        if (action_ontheway()) {
-            std::shared_ptr<MovementAction> next_action = std::make_shared<MovementAction>(action_origin,target,*priority_unit_);
-            if (!(game_.lock()->add_action(next_action,priority_team_->get_id()))) return false;
-            terminate_action();
-            return true;
-        }
-        return false;
-    }
-
-    bool enqueue_item_action(coordinates<size_t> target) {
-        if (action_ontheway() && priority_unit_->get_weapons().size() > 0) {
-            std::shared_ptr<WeaponAction> next_action = std::make_shared<WeaponAction>(*priority_unit_->get_weapons()[0],target,*priority_unit_);
-            if (!(game_.lock()->add_action(next_action,priority_team_->get_id()))) return false;
-            terminate_action();
-            return true;
-        }
-        return false;
-    }
-
-    void next_turn() {
-        game_.lock()->end_team_turns(priority_team_->get_id());
-        priority_team_ = next_team();
-        if (priority_team_ == nullptr) return;
-        game_.lock()->get_output_stream() << "Team " << priority_team_->get_id() << " turn\n";
-    }
+    /**
+     * @brief Ends turn, executes all action and gives the turn to the next team.
+     */
+    void next_turn();
 
 private:
     std::weak_ptr<Game> game_;
     const coordinates<size_t> invalid_coord = coordinates<size_t>(-1,-1);
     coordinates<size_t> action_origin = invalid_coord;
-    Unit* priority_unit_ = nullptr;
-    Team* priority_team_ = nullptr;
+    Unit* priority_unit_ = nullptr; //Potential action source.
+    Team* priority_team_ = nullptr; //Turn (holder?)
 
-    Team* next_team() const {
-        std::vector<Team>& teams = game_.lock()->get_teams(); 
-        if (!(teams.size() > 0)) return nullptr;
-        if (priority_team_ == nullptr) {
-            return &*teams.begin();
-        }
-        auto team_it = teams.begin();
-        while (team_it != teams.end() && team_it->get_id() != priority_team_->get_id()) { team_it++; }
-        if (team_it == teams.end()) return nullptr; //SHOULD NOT HAPPEN!!!!
-        team_it++;
-        if (team_it != teams.end()) {
-            return &*team_it;
-        } else {
-            return &*teams.begin();
-        }
-    }
+    /**
+     * @returns A pointer to the next team. Nullpointer if team vector is empty or game pointer has expired.
+     */
+    Team* next_team() const;
 };
 
 #endif
+
+
