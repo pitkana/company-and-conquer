@@ -21,7 +21,7 @@ add_executable(gui)
 
 target_sources(gui PUBLIC ${SOURCES})
 target_link_libraries(gui PUBLIC sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
-target_compile_features(gui PRIVATE cxx_std_17)
+target_compile_features(gui PRIVATE cxx_std_20)
 target_link_libraries(gui PRIVATE backend)
 target_include_directories(gui PRIVATE backend)
 set_target_properties(backend PROPERTIES LINKER_LANGUAGE CXX)

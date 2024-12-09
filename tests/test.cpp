@@ -1,7 +1,9 @@
-#include "rendering_engine_test.hpp"
+#include "renderer.hpp"
 
 int main() {
-  rendering_engine_test();
+  Renderer renderer(1000, 1000);
+  renderer.initialise_level(0);
+  renderer.start();
 
 
   return 0;
