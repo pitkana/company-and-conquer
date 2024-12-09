@@ -96,7 +96,6 @@ void Game::update_visible_tiles() {
 }
 
 std::vector<coordinates<size_t>> Game::get_visible_tiles() {
-    update_visible_tiles();
     return visible_coords;
 }
 
