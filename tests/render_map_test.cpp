@@ -12,7 +12,7 @@ void render_map_test() {
     std::vector<std::vector<char>> terrain_vec = builder.read_map_file(TESTMAP_PATH);
     size_t height = terrain_vec.size();
     size_t width = terrain_vec[0].size();
-    std::shared_ptr<Game> game = std::make_shared<Game>(Game(height,width));
+    std::shared_ptr<Game> game = std::make_shared<Game>(Game(width,height));
     builder.load(terrain_vec,game->get_map());
     int window_width = 500;
     int window_height = 600;

@@ -82,6 +82,19 @@ std::unordered_map<int, std::vector<Unit>*> Game::get_units_map() {
     return units_map;
 }
 
+std::vector<coordinates<size_t>> Game::get_visible_tiles(const Team& team) {
+    const std::vector<Unit>& active_units = team.get_units();
+    std::vector<coordinates<size_t>> visible_coords_vec;
+    for (auto unit : active_units) {
+        coordinates<size_t> unit_location = map_.get_unit_location(&unit);
+        std::vector<coordinates<size_t>> visible_coords_unit = map_.max_visible_locations(unit_location,5);
+        visible_coords_vec.insert(visible_coords_vec.end(),visible_coords_unit.begin(),visible_coords_unit.end());
+    }
+    std::sort(visible_coords_vec.begin(),visible_coords_vec.end());
+    std::unique(visible_coords_vec.begin(),visible_coords_vec.end());
+    return visible_coords_vec;
+}
+
 bool Game::add_action(std::shared_ptr<Action> action, int team_id) {
     Unit& executing_unit = action->get_unit();
 
@@ -163,4 +176,39 @@ std::stringstream& Game::get_output_stream() {
 void Game::clear_output() {
     output_.str("");
     output_.clear();
+}
+
+bool Game::init_game() {
+    output_ << "Initiating game\n";
+    next_team();
+    bool valid_team = active_team_idx_ != -1;
+    if (valid_team) output_ << "Team " << teams_[active_team_idx_].get_id() << " turn\n";
+    return valid_team;
+}
+
+bool Game::game_started() const { return active_team_idx_ > -1; }
+
+void Game::next_turn() {
+    if (!game_started()) return; 
+    end_team_turns(teams_[active_team_idx_].get_id());
+    next_team();
+    if (active_team_idx_ == -1) return;
+    output_ << "Team " << teams_[active_team_idx_].get_id() << " turn\n";
+}
+
+void Game::next_team() {
+    if (teams_.size() < 1) return;
+
+    if (!game_started()) {
+        active_team_idx_ = 0;
+        return;
+    }
+
+    active_team_idx_++;
+    active_team_idx_ = (active_team_idx_ >= int(teams_.size())) ? 0 : active_team_idx_;
+    return;
+}
+
+Team* Game::get_active_team() {
+    return (game_started()) ? &teams_[active_team_idx_] : nullptr;
 }

@@ -7,6 +7,8 @@
 #include <unordered_map>
 #include <string>
 #include <sstream>
+#include <vector>
+#include <unordered_set>
 
 #include "map.hpp"
 #include "team.hpp"
@@ -61,6 +63,15 @@ public:
     coordinates<size_t> get_unit_location(int id);
 
     /**
+     * @brief Used map_ to calculate all visible coords for the active team.
+     * This method will be used by rendering classes.
+     * 
+     * @param team Active team.
+     * 
+     * @returns Visibles coords in a vector.
+     */
+    std::vector<coordinates<size_t>> get_visible_tiles(const Team& team);
+    /**
      * @brief Adds an action to specific team's action queue
      *
      * @param action The action to be added
@@ -96,8 +107,35 @@ public:
 
     void clear_output();
 
+    //Turn handlers.
+
+    /**
+     * @brief Initiates the first turn.
+     * 
+     * @returns True if successful. False if game_ does not contain teams.
+     */
+    bool init_game();
+
+    /**
+     * @returns True if init_game has been called succesfully.
+     */
+    bool game_started() const;
+
+    /**
+     * @brief Ends turn, executes all action and gives the turn to the next team.
+     */
+    void next_turn();
+
+    Team* get_active_team();
+
 private:
     std::vector<Team> teams_;
     Map map_;
     std::stringstream output_;
+    int active_team_idx_ = -1;
+
+    /**
+     * @returns Increments active_team_it_. If end then jump to begin.
+     */
+    void next_team();
 };

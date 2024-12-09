@@ -25,7 +25,9 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
 
     Game_Manager manager(tile_map.GetGame());
 
-    manager.init_game();
+    Game& game = *game_;
+
+    game.init_game();
 
     // run the program as long as the window is open
     while (window.isOpen())
@@ -164,7 +166,7 @@ void Rendering_Engine::events(Tile_Map& tile_map, sf::RenderWindow& target, sf::
         manager.terminate_action();
     }
     if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space) {
-        manager.next_turn();
+        game_->next_turn();
     }
     if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Z) {
         sf::Vector2i mousePos = sf::Mouse::getPosition(target);
