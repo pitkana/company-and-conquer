@@ -68,7 +68,7 @@ public:
      * 
      * @returns Visibles coords in a vector.
      */
-    std::vector<coordinates<size_t>> get_visible_tiles() const;
+    std::vector<coordinates<size_t>> get_visible_tiles();
 
     /**
      * @brief Used map_ to calculate all visible coords for the active team.

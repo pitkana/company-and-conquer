@@ -25,9 +25,7 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
 
     Game_Manager manager(tile_map.GetGame());
 
-    Game& game = *game_;
-
-    game.init_game();
+    game_->init_game();
 
     // run the program as long as the window is open
     while (window.isOpen())

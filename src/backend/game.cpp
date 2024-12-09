@@ -87,7 +87,7 @@ void Game::update_visible_tiles() {
     std::vector<coordinates<size_t>> visible_coords_vec;
     for (auto& unit : active_units) {
         coordinates<size_t> unit_location = map_.get_unit_location(&unit);
-        std::vector<coordinates<size_t>> visible_coords_unit = map_.max_visible_locations(unit_location,5);
+        std::vector<coordinates<size_t>> visible_coords_unit = map_.tiles_unit_sees(unit_location,5);
         visible_coords_vec.insert(visible_coords_vec.end(),visible_coords_unit.begin(),visible_coords_unit.end());
     }
     std::sort(visible_coords_vec.begin(),visible_coords_vec.end());
@@ -95,7 +95,8 @@ void Game::update_visible_tiles() {
     visible_coords = visible_coords_vec;
 }
 
-std::vector<coordinates<size_t>> Game::get_visible_tiles() const {
+std::vector<coordinates<size_t>> Game::get_visible_tiles() {
+    update_visible_tiles();
     return visible_coords;
 }
 

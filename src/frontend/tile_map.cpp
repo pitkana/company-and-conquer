@@ -11,9 +11,9 @@ Tile_Map::Tile_Map(std::shared_ptr<Game>& game, std::pair<float, float> x0y0, in
 }
 
 bool Tile_Map::is_tile_drawn(size_t x, size_t y) const {
-    coordinates<size_t> target(x,y);
+    coordinates<size_t> target(x, y);
     std::vector<coordinates<size_t>> visible_coords = game_->get_visible_tiles();
-    auto coord_it = std::find(visible_coords.begin(),visible_coords.end(),target);
+    auto coord_it = std::find(visible_coords.begin(), visible_coords.end(), target);
     return ((!fog_of_war) || (coord_it != visible_coords.end()));
 }
 
