@@ -40,7 +40,10 @@ void Renderer::initialise_level( size_t level_idx )
 
     // create the new Game object with the new level
     game_ = std::make_shared<Game>( test_map_height, test_map_width );
+    Unit* jack = new Unit("Jack");
 
+    jack->add_item(ConstItem::medic_tent_tent);
+    game_->get_map().add_unit(1, 1, jack);
     // store the <terrain_vec> data into the new game object
     builder_.load(terrain_vec, game_->get_map());
 

@@ -63,8 +63,8 @@ void Render_Map::zoom(int z, size_t window_width, size_t window_height)
 {
     tileDim_ += z;
 
-    if ( tileDim_ <= 0 ) {
-        tileDim_ = 0;
+    if ( tileDim_ <= 30 ) {
+        tileDim_ = 30;
     } else {
         // Move the map with the zoom so that the zoom is centered on the center of the screen, not at (0, 0)
         x0y0_.first = x0y0_.first + z * (x0y0_.first - window_width * 0.5f) / tileDim_;
@@ -76,9 +76,10 @@ void Render_Map::zoom(int z, size_t window_width, size_t window_height)
 
 std::pair<int,int> Render_Map::get_map_coords(int x, int y) const {
     std::pair<int,int> crds;
+    //
     // Take into account the movement of the map
-    crds.first = (x - x0y0_.first) / tileDim_;
-    crds.second = (y - x0y0_.second) / tileDim_;
+    crds.first = std::floor((x - x0y0_.first) / tileDim_);
+    crds.second = std::floor((y - x0y0_.second) / tileDim_);
     return crds;
 }
 

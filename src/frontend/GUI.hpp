@@ -6,6 +6,8 @@
 #include <SFML/Graphics.hpp>
 #include <../../libs/SFMLButton/include/sfmlbutton.hpp>
 
+#include "coordinates.hpp"
+
 
 
 struct RectButtonGroup {
@@ -15,6 +17,8 @@ struct RectButtonGroup {
 
 
 class Game;
+class Map;
+class Item;
 
 class GUI : public sf::Drawable {
 public:
@@ -24,14 +28,30 @@ public:
     void initialize();
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
-    void execute_button_actions(sf::RenderWindow& window, sf::Event& event, size_t map_y, size_t map_x);
+    void update();
+    void execute_button_actions(sf::RenderWindow& window, sf::Event& event);
 
+    void set_active_coords(size_t y, size_t x);
+
+private:
+    void initialize_main_buttons();
+    void initialize_inventory();
+    void initialize_movement();
+
+    void draw_button_group(sf::RenderTarget& target, const RectButtonGroup& group) const;
+
+    std::vector<RectButton*> get_all_buttons();
 
 private:
     std::shared_ptr<Game> game_;
+    Map* map_;
+
+    coordinates<size_t> active_coords;
+    std::shared_ptr<const Item> active_item;
 
     sf::Font font_;
 
-    RectButtonGroup always_active_buttons_;
+    RectButtonGroup main_buttons_;
     RectButtonGroup unit_buttons_;
+    RectButtonGroup inventory_buttons_;
 };

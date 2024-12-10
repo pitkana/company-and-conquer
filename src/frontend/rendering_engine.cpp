@@ -4,24 +4,20 @@
 
 
 Rendering_Engine::Rendering_Engine(std::shared_ptr<Game>& game, const std::string& texture_path) : 
-    game_(game), text_path_(texture_path), gui_(game) {
-    gui_.initialize();
-}
+    game_(game), text_path_(texture_path), gui_(game) {}
 
 
 
 void Rendering_Engine::render(size_t window_width, size_t window_height, sf::RenderWindow& window, Render_Map& r_map, Tile_Map& tile_map, Renderer& renderer, const std::shared_ptr<Window_To_Render>& renderables)
 {
+
+    gui_.initialize();
     
     if (!r_map.load(text_path_)) {
         return;
     }
 
-    //sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Game");
-
-    sf::Font myfont;
-
-
+    //
     // run the program as long as the window is open
     while (window.isOpen())
     {
@@ -30,13 +26,13 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
         while (window.pollEvent(event))
         {
             events(r_map, window, event);
+            gui_.execute_button_actions(window, event);
         }
 
         window.clear(sf::Color::Black);
         key_inputs(r_map, renderer);
+        gui_.update();
 
-        //Every render target needs to be updated after changes.
-        //r_map.update();
         //Every render target will be drawn separately.
         window.draw(r_map); //Draw map.
         window.draw(gui_);
@@ -97,7 +93,7 @@ void Rendering_Engine::events(const Render_Map& render_map, sf::RenderWindow& ta
         case (sf::Event::MouseButtonReleased): {
             sf::Vector2i mousePos = sf::Mouse::getPosition(target);
             std::pair<int,int> matrix_pos = render_map.get_map_coords(mousePos.x,mousePos.y);
-
+            gui_.set_active_coords(matrix_pos.second, matrix_pos.first);
             std::cout << "Current pixel pos: [" << mousePos.x << "," << mousePos.y << "]" << std::endl;
             std::cout << "Current tile pos: [" << matrix_pos.first << "," << matrix_pos.second << "]" << std::endl; 
             break;

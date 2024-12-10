@@ -169,3 +169,13 @@ void RectButton::setButtonLabel(float charSize)
 {
     setButtonLabel(charSize, this->label);
 }
+
+void RectButton::toggle_button_disabled() {
+    isActive = isActive ? false : true;
+    if (!isActive) {
+        button.setFillColor(disabled);
+        return;
+    }
+
+    button.setFillColor(buttonColorSet.color);
+}

@@ -4,48 +4,120 @@
 
 #include "GUI.hpp"
 #include "game.hpp"
+#include "unit.hpp"
 
 
 GUI::GUI(std::shared_ptr<Game> game):
-    game_(game) {}
+    game_(game), map_(&game->get_map()) {}
 
 void GUI::initialize() {
     if (!font_.loadFromFile("fonts/NotoSans-Bold.ttf")) {
         assert(false && "Loading font failed");
     }
 
-    {
-        // RectButton button(font_, false, sf::Vector2f(100, 100));
-        RectButton button(sf::Vector2f(100, 100), sf::Vector2f(100, 100));
-        button.setButtonLabel(24, "Moi");
-        button.set_activation_function([](const std::shared_ptr<Game>& game, size_t y, size_t x) {
-            std::cout << "hello" << std::endl;
-        });
+    initialize_main_buttons();
 
-        always_active_buttons_.buttons.push_back(std::move(button));
-    }
-
-    always_active_buttons_.isActive = true;
 }
 
 void GUI::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    for (const RectButton& button : always_active_buttons_.buttons) {
-        button.draw(target);
-    }
+    draw_button_group(target, main_buttons_);
 
     if (unit_buttons_.isActive) {
-        for (const RectButton& button : unit_buttons_.buttons) {
-            button.draw(target);
+        draw_button_group(target, unit_buttons_);
+    }
+
+    if (inventory_buttons_.isActive) {
+        draw_button_group(target, inventory_buttons_);
+    }
+}
+
+void GUI::update() {
+    if (!map_->are_valid_coords(active_coords))
+        return;
+
+    if (map_->has_unit(active_coords)){
+        // initialize_movement();
+        initialize_inventory();
+    } else {
+        inventory_buttons_.isActive = false;
+        unit_buttons_.isActive = false;
+    }
+}
+
+void GUI::execute_button_actions(sf::RenderWindow& window, sf::Event& event) {
+
+    for (RectButton* button : get_all_buttons()) {
+        button->getButtonStatus(window, event);
+        if (button->isPressed) {
+            button->activate(game_, active_coords.y, active_coords.x);
         }
     }
 }
 
+void GUI::set_active_coords(size_t y, size_t x) {
+    active_coords = {x, y};
+}
 
-void GUI::execute_button_actions(sf::RenderWindow& window, sf::Event& event, size_t map_y, size_t map_x) {
-    for (RectButton& button : always_active_buttons_.buttons) {
-        button.getButtonStatus(window, event);
-        if (button.isPressed) {
-            button.activate(game_, map_y, map_x);
+void GUI::initialize_main_buttons() {
+    RectButton button(font_, true, sf::Vector2f(100, 100));
+    button.setButtonLabel(24, "Moi!!!!!!!!!!!!!!!");
+    button.set_activation_function([](const std::shared_ptr<Game>& game, size_t y, size_t x) {
+        std::cout << "hello" << std::endl;
+    });
+    main_buttons_.buttons.push_back(std::move(button));
+
+    main_buttons_.isActive = true;
+}
+
+void GUI::initialize_inventory() {
+    inventory_buttons_.buttons.clear();
+
+    float curr_x = 30;
+    Unit* active_unit = map_->get_unit(active_coords);
+    const std::vector<std::shared_ptr<const Item>>& inventory = active_unit->get_inventory();
+
+    for (unsigned int i = 0; i < unit_consts.inventory_size; i++) {
+        RectButton button(font_, true, {curr_x, 500});
+        if (i < inventory.size()) {
+            const std::shared_ptr<const Item>& item = inventory[i];
+            button.setButtonLabel(20, inventory[i]->get_name());
+            button.set_activation_function([this, item](const std::shared_ptr<Game>& game, size_t y, size_t x) {
+                this->active_item = item;
+                std::cout << "item on " << std::endl;
+            });
+
+        } else {
+            button.setButtonLabel(20, "No item");
+            button.toggle_button_disabled();
         }
+
+        curr_x += button.button.getSize().x + 20;
+        inventory_buttons_.buttons.push_back(std::move(button));
     }
+
+    inventory_buttons_.isActive = true;
+}
+
+void GUI::draw_button_group(sf::RenderTarget& target, const RectButtonGroup& group) const {
+    for (const RectButton& button : group.buttons) {
+        button.draw(target);
+    }
+}
+
+template <typename T>
+void add_ptrs_to_vec(std::vector<T*>& dest, std::vector<T>& source) {
+    dest.reserve(dest.size() + source.size());
+    for (T& t : source) {
+        dest.push_back(&t);
+    }
+}
+
+std::vector<RectButton*> GUI::get_all_buttons() {
+    std::vector<RectButton*> buttons;
+
+    add_ptrs_to_vec(buttons, main_buttons_.buttons);
+    add_ptrs_to_vec(buttons, inventory_buttons_.buttons);
+    add_ptrs_to_vec(buttons, unit_buttons_.buttons);
+
+    return buttons;
 }

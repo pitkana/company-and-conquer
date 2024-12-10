@@ -94,4 +94,5 @@ bool Button::activate(const std::shared_ptr<Game>& game, size_t y, size_t x) {
     return true;
 }
 
+
 unsigned int Button::count = 0;
