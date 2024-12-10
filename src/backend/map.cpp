@@ -58,6 +58,13 @@ std::shared_ptr<Terrain> Map::get_terrain(const coordinates<size_t>& coords) {
     return get_terrain(coords.y, coords.x);
 }
 
+bool Map::are_valid_coords(size_t y, size_t x) const {
+    return y >= 0 && y < height() && x >= 0 && x < width();
+}
+
+bool Map::are_valid_coords(const coordinates<size_t> &coords) const {
+    return are_valid_coords(coords.y, coords.x);
+}
 
 bool Map::has_building(size_t y, size_t x) const {
     return all_buildings_(y, x) != nullptr;

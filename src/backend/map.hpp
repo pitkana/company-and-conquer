@@ -105,6 +105,9 @@ class Map
         std::shared_ptr<Terrain> get_terrain(const coordinates<size_t>& coords);
 
 
+        bool are_valid_coords(size_t y, size_t x) const;
+        bool are_valid_coords(const coordinates<size_t>& coords) const;
+
         bool has_building(size_t y, size_t x) const;
         bool has_building(const coordinates<size_t>& coords) const;
 

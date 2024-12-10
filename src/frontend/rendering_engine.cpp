@@ -16,6 +16,7 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
     if (!r_map.load(text_path_)) {
         return;
     }
+
     //
     // run the program as long as the window is open
     while (window.isOpen())
@@ -33,6 +34,7 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
 
         window.clear(sf::Color::Black);
         key_inputs(r_map, renderer);
+        gui_.update();
 
         //Every render target will be drawn separately.
         window.draw(r_map); //Draw map.
@@ -93,6 +95,7 @@ void Rendering_Engine::events(const Render_Map& render_map, sf::RenderWindow& ta
         case (sf::Event::MouseButtonReleased): {
             sf::Vector2i mousePos = sf::Mouse::getPosition(target);
             std::pair<int,int> matrix_pos = render_map.get_map_coords(mousePos.x,mousePos.y);
+            gui_.set_active_coords(matrix_pos.second, matrix_pos.first);
             std::cout << "Current pixel pos: [" << mousePos.x << "," << mousePos.y << "]" << std::endl;
             std::cout << "Current tile pos: [" << matrix_pos.first << "," << matrix_pos.second << "]" << std::endl; 
             break;
