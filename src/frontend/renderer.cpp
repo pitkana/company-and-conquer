@@ -12,11 +12,13 @@ Renderer::Renderer( size_t width, size_t height ) : width_(width), height_(heigh
 {
     game_ = std::make_shared<Game>( height, width );
 
-    renderable_ = std::make_shared<sf::RenderWindow>(sf::VideoMode(width, height), "Game");
+    render_window_ = std::make_shared<sf::RenderWindow>(sf::VideoMode(width, height), "Game");
 
     tile_map_ = std::make_shared<Tile_Map>( game_, 100 );
 
     r_map_ = std::make_shared<Render_Map>( tile_map_ );
+
+    renderables_ = std::make_shared<Window_To_Render>();
 }
 
 
@@ -47,11 +49,15 @@ void Renderer::initialise_level( size_t level_idx )
     tile_map_->SetGame( game_ );
     r_map_->set_tile_map( tile_map_ );
 
+    auto inv = std::make_shared<Inventory_UI>( game_ );
+    inv->update();
+
+    renderables_->add_drawable( inv );
 
 }
 
 void Renderer::start()
 {
     window_ = Rendering_Engine(game_, TEXTURE_PATH);
-    window_.render( width_, height_, *renderable_, *r_map_, *tile_map_, *this);
+    window_.render( width_, height_, *render_window_, *r_map_, *tile_map_, *this, renderables_);
 }

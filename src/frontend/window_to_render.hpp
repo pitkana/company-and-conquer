@@ -1,3 +1,7 @@
+#ifndef WINDOW_TO_RENDER
+#define WINDOW_TO_RENDER
+
+
 #include <memory>
 #include "SFML/Graphics.hpp"
 
@@ -6,7 +10,7 @@
  * this will store all the other renderables
  * 
  */
-class Window_To_Render : public sf::Drawable
+class Window_To_Render : public sf::Drawable, public sf::Transformable
 {
     public: 
         Window_To_Render();
@@ -16,13 +20,13 @@ class Window_To_Render : public sf::Drawable
          * 
          * @param a_drawable 
          */
-        void add_drawable( std::shared_ptr<sf::Drawable>& a_drawable );
+        void add_drawable( const std::shared_ptr<sf::Drawable> a_drawable );
 
     private:
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override
         {
             for ( const std::shared_ptr<sf::Drawable>& a_drawable : drawables_ ) {
-                target.draw( *a_drawable );
+                target.draw( *a_drawable, states );
             }
 
         }
@@ -30,3 +34,6 @@ class Window_To_Render : public sf::Drawable
         std::vector<std::shared_ptr<sf::Drawable>> drawables_;
 
 };
+
+
+#endif

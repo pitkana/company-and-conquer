@@ -10,7 +10,7 @@ Rendering_Engine::Rendering_Engine(std::shared_ptr<Game>& game, const std::strin
 
 
 
-void Rendering_Engine::render(size_t window_width, size_t window_height, sf::RenderWindow& window, Render_Map& r_map, Tile_Map& tile_map, Renderer& renderer)
+void Rendering_Engine::render(size_t window_width, size_t window_height, sf::RenderWindow& window, Render_Map& r_map, Tile_Map& tile_map, Renderer& renderer, const std::shared_ptr<Window_To_Render>& renderables)
 {
     
     if (!r_map.load(text_path_)) {
@@ -40,6 +40,7 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
         //Every render target will be drawn separately.
         window.draw(r_map); //Draw map.
         window.draw(gui_);
+        window.draw(*renderables);
 
         window.display();
     }

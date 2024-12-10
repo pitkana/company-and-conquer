@@ -9,6 +9,8 @@
 #include "map.hpp"
 #include "tile_map.hpp"
 #include "render_map.hpp"
+#include "inventory_ui.hpp"
+#include "window_to_render.hpp"
 
 
 
@@ -34,7 +36,7 @@ public:
      * @param window_width The width of the sfml window in pixels.
      * @param window_height The height of the sfml window in pixels.
      */
-    void render(size_t window_width, size_t window_height, sf::RenderWindow& window, Render_Map& r_map, Tile_Map& tile_map, Renderer& renderer);
+    void render(size_t window_width, size_t window_height, sf::RenderWindow& window, Render_Map& r_map, Tile_Map& tile_map, Renderer& renderer, const std::shared_ptr<Window_To_Render>& renderables);
 
     /**
      * @brief Used for updating the map, for example when we go to the next level
@@ -59,7 +61,6 @@ private:
     void events(const Render_Map& render_map, sf::RenderWindow& target, sf::Event event);
     std::shared_ptr<Game> game_;
     std::string text_path_;
-
     GUI gui_;
 
 

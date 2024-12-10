@@ -10,6 +10,8 @@
 #include "game.hpp"
 #include "map_builder.hpp"
 #include "rendering_engine.hpp"
+#include "window_to_render.hpp"
+#include "inventory_ui.hpp"
 
 
 class Renderer
@@ -40,7 +42,8 @@ class Renderer
         Rendering_Engine window_; // the class that contains logic for rendering
         std::shared_ptr<Tile_Map> tile_map_;
         std::shared_ptr<Render_Map> r_map_;
-        std::shared_ptr<sf::RenderWindow> renderable_; // contains the actual window into which we'll render stuff
+        std::shared_ptr<sf::RenderWindow> render_window_; // contains the actual window into which we'll render stuff
+        std::shared_ptr<Window_To_Render> renderables_;
 };
 
 #endif
