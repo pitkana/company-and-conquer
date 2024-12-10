@@ -166,6 +166,9 @@ void Rendering_Engine::events(Tile_Map& tile_map, sf::RenderWindow& target, sf::
     if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space) {
         game_->next_turn();
     }
+    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::F) {
+        tile_map.fog_of_war = !tile_map.fog_of_war;
+    }
     if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Z) {
         sf::Vector2i mousePos = sf::Mouse::getPosition(target);
         if (tile_map.is_inside_map_pixel(mousePos.x,mousePos.y) && manager.action_ontheway()) {

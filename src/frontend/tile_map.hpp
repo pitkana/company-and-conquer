@@ -18,7 +18,9 @@ public:
 
     bool is_tile_drawn(size_t x, size_t y) const;
 
-    const bool fog_of_war = true;
+    bool is_tile_drawn(const coordinates<size_t>& coords) const;
+
+    bool fog_of_war = true;
 
     //TODO: Movement needs to be capped.
     /**

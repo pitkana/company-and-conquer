@@ -20,11 +20,14 @@ public:
 private:
     std::shared_ptr<Tile_Map> tile_map_;
     std::unordered_map<Unit*,sf::Sprite> unit_sprite_map_;
+    std::unordered_map<int,int> team_id_text_idx_map_;
     std::pair<int,int> x0y0_;
     int tileDim_;
     sf::Texture unit_text;
+
     
     void draw_units();
+    void update_textures();
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const {
         for (auto spr : unit_sprite_map_) {

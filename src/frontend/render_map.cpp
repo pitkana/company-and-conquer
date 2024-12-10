@@ -43,36 +43,6 @@ void Render_Map::draw_map() {
     }
 }
 
-
-
-/*
-void Render_Map::load_new_map(Tile_Map& tile_map)
-{
-    tile_map_ = tile_map;
-    tileDim_ = tile_map.GetTileDim();
-}
-*/
-//Updating needs to be done in Tile_Map. zoom does not work for now.
-/*
-void Render_Map::move(float x, float y) 
-{
-    x0y0_.first = x0y0_.first + x;
-    x0y0_.second = x0y0_.second + y;
-
-    draw_map();
-}
-
-void Render_Map::zoom(int z) 
-{
-    tileDim_ = tileDim_ + z;
-
-    if ( tileDim_ < 0 ) {
-        tileDim_ = 0;
-    }
-
-    draw_map();
-}
-*/
 void Render_Map::update() {
     std::pair<int,int> map_x0y0 = tile_map_->Getx0y0();
     int map_tile_dim = tile_map_->GetTileDim();

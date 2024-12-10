@@ -11,20 +11,16 @@ bool Render_Units::load(const std::string& unit_texture_path) {
     int text_idx = 1;
     int textW = unit_text.getSize().y;
     for (auto& team : game.get_teams()) {
+        team_id_text_idx_map_[team.get_id()] = text_idx;
+        text_idx++;
         for (auto& unit : team.get_units()) {
             unit_sprite_map_[&unit] = sf::Sprite();
             sf::Sprite& sprite = unit_sprite_map_[&unit];
-            sprite.setTextureRect(sf::IntRect(textW*text_idx,0,textW,textW));
+            //sprite.setTextureRect(sf::IntRect(textW*text_idx,0,textW,textW));
             sprite.setOrigin(x0y0_.first,x0y0_.second);
             sprite.setTexture(unit_text);
             double scale = tileDim_ / textW;
             sprite.scale(scale,scale);
-        }
-        //Reset texture id.
-        if (text_idx == 1) {
-            text_idx = 2;
-        } else {
-            text_idx = 1;
         }
     }
     draw_units();
@@ -45,11 +41,17 @@ void Render_Units::draw_units() {
     Map& map = tile_map_->GetMap();
     for (auto& unit_spr : unit_sprite_map_) {
         coordinates<size_t> coords = map.get_unit_location(unit_spr.first);
-        if (coords.x != -1 && coords.y != -1) {
-            std::pair<int,int> pixel_coords = tile_map_->get_tile_coords(coords.y,coords.x);
-            sf::Vector2i spr_coords = sf::Vector2i(coords.x*tileDim_,coords.y*tileDim_);
-            unit_spr.second.setPosition(x0y0_.first+spr_coords.x,x0y0_.second+spr_coords.y);
-        } //else { could do something here... }
+        if (coords.x < 0 || coords.y < 0) assert(false);
+        std::pair<int,int> pixel_coords = tile_map_->get_tile_coords(coords.y,coords.x);
+        sf::Vector2i spr_coords = sf::Vector2i(coords.x*tileDim_,coords.y*tileDim_);
+        unit_spr.second.setPosition(x0y0_.first+spr_coords.x,x0y0_.second+spr_coords.y);
+        int text_idx = 0;
+        int textW = unit_text.getSize().y;
+        if (tile_map_->is_tile_drawn(coords)) {
+            int unit_team_id = tile_map_->GetGame().lock()->get_unit_team_id(unit_spr.first->get_id());
+            text_idx = (unit_spr.first->is_dead()) ? 3 : team_id_text_idx_map_[unit_team_id];
+        }
+        unit_spr.second.setTextureRect(sf::IntRect(textW*text_idx,0,textW,textW));
     }
 }
 
