@@ -7,13 +7,14 @@
 #include "SFML/Graphics.hpp"
 #include "terrain.hpp"
 #include "tile_map.hpp"
+#include "auxiliary_renderable.hpp"
 
 /**
  * A class that inherits properties from sfml:s Drawable and Transformable
  * classes. Render_Map object can be passed as a parameter to sf::RenderWindow::Draw
  * function. 
  */
-class Render_Map : public sf::Drawable, public sf::Transformable {
+class Render_Map : public Auxiliary_renderable {
 public:
     /**
      * @param tile_map Can be used to access the map and the game object.
@@ -39,7 +40,7 @@ public:
     /**
      * @brief Check if changes were made to Tile_Map objects tileDim or x0y0. If yes then update vertex positions.
      */
-    void update();
+    void update() override;
 
     void update_textures();
 
@@ -60,7 +61,7 @@ private:
     /**
      * Inherited method from parent classes.
      */
-    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const {
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
         states.transform *= getTransform();
         states.texture = &g_texture;
         target.draw(g_VertexArr,states);

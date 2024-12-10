@@ -4,13 +4,14 @@
 
 #include <memory>
 #include "SFML/Graphics.hpp"
+#include "auxiliary_renderable.hpp"
 
 /**
  * @brief Our Window object that we will pass to the sf::RenderWindow to be rendered,
  * this will store all the other renderables
  * 
  */
-class Window_To_Render : public sf::Drawable, public sf::Transformable
+class Window_To_Render : public Auxiliary_renderable
 {
     public: 
         Window_To_Render();
@@ -20,18 +21,24 @@ class Window_To_Render : public sf::Drawable, public sf::Transformable
          * 
          * @param a_drawable 
          */
-        void add_drawable( const std::shared_ptr<sf::Drawable> a_drawable );
+        void add_drawable( const std::shared_ptr<Auxiliary_renderable> a_drawable );
+
+        /**
+         * @brief Calls the update() override method of all the sf::Drawables added into it
+         * 
+         */
+        void update() override;
 
     private:
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override
         {
-            for ( const std::shared_ptr<sf::Drawable>& a_drawable : drawables_ ) {
+            for ( const std::shared_ptr<Auxiliary_renderable>& a_drawable : drawables_ ) {
                 target.draw( *a_drawable, states );
             }
 
         }
 
-        std::vector<std::shared_ptr<sf::Drawable>> drawables_;
+        std::vector<std::shared_ptr<Auxiliary_renderable>> drawables_;
 
 };
 

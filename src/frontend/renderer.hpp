@@ -51,6 +51,7 @@ class Renderer
         std::shared_ptr<Render_Aux> r_aux_;
         std::shared_ptr<sf::RenderWindow> render_window_; // contains the actual window into which we'll render stuff
         std::shared_ptr<Window_To_Render> renderables_;
+        std::shared_ptr<Inventory_UI> r_inv_;
 
 };
 

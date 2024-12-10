@@ -3,16 +3,18 @@
 
 #include "tile_map.hpp"
 #include "coordinates.hpp"
+#include "auxiliary_renderable.hpp"
+
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <string>
 #include <unordered_map>
 
-class Render_Aux: public sf::Drawable, public sf::Transformable {
+class Render_Aux: public Auxiliary_renderable {
 public:
     Render_Aux(std::shared_ptr<Tile_Map>& tile_map);
     bool load(const std::string& aux_texture_path);
-    void update();
+    void update() override;
     //TODO: Implement. This could be used to update unit texture when it dies.
     //void update_textures();
     std::weak_ptr<Tile_Map> get_tile_map();
@@ -34,7 +36,7 @@ private:
     void draw_highlight(const coordinates<size_t>& coords, sf::Sprite& highlight_sprite, size_t texture_idx);
     void hide_highlight(sf::Sprite& highlight_sprite);
 
-    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const {
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
         target.draw(highlight_unit_,states);
         target.draw(highlight_cursor_,states);
     }

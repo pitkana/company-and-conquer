@@ -65,6 +65,8 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
         r_units.update();
         r_buildings.update();
         r_aux_.update();
+
+        renderables->update();
         //Every render target will be drawn separately.
         window.draw(r_map); //Draw map.
         window.draw(r_units);

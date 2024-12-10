@@ -26,7 +26,16 @@ Renderer::Renderer( size_t width, size_t height ) : width_(width), height_(heigh
 
     r_aux_ = std::make_shared<Render_Aux>( tile_map_ ); 
 
+    r_inv_ = std::make_shared<Inventory_UI>( game_ );
+
     renderables_ = std::make_shared<Window_To_Render>();
+
+    renderables_->add_drawable( r_map_ );
+    renderables_->add_drawable( r_units_ );
+    renderables_->add_drawable( r_buildings_ );
+    renderables_->add_drawable( r_aux_ );
+    renderables_->add_drawable( r_inv_ );
+    
 }
 
 
@@ -62,12 +71,7 @@ void Renderer::initialise_level( size_t level_idx )
     r_units_->set_tile_map( tile_map_ );
     r_buildings_->set_tile_map( tile_map_ );
     r_aux_->set_tile_map( tile_map_ );
-
-    auto inv = std::make_shared<Inventory_UI>( game_ );
-    inv->update();
-
-    renderables_->add_drawable( inv );
-
+    
 
 }
 
