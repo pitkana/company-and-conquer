@@ -34,7 +34,17 @@ class Terrain
 
     public:
 
-        Terrain(char repr = '.') : character_repr_(repr) { }
+        Terrain(char repr = '.') : character_repr_(repr) { 
+            switch (repr) {
+            case '.':
+                texture_idx_ = 1;
+                break;
+            case '#':
+                texture_idx_ = 2;
+                break;
+            }
+
+        }
 
         Terrain(char repr, bool can_shoot, bool can_see, bool can_walk, bool can_build) : character_repr_(repr) 
         { 
@@ -43,10 +53,10 @@ class Terrain
             terrain_properties_[can_walk_through_] = can_walk;
             terrain_properties_[can_build_in_] = can_build;
             switch (repr) {
-            case '#':
+            case '.':
                 texture_idx_ = 1;
                 break;
-            case '-':
+            case '#':
                 texture_idx_ = 2;
                 break;
             }
@@ -60,10 +70,10 @@ class Terrain
             terrain_properties_[can_build_in_] = can_build;
 
             switch (repr) {
-            case '#':
+            case '.':
                 texture_idx_ = 1;
                 break;
-            case '-':
+            case '#':
                 texture_idx_ = 2;
                 break;
             }
@@ -72,10 +82,10 @@ class Terrain
             character_repr_ = repr;
             movement_cost_ = movement_cost;
             switch (repr) {
-            case '#':
+            case '.':
                 texture_idx_ = 1;
                 break;
-            case '-':
+            case '#':
                 texture_idx_ = 2;
                 break;
             }
