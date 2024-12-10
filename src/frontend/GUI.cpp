@@ -15,13 +15,11 @@ void GUI::initialize() {
     }
 
     {
-        // RectButton button(font_, false, sf::Vector2f(100, 100));
-        RectButton button(sf::Vector2f(100, 100), sf::Vector2f(100, 100));
-        button.setButtonLabel(24, "Moi");
+        RectButton button(font_, true, sf::Vector2f(100, 100));
+        button.setButtonLabel(24, "Moi!!!!!!!!!!!!!!!");
         button.set_activation_function([](const std::shared_ptr<Game>& game, size_t y, size_t x) {
             std::cout << "hello" << std::endl;
         });
-
         always_active_buttons_.buttons.push_back(std::move(button));
     }
 

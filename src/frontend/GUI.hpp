@@ -24,6 +24,7 @@ public:
     void initialize();
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+    void draw2(sf::RenderWindow& window);
     void execute_button_actions(sf::RenderWindow& window, sf::Event& event, size_t map_y, size_t map_x);
 
 

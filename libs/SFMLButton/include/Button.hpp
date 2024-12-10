@@ -36,7 +36,7 @@
 
 ////////////////////////////////////////////////////////////
 
-const sf::Color defaultColor = sf::Color(255,255,255, 0);
+const sf::Color defaultColor = sf::Color(255,255,255);
 const sf::Color defaultHover = sf::Color(191, 191, 191);
 const sf::Color defaultPress = sf::Color(153, 153, 153);
 const sf::Color disabled = sf::Color(60,60,60);
@@ -75,6 +75,8 @@ struct ColorSet
 class Button
 {
     public:
+
+        virtual ~Button() = default;
 
         virtual void getButtonStatus(sf::RenderWindow& window, sf::Event& event) = 0;
         virtual void draw(sf::RenderTarget& window) const = 0;
