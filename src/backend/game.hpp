@@ -6,6 +6,9 @@
 #include <vector>
 #include <unordered_map>
 #include <string>
+#include <sstream>
+#include <vector>
+#include <unordered_set>
 
 #include "map.hpp"
 #include "team.hpp"
@@ -19,6 +22,8 @@ class Game {
 public:
 
     Game(size_t map_height, size_t map_width) : map_(map_height, map_width) {}
+
+    Game(Map& map): map_(map) {}
 
     //Add team to teams_
     inline void add_team(Team team) {
@@ -58,13 +63,27 @@ public:
     coordinates<size_t> get_unit_location(int id);
 
     /**
+     * @brief Used map_ to calculate all visible coords for the active team.
+     * This method will be used by rendering classes.
+     * 
+     * @returns Visibles coords in a vector.
+     */
+    std::vector<coordinates<size_t>> get_visible_tiles();
+
+    /**
+     * @brief Used map_ to calculate all visible coords for the active team.
+     * This method will be called on on the start of the game, after turn changes
+     * and after movement_action is executed.
+     */
+    void update_visible_tiles();
+    /**
      * @brief Adds an action to specific team's action queue
      *
      * @param action The action to be added
      * @param team_id The team id that the action gets added to
-     * @return void
+     * @return True or false if adding action was succesful.
      */
-    void add_action(std::shared_ptr<Action> action, int team_id);
+    bool add_action(std::shared_ptr<Action> action, int team_id);
     
     //return all units as values in an unordered_map, keys being their team's id
     //pointers since you cant store references in map
@@ -87,8 +106,42 @@ public:
     Map& get_map();
     const Map& get_map() const;
 
+    std::string get_output() const;
+
+    std::stringstream& get_output_stream();
+
+    void clear_output();
+
+    //Turn handlers.
+
+    /**
+     * @brief Initiates the first turn.
+     * 
+     * @returns True if successful. False if game_ does not contain teams.
+     */
+    bool init_game();
+
+    /**
+     * @returns True if init_game has been called succesfully.
+     */
+    bool game_started() const;
+
+    /**
+     * @brief Ends turn, executes all action and gives the turn to the next team.
+     */
+    void next_turn();
+
+    Team* get_active_team();
+
 private:
     std::vector<Team> teams_;
     Map map_;
+    std::stringstream output_;
+    int active_team_idx_ = -1;
+    std::vector<coordinates<size_t>> visible_coords;
 
+    /**
+     * @returns Increments active_team_it_. If end then jump to begin.
+     */
+    void next_team();
 };

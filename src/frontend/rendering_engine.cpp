@@ -3,21 +3,31 @@
 
 
 
-Rendering_Engine::Rendering_Engine(std::shared_ptr<Game>& game, const std::string& texture_path) : 
-    game_(game), text_path_(texture_path), gui_(game) {}
+Rendering_Engine::Rendering_Engine(std::shared_ptr<Game>& game, const std::string& map_texture_path, const std::string& unit_texture_path, const std::string& buildings_texture_path, const std::string& aux_texture_path) : 
+    game_(game), map_text_path_(map_texture_path), unit_text_path_(unit_texture_path), building_text_path_(buildings_texture_path), aux_text_path_(aux_texture_path), gui_(game) {}
 
-
-
-void Rendering_Engine::render(size_t window_width, size_t window_height, sf::RenderWindow& window, Render_Map& r_map, Tile_Map& tile_map, Renderer& renderer, const std::shared_ptr<Window_To_Render>& renderables)
+void Rendering_Engine::render(size_t window_width, size_t window_height, sf::RenderWindow& window, Render_Map& r_map, Tile_Map& tile_map, Render_Units& r_units, Render_Buildings& r_buildings, Render_Aux& r_aux_, Renderer& renderer, const std::shared_ptr<Window_To_Render>& renderables)
 {
-
-    gui_.initialize();
     
-    if (!r_map.load(text_path_)) {
+    if (!r_map.load(map_text_path_)) {
+        return;
+    }
+    if (!r_units.load(unit_text_path_)) {
         return;
     }
 
-    //
+    if (!r_buildings.load(building_text_path_)) {
+        return;
+    }
+
+    if (!r_aux_.load(aux_text_path_)) {
+        return;
+    }
+
+    Game_Manager manager(tile_map.GetGame());
+
+    game_->init_game();
+
     // run the program as long as the window is open
     while (window.isOpen())
     {
@@ -25,42 +35,79 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
         sf::Event event;
         while (window.pollEvent(event))
         {
-            events(r_map, window, event);
+            events(tile_map, window, event, manager);
             gui_.execute_button_actions(window, event);
         }
 
         window.clear(sf::Color::Black);
-        key_inputs(r_map, renderer);
-        gui_.update();
+        key_inputs(tile_map, 1, 1, r_map, renderer);
 
+        if (manager.action_ontheway()) {
+            r_aux_.draw_unit_highlight(manager.get_priority_coords());
+            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+            if (tile_map.is_inside_map_pixel(mousePos.x,mousePos.y)) {
+                coordinates<size_t> matrix_pos = tile_map.get_map_coords(mousePos.x,mousePos.y);
+                r_aux_.draw_cursor_highlight(matrix_pos);
+            }
+        } else {
+            r_aux_.hide_unit_highlight();
+            r_aux_.hide_cursor_highlight();
+        }
+
+        std::string output = game_->get_output();
+        if (output.size() > 0) {
+            std::cout << output << std::endl;
+            game_->clear_output();
+        }
+
+        //Every render target needs to be updated after changes.
+        r_map.update();
+        r_units.update();
+        r_buildings.update();
+        r_aux_.update();
         //Every render target will be drawn separately.
         window.draw(r_map); //Draw map.
+        window.draw(r_units);
+        window.draw(r_buildings);
+        window.draw(r_aux_);
         window.draw(gui_);
         window.draw(*renderables);
 
         window.display();
+        //std::cout << game_->get_output() << std::endl;
+        //game_->clear_output();
     }
 }
 
-void Rendering_Engine::key_inputs(Render_Map& r_map, Renderer& renderer) {
+Game& Rendering_Engine::get_game() const {
+    return *game_;
+}
+
+
+/**
+ * sf::Transformable apparently has a move method. Maybe we should use that.  
+ */
+void Rendering_Engine::key_inputs(Tile_Map& tile_map, float moveSpeed, float zoom, Render_Map& r_map, Renderer& renderer) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-        r_map.move(-move_speed,0);
+        tile_map.move((-1)*moveSpeed,0);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
-        r_map.move(0,-move_speed);
+        tile_map.move(0,(-1)*moveSpeed);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-        r_map.move(move_speed,0);
+        tile_map.move(moveSpeed,0);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
-        r_map.move(0,move_speed);
+        tile_map.move(0,moveSpeed);
     }
+/*
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F)) {
         r_map.zoom(1, renderer.width(), renderer.height());
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::G)) {
         r_map.zoom(-1, renderer.width(), renderer.height());
     }
+*/
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)) {
         /*
         Map_Builder builder_ = Map_Builder{};
@@ -76,30 +123,67 @@ void Rendering_Engine::key_inputs(Render_Map& r_map, Renderer& renderer) {
 
         renderer.initialise_level(1);
         // the below should be implemented in Renderer
-        if (!r_map.load(text_path_)) {
+        if (!r_map.load(map_text_path_)) {
             return;
         }
         
     }
 }
 
-void Rendering_Engine::events(const Render_Map& render_map, sf::RenderWindow& target, sf::Event event) {
+void Rendering_Engine::events(Tile_Map& tile_map, sf::RenderWindow& target, sf::Event event, Game_Manager& manager) {
     // "close requested" event: we close the window
-    switch (event.type) {
-        case (sf::Event::Closed): {
-            target.close();
-            break;
+    if (event.type == sf::Event::Closed)
+        target.close();
+    if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+        sf::Vector2i mousePos = sf::Mouse::getPosition(target);
+        std::cout << "Current pixel pos: [" << mousePos.x << "," << mousePos.y << "]" << std::endl;
+        if (tile_map.is_inside_map_pixel(mousePos.x,mousePos.y))
+        {
+            coordinates<size_t> matrix_pos = tile_map.get_map_coords(mousePos.x,mousePos.y);
+            std::pair<int,int> tile_pixel_pos = tile_map.get_tile_coords(matrix_pos);
+            std::cout << "Current tile pixel pos: [" << tile_pixel_pos.first << "," << tile_pixel_pos.second << "]" << std::endl;
+            std::cout << "Current tile coords:" << matrix_pos << std::endl;
+            std::cout << "Terrain: " << tile_map.GetMap().get_terrain(matrix_pos)->get_repr() << std::endl;
+            if (manager.action_ontheway()) {
+                manager.enqueue_movement_action(matrix_pos);
+            }
         }
-        case (sf::Event::MouseButtonReleased): {
-            sf::Vector2i mousePos = sf::Mouse::getPosition(target);
-            std::pair<int,int> matrix_pos = render_map.get_map_coords(mousePos.x,mousePos.y);
-            gui_.set_active_coords(matrix_pos.second, matrix_pos.first);
-            std::cout << "Current pixel pos: [" << mousePos.x << "," << mousePos.y << "]" << std::endl;
-            std::cout << "Current tile pos: [" << matrix_pos.first << "," << matrix_pos.second << "]" << std::endl; 
-            break;
+    }
+    if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Right) {
+        sf::Vector2i mousePos = sf::Mouse::getPosition(target);
+        if (tile_map.is_inside_map_pixel(mousePos.x,mousePos.y))
+        {
+            coordinates<size_t> mouse_coords = tile_map.get_map_coords(mousePos.x,mousePos.y);
+            Map& map = tile_map.GetMap();
+            if (map.has_unit(mouse_coords)) {
+                Unit* target_unit = map.get_unit(mouse_coords);
+                if (manager.init_priority(mouse_coords)) {
+                    std::cout << "Init priority!" << std::endl;
+                } else {
+                    std::cout << "Failed!" << std::endl;
+                }
+            }
+            //tile_map.center_at(matrix_pos,700,700);
         }
-
-        default:
-            break;
+    }
+    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Escape) {
+        manager.terminate_action();
+    }
+    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space) {
+        game_->next_turn();
+    }
+    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::F) {
+        tile_map.fog_of_war = !tile_map.fog_of_war;
+    }
+    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Z) {
+        sf::Vector2i mousePos = sf::Mouse::getPosition(target);
+        if (tile_map.is_inside_map_pixel(mousePos.x,mousePos.y) && manager.action_ontheway()) {
+            coordinates<size_t> mouse_coords = tile_map.get_map_coords(mousePos.x,mousePos.y);
+            if (manager.enqueue_item_action(mouse_coords)) {
+                std::cout << "Item action success!" << std::endl;
+            } else {
+                std::cout << "Item action failed!" << std::endl;
+            }
+        }
     }
 }

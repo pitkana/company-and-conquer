@@ -9,6 +9,10 @@
 #include "map.hpp"
 #include "tile_map.hpp"
 #include "render_map.hpp"
+#include "render_units.hpp"
+#include "render_buildings.hpp"
+#include "render_aux.hpp"
+#include "game_manager.hpp"
 #include "inventory_ui.hpp"
 #include "window_to_render.hpp"
 
@@ -28,7 +32,7 @@ public:
      * @param game A pointer to the game object
      * @param texture_path A path to the texture file.
      */
-    Rendering_Engine(std::shared_ptr<Game>& game, const std::string& texture_path);
+    Rendering_Engine(std::shared_ptr<Game>& game, const std::string& map_texture_path, const std::string& unit_texture_path, const std::string& buildings_texture_path, const std::string& aux_texture_path);
 
     /**
      * @brief draws stuff to sfml window it.
@@ -36,7 +40,7 @@ public:
      * @param window_width The width of the sfml window in pixels.
      * @param window_height The height of the sfml window in pixels.
      */
-    void render(size_t window_width, size_t window_height, sf::RenderWindow& window, Render_Map& r_map, Tile_Map& tile_map, Renderer& renderer, const std::shared_ptr<Window_To_Render>& renderables);
+    void render(size_t window_width, size_t window_height, sf::RenderWindow& window, Render_Map& r_map, Tile_Map& tile_map, Render_Units& r_units, Render_Buildings& r_buildings, Render_Aux& r_aux_, Renderer& renderer, const std::shared_ptr<Window_To_Render>& renderables);
 
     /**
      * @brief Used for updating the map, for example when we go to the next level
@@ -47,6 +51,11 @@ public:
      */
     bool update_map( size_t level_idx );
 
+    /**
+     * @brief Most likely only used for developing.
+     */
+    Game& get_game() const;
+
 private:
     /**
      * @brief Keyinputs can be implemented with a bunch of if statements in sfml.
@@ -54,18 +63,24 @@ private:
      * @param moveSpeed Determines how much the tiles will be moved.
      * @param zoom How fast the zoom will be.
      */
-    void key_inputs(Render_Map& r_map, Renderer& renderer);
+    void key_inputs(Tile_Map& tile_map, float moveSpeed, float zoom, Render_Map& r_map, Renderer& renderer);
     /**
      * @brief Events are also handled with bunch of if statements in sfml.
      */
-    void events(const Render_Map& render_map, sf::RenderWindow& target, sf::Event event);
+    void events(Tile_Map& tile_map, sf::RenderWindow& target, sf::Event event, Game_Manager& manager);
     std::shared_ptr<Game> game_;
+    std::string map_text_path_;
+    std::string unit_text_path_;
+    std::string building_text_path_;
+    std::string aux_text_path_;
+
     std::string text_path_;
     GUI gui_;
 
 
     static inline const float move_speed = 5;
     static inline const float zoom_speed = 1;
+
 };
 
 

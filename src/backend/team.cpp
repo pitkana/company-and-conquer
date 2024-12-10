@@ -54,7 +54,7 @@ Unit* Team::get_unit(int id) {
     }
 
     //should not be reached
-    assert(false);
+    //assert(false);
     return nullptr;
 }
 

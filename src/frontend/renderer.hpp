@@ -10,6 +10,9 @@
 #include "game.hpp"
 #include "map_builder.hpp"
 #include "rendering_engine.hpp"
+#include "render_units.hpp"
+#include "render_buildings.hpp"
+#include "render_map.hpp"
 #include "window_to_render.hpp"
 #include "inventory_ui.hpp"
 
@@ -19,7 +22,7 @@ class Renderer
     public:
         Renderer( size_t width, size_t height );
 
-        void initialise_level( size_t level_idx);
+        void initialise_level( size_t level_idx );
 
         inline size_t width() const {
             return width_;
@@ -31,6 +34,7 @@ class Renderer
 
         void start();
 
+        Game& get_game() const;
 
     private:
         size_t width_ = 0;
@@ -42,8 +46,12 @@ class Renderer
         Rendering_Engine window_; // the class that contains logic for rendering
         std::shared_ptr<Tile_Map> tile_map_;
         std::shared_ptr<Render_Map> r_map_;
+        std::shared_ptr<Render_Units> r_units_;
+        std::shared_ptr<Render_Buildings> r_buildings_;
+        std::shared_ptr<Render_Aux> r_aux_;
         std::shared_ptr<sf::RenderWindow> render_window_; // contains the actual window into which we'll render stuff
         std::shared_ptr<Window_To_Render> renderables_;
+
 };
 
 #endif

@@ -15,12 +15,17 @@ set(SOURCES ${SOURCES_C} ${SOURCES_CPP} ${SOURCES_H} ${SOURCES_HPP})
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
 # add the executable target
-add_executable(test)
+add_executable(test
+        scenario_test.cpp)
 
 target_sources(test PUBLIC ${SOURCES})
 target_include_directories(test PUBLIC .)
 target_include_directories(test PUBLIC ../src/)
+
 target_link_libraries(test PRIVATE sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
+target_link_libraries(test PRIVATE sfml-graphics)
+target_link_libraries(test PRIVATE yaml-cpp::yaml-cpp)
+
 target_compile_features(test PRIVATE cxx_std_17)
 target_link_libraries(test PRIVATE backend)
 target_include_directories(test PRIVATE ../src/backend)
@@ -30,13 +35,17 @@ target_include_directories(test PRIVATE ../src/frontend)
 set_target_properties(frontend PROPERTIES LINKER_LANGUAGE CXX)
 
 # For relative paths.
-set(TESTMAP_PATH ${CMAKE_SOURCE_DIR}/tests/test_map.txt)
-add_compile_definitions(TESTMAP_PATH="${TESTMAP_PATH}")
-set(TESTMAP_PATH1 ${CMAKE_SOURCE_DIR}/tests/test_map.txt)
-add_compile_definitions(TESTMAP_PATH1="${TESTMAP_PATH1}")
-set(TEXTURE_PATH ${CMAKE_SOURCE_DIR}/textures/tiles.png)
-add_compile_definitions(TEXTURE_PATH="${TEXTURE_PATH}")
-
+    # Maps
+    set(TESTMAP_PATH ${CMAKE_SOURCE_DIR}/tests/test_map.txt)
+    add_compile_definitions(TESTMAP_PATH="${TESTMAP_PATH}")
+    set(TESTMAP_PATH1 ${CMAKE_SOURCE_DIR}/tests/test_map1.txt)
+    add_compile_definitions(TESTMAP_PATH1="${TESTMAP_PATH1}")
+    set(TEXTURE_PATH ${CMAKE_SOURCE_DIR}/textures/tiles.png)
+    add_compile_definitions(TEXTURE_PATH="${TEXTURE_PATH}")
+        # Units
+    set(UNITS_TEXTURE ${CMAKE_SOURCE_DIR}/textures/units.png)
+    add_compile_definitions(UNITS_TEXTURE="${TEXTURE_PATH}")
+    
 
 # get a lot of warnings
 if(MSVC)

@@ -31,17 +31,17 @@ public:
 
 
     // void load_new_map(Tile_Map& tile_map);
+    
+    //void move(float x, float y);
 
-    void move(float x, float y);
-
-    void zoom(int z, size_t window_width, size_t window_height);
-
-    std::pair<int, int> get_map_coords(int x, int y) const;
+    //void zoom(int z);
 
     /**
      * @brief Check if changes were made to Tile_Map objects tileDim or x0y0. If yes then update vertex positions.
      */
     void update();
+
+    void update_textures();
 
     std::weak_ptr<Tile_Map> get_tile_map();
     void set_tile_map(std::shared_ptr<Tile_Map>& tile_map);

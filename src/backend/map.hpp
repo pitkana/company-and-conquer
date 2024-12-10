@@ -48,8 +48,6 @@ class Map
         //Raw pointer since the map doesn't have ownership of units
         Matrix< Unit* > all_units_;
         Matrix< std::shared_ptr< Building >> all_buildings_;
-
-
         
         // we define the directions from the Helper tools that we'll use in directions handling
         std::vector< Helper::Directions > directions_ = { 
@@ -121,6 +119,7 @@ class Map
 
         std::shared_ptr<Building> get_building(size_t y, size_t x);
         std::shared_ptr<Building> get_building(const coordinates<size_t>& coords);
+        std::vector<std::shared_ptr<Building>> get_all_buildings() const;
 
         bool has_weapon_building(size_t y, size_t x);
         bool has_weapon_building(const coordinates<size_t>& coords);
@@ -144,6 +143,7 @@ class Map
         Unit* get_unit(const coordinates<size_t>& coords);
 
         coordinates<size_t> get_unit_location(Unit* unit_ptr) const;
+        coordinates<size_t> get_building_location(std::shared_ptr<Building> building_ptr) const;
 
         bool add_unit(size_t y, size_t x, Unit* unit);
         bool add_unit(const coordinates<size_t>& coords, Unit* unit);
@@ -217,9 +217,7 @@ class Map
          * @param visibility_range the distance to which the unit can see
          * @return std::vector< coordinates<size_t> > 
          */
-        std::vector< coordinates<size_t> > max_visible_locations( const coordinates<size_t>& location, const uint32_t visibility_range );
-
-
+        std::vector< coordinates<size_t> > max_visible_locations( const coordinates<size_t> location, const uint32_t visibility_range );
 
         std::vector<coordinates<size_t>> get_aoe_affected_coords(const coordinates<size_t>& location, const uint32_t range);
 

@@ -19,6 +19,14 @@ Renderer::Renderer( size_t width, size_t height ) : width_(width), height_(heigh
     r_map_ = std::make_shared<Render_Map>( tile_map_ );
 
     renderables_ = std::make_shared<Window_To_Render>();
+
+    r_units_ = std::make_shared<Render_Units>( tile_map_ );
+
+    r_buildings_ = std::make_shared<Render_Buildings>( tile_map_ );
+
+    r_aux_ = std::make_shared<Render_Aux>( tile_map_ ); 
+
+    renderables_ = std::make_shared<Window_To_Render>();
 }
 
 
@@ -39,7 +47,7 @@ void Renderer::initialise_level( size_t level_idx )
     size_t test_map_width = terrain_vec[0].size();
 
     // create the new Game object with the new level
-    game_ = std::make_shared<Game>( test_map_height, test_map_width );
+    game_ = std::make_shared<Game>( test_map_width, test_map_height );
     Unit* jack = new Unit("Jack");
 
     jack->add_item(ConstItem::medic_tent_tent);
@@ -51,16 +59,24 @@ void Renderer::initialise_level( size_t level_idx )
     // add it into the renderable
     tile_map_->SetGame( game_ );
     r_map_->set_tile_map( tile_map_ );
+    r_units_->set_tile_map( tile_map_ );
+    r_buildings_->set_tile_map( tile_map_ );
+    r_aux_->set_tile_map( tile_map_ );
 
     auto inv = std::make_shared<Inventory_UI>( game_ );
     inv->update();
 
     renderables_->add_drawable( inv );
 
+
 }
 
 void Renderer::start()
 {
-    window_ = Rendering_Engine(game_, TEXTURE_PATH);
-    window_.render( width_, height_, *render_window_, *r_map_, *tile_map_, *this, renderables_);
+    window_ = Rendering_Engine(game_, TEXTURE_PATH, UNITS_TEXTURE_PATH, BUILDINGS_TEXTURE_PATH, AUX_TEXTURE_PATH);
+    window_.render( width_, height_, *render_window_, *r_map_, *tile_map_, *r_units_, *r_buildings_, *r_aux_, *this, renderables_);
+}
+
+Game& Renderer::get_game() const {
+    return *game_;
 }

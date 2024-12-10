@@ -10,6 +10,7 @@ std::shared_ptr<Action> Building::use_building(coordinates<size_t> target, Unit&
     return building_item_->get_action(target, executing_unit);
 }
 
+
 bool Building::has_part(const BuildingPart &part) const {
     const bool* part_bool = get_part_bool_ptr(part);
     if (part_bool == nullptr || !*part_bool) return false;

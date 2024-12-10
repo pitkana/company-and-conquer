@@ -1,11 +1,9 @@
-#include "renderer.hpp"
+
+#include "render_window_test.hpp"
+#include "render_map_test.hpp"
 
 int main() {
-  Renderer renderer(1000, 1000);
-  renderer.initialise_level(0);
-  renderer.start();
-
-
+  rendering_engine_test();
   return 0;
 
 }

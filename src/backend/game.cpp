@@ -82,15 +82,37 @@ std::unordered_map<int, std::vector<Unit>*> Game::get_units_map() {
     return units_map;
 }
 
-void Game::add_action(std::shared_ptr<Action> action, int team_id) {
+void Game::update_visible_tiles() {
+    if (!(active_team_idx_ >= 0 && active_team_idx_ < teams_.size())) {
+        visible_coords.clear();
+        return;
+    }
+
+    std::vector<Unit>& active_units = teams_[active_team_idx_].get_units();
+    std::vector<coordinates<size_t>> visible_coords_vec;
+    for (auto& unit : active_units) {
+        coordinates<size_t> unit_location = map_.get_unit_location(&unit);
+        std::vector<coordinates<size_t>> visible_coords_unit = map_.tiles_unit_sees(unit_location,5);
+        visible_coords_vec.insert(visible_coords_vec.end(),visible_coords_unit.begin(),visible_coords_unit.end());
+    }
+    std::sort(visible_coords_vec.begin(),visible_coords_vec.end());
+    std::unique(visible_coords_vec.begin(),visible_coords_vec.end());
+    visible_coords = visible_coords_vec;
+}
+
+std::vector<coordinates<size_t>> Game::get_visible_tiles() {
+    return visible_coords;
+}
+
+bool Game::add_action(std::shared_ptr<Action> action, int team_id) {
     Unit& executing_unit = action->get_unit();
 
     // Check if the unit has already performed this kind of action in this turn
     if (action->is_movement()) {
-        if (executing_unit.has_moved) return;
+        if (executing_unit.has_moved) return false;
         executing_unit.has_moved = true;
     } else {
-        if (executing_unit.has_added_action) return;
+        if (executing_unit.has_added_action) return false;
         executing_unit.has_added_action = true;
     }
 
@@ -100,6 +122,8 @@ void Game::add_action(std::shared_ptr<Action> action, int team_id) {
         execute_action(action);
     }
     team.enqueue_action(std::move(action));
+    update_visible_tiles();
+    return true;
 }
 
 
@@ -125,7 +149,7 @@ void Game::undo_action(int team_id) {
     } else {
         executing_unit.has_added_action = false;
     }
-
+    update_visible_tiles();
     action->undo(*this);
 }
 
@@ -151,3 +175,52 @@ const Map& Game::get_map() const {
     return map_;
 }
 
+std::string Game::get_output() const {
+    return std::string(output_.str());
+}
+
+std::stringstream& Game::get_output_stream() {
+    return output_;
+}
+
+void Game::clear_output() {
+    output_.str("");
+    output_.clear();
+}
+
+bool Game::init_game() {
+    output_ << "Initiating game\n";
+    next_team();
+    update_visible_tiles();
+    bool valid_team = active_team_idx_ != -1;
+    if (valid_team) output_ << "Team " << teams_[active_team_idx_].get_id() << " turn\n";
+    return valid_team;
+}
+
+bool Game::game_started() const { return active_team_idx_ > -1; }
+
+void Game::next_turn() {
+    if (!game_started()) return; 
+    end_team_turns(teams_[active_team_idx_].get_id());
+    next_team();
+    if (active_team_idx_ == -1) return;
+    output_ << "Team " << teams_[active_team_idx_].get_id() << " turn\n";
+    update_visible_tiles();
+}
+
+void Game::next_team() {
+    if (teams_.size() < 1) return;
+
+    if (!game_started()) {
+        active_team_idx_ = 0;
+        return;
+    }
+
+    active_team_idx_++;
+    active_team_idx_ = (active_team_idx_ >= int(teams_.size())) ? 0 : active_team_idx_;
+    return;
+}
+
+Team* Game::get_active_team() {
+    return (game_started()) ? &teams_[active_team_idx_] : nullptr;
+}

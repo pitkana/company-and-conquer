@@ -19,6 +19,7 @@ public:
     //Return action associated with using this specific building
     std::shared_ptr<Action> use_building(coordinates<size_t> target, Unit& executing_unit) const;
 
+    virtual size_t get_texture_idx() const { return 0; };
 
     //Check if this specific part is already added to this building
     [[nodiscard]]
@@ -63,6 +64,8 @@ class Turret : public Building {
 public:
     Turret(): Building("turret", ConstItem::turret_weapon) {}
 
+    virtual size_t get_texture_idx() const { return 1; };
+
     [[nodiscard]]
     virtual bool is_ready() const;
     [[nodiscard]]
@@ -105,6 +108,8 @@ private:
 class MedicTent : public Building {
 public:
     MedicTent(): Building("medic tent", ConstItem::medic_tent_heal_item) {}
+
+    virtual size_t get_texture_idx() const { return 2; };
 
     [[nodiscard]]
     virtual bool is_ready() const;
