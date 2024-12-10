@@ -7,8 +7,7 @@
 
 /**
  * @brief Use this for inheritance instead of straight up using the sfml classes so that
- * window_to_render can call update() override on all of them
- * 
+ * window_to_render can call update() and draw() overrides on all of them.
  */
 class Auxiliary_renderable : public sf::Drawable, public sf::Transformable
 {

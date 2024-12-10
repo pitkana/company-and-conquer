@@ -55,6 +55,14 @@ void Render_Units::draw_units() {
     }
 }
 
+void Render_Units::clear()
+{
+    unit_sprite_map_.clear();
+    tile_map_.reset();
+    tileDim_ = 0;
+    team_id_text_idx_map_.clear();
+}
+
 std::weak_ptr<Tile_Map> Render_Units::get_tile_map()
 {
     return tile_map_;

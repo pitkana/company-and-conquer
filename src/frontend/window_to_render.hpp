@@ -29,6 +29,12 @@ class Window_To_Render : public Auxiliary_renderable
          */
         void update() override;
 
+        /**
+         * @brief Used to clear the underlying container
+         * 
+         */
+        void clear();
+
     private:
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override
         {

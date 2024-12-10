@@ -14,3 +14,9 @@ void Window_To_Render::update()
         a_drawable->update();
     }   
 }
+
+
+void Window_To_Render::clear()
+{
+    drawables_.clear();
+}

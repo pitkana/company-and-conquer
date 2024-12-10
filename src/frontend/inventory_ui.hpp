@@ -17,7 +17,7 @@ class Inventory_UI : public Auxiliary_renderable
 {
     public:
 
-        Inventory_UI(const std::shared_ptr<Game>& game);
+        Inventory_UI(const size_t width, const size_t height);
 
         // the padding of the item images from the sides of the inventory rectangle and from each other
         // the value is in pixels
@@ -59,14 +59,34 @@ class Inventory_UI : public Auxiliary_renderable
                     target.draw(*spr, states);
                 }
             } 
+        }
 
-            
+        /**
+         * @brief Used for updating the background_ member, so it doesnt have
+         * to be explicitly written into multiple methods
+         * 
+         */
+        void update_background()
+        {
+            size_t width = window_width_ / 2 + padding * 4;
+            size_t height = window_height_ - (window_height_ / 8) + padding * 2;
+
+            sf::Vector2f pos = { 2 * (window_width_ / 8), window_height_ - (window_height_ / 8)};
+
+            background_.setPosition( pos );
+
+            sf::Texture texture;
+            texture.create(width, height);
+            //sf::Uint8* pixels = new sf::Uint8[width * height * 4](0xff);
+            background_.setTexture( texture, true );
+            background_.setColor( sf::Color(255, 255, 255) );
         }
 
 
         sf::Sprite background_;
         std::vector<std::unique_ptr<sf::Sprite>> items_list_;
-        std::shared_ptr<Game> game_;
+        size_t window_width_ = 0;
+        size_t window_height_ = 0;
         bool display_inv_ = false;
 };
 

@@ -2,22 +2,13 @@
 
 
 
-Inventory_UI::Inventory_UI(const std::shared_ptr<Game>& game) : game_(game)
+
+
+Inventory_UI::Inventory_UI(const size_t width, const size_t height) : window_width_(width), window_height_(height)
 {
     items_list_.reserve( unit_consts.inventory_size );
 
-    size_t width = game_->get_map().width() / 2 + padding * 4;
-    size_t height = game_->get_map().height() - (game_->get_map().height() / 8) + padding * 2;
-
-    sf::Vector2f pos = { 2 * (game_->get_map().width() / 8), game_->get_map().height() - (game_->get_map().height() / 8)};
-
-    background_.setPosition( pos );
-
-    sf::Texture texture;
-    texture.create(width, height);
-    sf::Uint8* pixels = new sf::Uint8[width * height * 4](0xff);
-    background_.setTexture( texture, true );
-    background_.setColor( sf::Color(255, 255, 255) );
+    update_background();
 }
 
 
@@ -35,20 +26,7 @@ void Inventory_UI::update_inventory(std::span<std::shared_ptr<const Item>> items
 
 void Inventory_UI::update()
 {
-    size_t width = game_->get_map().width() / 2 + padding * 4;
-    size_t height = game_->get_map().height() - (game_->get_map().height() / 8) + padding * 2;
-
-    sf::Vector2f pos = { 2 * (game_->get_map().width() / 8), game_->get_map().height() - (game_->get_map().height() / 8)};
-
-    background_.setPosition( pos );
-
-    sf::Texture texture;
-    texture.create(width, height);
-
-
-    sf::Uint8* pixels = new sf::Uint8[width * height * 4](0xff);
-    background_.setTexture( texture, true );
-    background_.setColor( sf::Color(255, 255, 255) );
+    update_background();
 }
 
 
@@ -60,11 +38,11 @@ void Inventory_UI::display_inv( bool display_inv )
 
 std::unique_ptr<sf::Sprite> Inventory_UI::render_item(const Item& an_item, size_t position_idx)
 {
-    size_t width = game_->get_map().width() / 2 + padding * 4;
-    size_t height = game_->get_map().height() - (game_->get_map().height() / 8) + padding * 2;
+    size_t width = window_width_ / 2 + padding * 4;
+    size_t height = window_height_ - (window_height_ / 8) + padding * 2;
 
     std::unique_ptr<sf::Sprite> item = std::make_unique<sf::Sprite>();
-    sf::Vector2f pos = {( 2 + position_idx) *(game_->get_map().width() / 8) + padding, game_->get_map().height() - (game_->get_map().height() / 8) + padding};
+    sf::Vector2f pos = {( 2 + position_idx) *(window_width_ / 8) + padding, window_height_ - (window_height_ / 8) + padding};
 
     item->setPosition( pos );
 

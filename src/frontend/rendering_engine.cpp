@@ -3,30 +3,14 @@
 
 
 
-Rendering_Engine::Rendering_Engine(std::shared_ptr<Game>& game, const std::string& map_texture_path, const std::string& unit_texture_path, const std::string& buildings_texture_path, const std::string& aux_texture_path) : 
-    game_(game), map_text_path_(map_texture_path), unit_text_path_(unit_texture_path), building_text_path_(buildings_texture_path), aux_text_path_(aux_texture_path), gui_(game) {}
+Rendering_Engine::Rendering_Engine(std::shared_ptr<Game>& game) : game_(game) { }
 
-void Rendering_Engine::render(size_t window_width, size_t window_height, sf::RenderWindow& window, Render_Map& r_map, Tile_Map& tile_map, Render_Units& r_units, Render_Buildings& r_buildings, Render_Aux& r_aux_, Renderer& renderer, const std::shared_ptr<Window_To_Render>& renderables)
+void Rendering_Engine::render(size_t window_width, size_t window_height, sf::RenderWindow& window, Renderer& renderer, const std::shared_ptr<Window_To_Render>& renderables)
 {
-    
-    if (!r_map.load(map_text_path_)) {
-        return;
-    }
-    if (!r_units.load(unit_text_path_)) {
-        return;
-    }
-
-    if (!r_buildings.load(building_text_path_)) {
-        return;
-    }
-
-    if (!r_aux_.load(aux_text_path_)) {
-        return;
-    }
-
-    Game_Manager manager(tile_map.GetGame());
-
-    game_->init_game();
+    r_map = renderer.get_r_map();
+    tile_map = renderer.get_tile_map();
+    r_aux_ = renderer.get_r_aux();
+    manager = renderer.get_manager();
 
     // run the program as long as the window is open
     while (window.isOpen())
@@ -35,23 +19,23 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
         sf::Event event;
         while (window.pollEvent(event))
         {
-            events(tile_map, window, event, manager);
+            events(*tile_map, window, event, *manager);
             gui_.execute_button_actions(window, event);
         }
 
         window.clear(sf::Color::Black);
-        key_inputs(tile_map, 1, 1, r_map, renderer);
+        key_inputs(1, 1, renderer);
 
-        if (manager.action_ontheway()) {
-            r_aux_.draw_unit_highlight(manager.get_priority_coords());
+        if (manager->action_ontheway()) {
+            r_aux_->draw_unit_highlight(manager->get_priority_coords());
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-            if (tile_map.is_inside_map_pixel(mousePos.x,mousePos.y)) {
-                coordinates<size_t> matrix_pos = tile_map.get_map_coords(mousePos.x,mousePos.y);
-                r_aux_.draw_cursor_highlight(matrix_pos);
+            if (tile_map->is_inside_map_pixel(mousePos.x,mousePos.y)) {
+                coordinates<size_t> matrix_pos = tile_map->get_map_coords(mousePos.x,mousePos.y);
+                r_aux_->draw_cursor_highlight(matrix_pos);
             }
         } else {
-            r_aux_.hide_unit_highlight();
-            r_aux_.hide_cursor_highlight();
+            r_aux_->hide_unit_highlight();
+            r_aux_->hide_cursor_highlight();
         }
 
         std::string output = game_->get_output();
@@ -61,19 +45,11 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
         }
 
         //Every render target needs to be updated after changes.
-        r_map.update();
-        r_units.update();
-        r_buildings.update();
-        r_aux_.update();
+        renderables->update();  // update every renderable
 
-        renderables->update();
         //Every render target will be drawn separately.
-        window.draw(r_map); //Draw map.
-        window.draw(r_units);
-        window.draw(r_buildings);
-        window.draw(r_aux_);
+        window.draw(*renderables);  // draw the renderables
         window.draw(gui_);
-        window.draw(*renderables);
 
         window.display();
         //std::cout << game_->get_output() << std::endl;
@@ -85,22 +61,27 @@ Game& Rendering_Engine::get_game() const {
     return *game_;
 }
 
+std::shared_ptr<Game>& Rendering_Engine::get_game() 
+{
+    return game_;
+}
+
 
 /**
  * sf::Transformable apparently has a move method. Maybe we should use that.  
  */
-void Rendering_Engine::key_inputs(Tile_Map& tile_map, float moveSpeed, float zoom, Render_Map& r_map, Renderer& renderer) {
+void Rendering_Engine::key_inputs(float moveSpeed, float zoom, Renderer& renderer) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-        tile_map.move((-1)*moveSpeed,0);
+        tile_map->move((-1)*moveSpeed,0);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
-        tile_map.move(0,(-1)*moveSpeed);
+        tile_map->move(0,(-1)*moveSpeed);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-        tile_map.move(moveSpeed,0);
+        tile_map->move(moveSpeed,0);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
-        tile_map.move(0,moveSpeed);
+        tile_map->move(0,moveSpeed);
     }
 /*
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F)) {
@@ -124,10 +105,13 @@ void Rendering_Engine::key_inputs(Tile_Map& tile_map, float moveSpeed, float zoo
         */
 
         renderer.initialise_level(1);
-        // the below should be implemented in Renderer
-        if (!r_map.load(map_text_path_)) {
-            return;
-        }
+
+        // have to update these pointers right after initialising a new level so we
+        // don't try to call the old objects and get segfault
+        r_map = renderer.get_r_map();
+        tile_map = renderer.get_tile_map();
+        r_aux_ = renderer.get_r_aux();
+        manager = renderer.get_manager();
         
     }
 }

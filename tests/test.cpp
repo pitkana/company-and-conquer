@@ -5,5 +5,4 @@
 int main() {
   rendering_engine_test();
   return 0;
-
 }

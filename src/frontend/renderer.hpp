@@ -15,6 +15,7 @@
 #include "render_map.hpp"
 #include "window_to_render.hpp"
 #include "inventory_ui.hpp"
+#include "game_manager.hpp"
 
 
 class Renderer
@@ -36,6 +37,16 @@ class Renderer
 
         Game& get_game() const;
 
+        std::shared_ptr<Tile_Map>& get_tile_map() { return tile_map_; }
+        std::shared_ptr<Render_Map>& get_r_map() { return r_map_; }
+        std::shared_ptr<Render_Units>& get_r_units() { return r_units_; }
+        std::shared_ptr<Render_Buildings>& get_r_buildings() { return r_buildings_; }
+        std::shared_ptr<Render_Aux>& get_r_aux() { return r_aux_; }
+        std::shared_ptr<Window_To_Render>& get_renderables() { return renderables_; }
+        std::shared_ptr<Inventory_UI>& get_r_inv() { return r_inv_; }
+        std::shared_ptr<Game_Manager>& get_manager() { return manager_; }
+
+
     private:
         size_t width_ = 0;
         size_t height_ = 0;
@@ -44,6 +55,8 @@ class Renderer
         std::shared_ptr<Game> game_;  // current level
         Map_Builder builder_ = Map_Builder{};
         Rendering_Engine window_; // the class that contains logic for rendering
+        std::shared_ptr<Game_Manager> manager_;
+
         std::shared_ptr<Tile_Map> tile_map_;
         std::shared_ptr<Render_Map> r_map_;
         std::shared_ptr<Render_Units> r_units_;
@@ -53,6 +66,10 @@ class Renderer
         std::shared_ptr<Window_To_Render> renderables_;
         std::shared_ptr<Inventory_UI> r_inv_;
 
+        std::string map_text_path_;
+        std::string unit_text_path_;
+        std::string building_text_path_;
+        std::string aux_text_path_;
 };
 
 #endif
