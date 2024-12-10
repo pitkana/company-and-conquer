@@ -44,11 +44,12 @@ void GUI::update() {
     }
 }
 
-void GUI::execute_button_actions(sf::RenderWindow& window, sf::Event& event, size_t map_y, size_t map_x) {
-    for (RectButton& button : main_buttons_.buttons) {
-        button.getButtonStatus(window, event);
-        if (button.isPressed) {
-            button.activate(game_, map_y, map_x);
+void GUI::execute_button_actions(sf::RenderWindow& window, sf::Event& event) {
+
+    for (RectButton* button : get_all_buttons()) {
+        button->getButtonStatus(window, event);
+        if (button->isPressed) {
+            button->activate(game_, active_coords.y, active_coords.x);
         }
     }
 }
@@ -78,9 +79,16 @@ void GUI::initialize_inventory() {
     for (unsigned int i = 0; i < unit_consts.inventory_size; i++) {
         RectButton button(font_, true, {curr_x, 500});
         if (i < inventory.size()) {
+            const std::shared_ptr<const Item>& item = inventory[i];
             button.setButtonLabel(20, inventory[i]->get_name());
+            button.set_activation_function([this, item](const std::shared_ptr<Game>& game, size_t y, size_t x) {
+                this->active_item = item;
+                std::cout << "item on " << std::endl;
+            });
+
         } else {
             button.setButtonLabel(20, "No item");
+            button.toggle_button_disabled();
         }
 
         curr_x += button.button.getSize().x + 20;
@@ -94,4 +102,22 @@ void GUI::draw_button_group(sf::RenderTarget& target, const RectButtonGroup& gro
     for (const RectButton& button : group.buttons) {
         button.draw(target);
     }
+}
+
+template <typename T>
+void add_ptrs_to_vec(std::vector<T*>& dest, std::vector<T>& source) {
+    dest.reserve(dest.size() + source.size());
+    for (T& t : source) {
+        dest.push_back(&t);
+    }
+}
+
+std::vector<RectButton*> GUI::get_all_buttons() {
+    std::vector<RectButton*> buttons;
+
+    add_ptrs_to_vec(buttons, main_buttons_.buttons);
+    add_ptrs_to_vec(buttons, inventory_buttons_.buttons);
+    add_ptrs_to_vec(buttons, unit_buttons_.buttons);
+
+    return buttons;
 }

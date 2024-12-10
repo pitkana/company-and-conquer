@@ -54,6 +54,8 @@ class RectButton: public Button
         void setButtonLabel(float charSize, std::string label);
         void setButtonLabel(float charSize);
 
+        void toggle_button_disabled();
+
         sf::RectangleShape button;
 
     //end of public

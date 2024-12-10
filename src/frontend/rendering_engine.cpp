@@ -25,11 +25,8 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
         sf::Event event;
         while (window.pollEvent(event))
         {
-            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-            auto [x, y] = r_map.get_map_coords(mousePos.x,mousePos.y);
-            gui_.execute_button_actions(window, event, y, x);
-
             events(r_map, window, event);
+            gui_.execute_button_actions(window, event);
         }
 
         window.clear(sf::Color::Black);
