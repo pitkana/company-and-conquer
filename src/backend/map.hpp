@@ -219,6 +219,8 @@ class Map
          */
         std::vector< coordinates<size_t> > max_visible_locations( const coordinates<size_t> location, const uint32_t visibility_range );
 
+        std::vector<coordinates<size_t>> tiles_can_shoot_on(const coordinates<size_t>& coords, const uint32_t range);
+
         std::vector<coordinates<size_t>> get_aoe_affected_coords(const coordinates<size_t>& location, const uint32_t range);
 
         /**

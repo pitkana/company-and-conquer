@@ -61,10 +61,10 @@ void Renderer::initialise_level( size_t level_idx )
     // create the new Game object with the new level
     game_ = std::make_shared<Game>( test_map_width, test_map_height );
 
-    Unit* jack = new Unit("Jack");
-
-    jack->add_item(ConstItem::medic_tent_tent);
-    game_->get_map().add_unit(1, 1, jack);
+    // Unit* jack = new Unit("Jack");
+    //
+    // jack->add_item(ConstItem::medic_tent_tent);
+    // game_->get_map().add_unit(1, 1, jack);
 
 
     // store the pointer to the new level into the <tile_map_>, and

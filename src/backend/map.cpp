@@ -370,6 +370,12 @@ std::vector< coordinates<size_t> > Map::max_visible_locations( const coordinates
     return visible_tiles;
 }
 
+std::vector<coordinates<size_t>> Map::tiles_can_shoot_on(const coordinates<size_t>& coords, const uint32_t range) {
+    return line_of_sight_check(coords, range, [this](int64_t y, int64_t x) -> bool {
+        const std::shared_ptr<Terrain>& terrain = this->get_terrain(y, x);
+        return terrain->can_shoot_through() && terrain->can_see_through();
+    });
+}
 
 std::vector< coordinates<size_t> > Map::tiles_unit_sees( const coordinates<size_t>& location, const uint32_t visibility_range )
 {

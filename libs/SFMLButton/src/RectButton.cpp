@@ -71,23 +71,23 @@ void RectButton::getButtonStatus(sf::RenderWindow& window, sf::Event& event)
     this->isHover = false;
     this->isPressed = false;
 
+    if(button.getGlobalBounds().contains(this->mousePosView))
+    {
+        this->isHover = true;
+    }
+
+    if(button.getGlobalBounds().contains(this->mousePosView))
+    {
+        if(event.type == sf::Event::MouseButtonReleased)
+        {
+            this->isPressed = true;
+        }
+    }
+
     if (isActive)
     {
         button.setFillColor(buttonColorSet.color);
         buttonLabel.setFillColor(labelColorSet.color);
-        if(button.getGlobalBounds().contains(this->mousePosView))
-        {
-            this->isHover = true;
-        }
-
-        if(button.getGlobalBounds().contains(this->mousePosView))
-        {
-            if(event.type == sf::Event::MouseButtonReleased)
-            {
-                this->isPressed = true;
-            }
-        }
-
         //I am not sure if it is best to implement this inside a class
         if (isHover)
         {
@@ -107,9 +107,8 @@ void RectButton::getButtonStatus(sf::RenderWindow& window, sf::Event& event)
                 buttonLabel.setFillColor(labelColorSet.press);
             }
         }
-
     }
-    else
+        else
     {
         button.setFillColor(disabled);
     }

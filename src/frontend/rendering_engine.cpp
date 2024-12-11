@@ -3,7 +3,9 @@
 
 
 
-Rendering_Engine::Rendering_Engine(std::shared_ptr<Game>& game) : game_(game) { }
+Rendering_Engine::Rendering_Engine(std::shared_ptr<Game>& game) : game_(game), gui_(game) { 
+    gui_.initialize();
+}
 
 void Rendering_Engine::render(size_t window_width, size_t window_height, sf::RenderWindow& window, Renderer& renderer, const std::shared_ptr<Window_To_Render>& renderables)
 {
@@ -20,7 +22,6 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
         while (window.pollEvent(event))
         {
             events(*tile_map, window, event, *manager);
-            gui_.execute_button_actions(window, event);
         }
 
         window.clear(sf::Color::Black);
@@ -46,6 +47,7 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
 
         //Every render target needs to be updated after changes.
         renderables->update();  // update every renderable
+        gui_.update();
 
         //Every render target will be drawn separately.
         window.draw(*renderables);  // draw the renderables
@@ -117,6 +119,10 @@ void Rendering_Engine::key_inputs(float moveSpeed, float zoom, Renderer& rendere
 }
 
 void Rendering_Engine::events(Tile_Map& tile_map, sf::RenderWindow& target, sf::Event event, Game_Manager& manager) {
+    // If a button was pressed (aka func returns true) return, which means event is consumed by the button
+    if (gui_.execute_button_actions(target, event)) return;
+
+
     // "close requested" event: we close the window
     if (event.type == sf::Event::Closed)
         target.close();
@@ -125,11 +131,19 @@ void Rendering_Engine::events(Tile_Map& tile_map, sf::RenderWindow& target, sf::
         std::cout << "Current pixel pos: [" << mousePos.x << "," << mousePos.y << "]" << std::endl;
         if (tile_map.is_inside_map_pixel(mousePos.x,mousePos.y))
         {
+
+
             coordinates<size_t> matrix_pos = tile_map.get_map_coords(mousePos.x,mousePos.y);
             std::pair<int,int> tile_pixel_pos = tile_map.get_tile_coords(matrix_pos);
             std::cout << "Current tile pixel pos: [" << tile_pixel_pos.first << "," << tile_pixel_pos.second << "]" << std::endl;
             std::cout << "Current tile coords:" << matrix_pos << std::endl;
             std::cout << "Terrain: " << tile_map.GetMap().get_terrain(matrix_pos)->get_repr() << std::endl;
+
+            // Maybe change this to "click" on a coords and if active item do something etc.
+            gui_.click_on_coords(matrix_pos.y, matrix_pos.x);
+            
+
+
             if (manager.action_ontheway()) {
                 manager.enqueue_movement_action(matrix_pos);
             }
