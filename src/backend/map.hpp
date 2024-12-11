@@ -228,6 +228,14 @@ class Map
          */
         std::vector< coordinates<size_t> > line_of_sight_check( const coordinates<size_t>& location, const uint32_t range, const std::function<bool(int64_t y, int64_t x)>& predicate);
         
+        /**
+         * @brief Checks if there is a line of sight (los) from coordinates a to coordinates b.
+         * 
+         * @param a Start point for los.
+         * @param b End point for los.
+         * @param range The distance to which the unit can see.
+         */
+        bool los_check_from_A_to_B(const coordinates<size_t>& a, const coordinates<size_t>& b, const uint32_t range);
 
         /**
          * @brief Used for the fog of war feature

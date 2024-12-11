@@ -377,6 +377,14 @@ std::vector<coordinates<size_t>> Map::get_aoe_affected_coords(const coordinates<
     });
 }
 
+bool Map::los_check_from_A_to_B(const coordinates<size_t>& a, const coordinates<size_t>& b, const uint32_t range) {
+    auto los_tiles = line_of_sight_check(a,range,[this](int64_t y, int64_t x) -> bool {
+        return this->get_terrain(y, x)->can_shoot_through();
+    });
+    auto coord_it = std::find(los_tiles.begin(),los_tiles.end(),b);
+    return coord_it != los_tiles.end();
+}
+
 std::vector< coordinates<size_t> > Map::line_of_sight_check( const coordinates<size_t>& location, const uint32_t range, const std::function<bool(int64_t y, int64_t x)>& predicate) {
     std::vector< coordinates<size_t> > max_range_coords = max_visible_locations( location, range );
     std::vector< coordinates<size_t> > max_range_coords1 = max_visible_locations( location, range - 1 ); // used to fix the error where there would be left some holes in the circle
