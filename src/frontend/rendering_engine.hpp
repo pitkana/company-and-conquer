@@ -29,7 +29,7 @@ public:
      * @param game A pointer to the game object
      * @param texture_path A path to the texture file.
      */
-    Rendering_Engine(std::shared_ptr<Game>& game, const std::string& map_texture_path, const std::string& unit_texture_path, const std::string& buildings_texture_path, const std::string& aux_texture_path);
+    Rendering_Engine(std::shared_ptr<Game>& game, const std::string& map_texture_path, const std::string& unit_texture_path, const std::string& buildings_texture_path, const std::string& aux_texture_path, const std::string& font_path);
 
     /**
      * @brief draws stuff to sfml window it.
@@ -70,6 +70,7 @@ private:
     std::string unit_text_path_;
     std::string building_text_path_;
     std::string aux_text_path_;
+    std::string font_path_;
 };
 
 

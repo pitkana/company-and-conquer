@@ -3,11 +3,13 @@
 
 
 
-Rendering_Engine::Rendering_Engine(std::shared_ptr<Game>& game, const std::string& map_texture_path, const std::string& unit_texture_path, const std::string& buildings_texture_path, const std::string& aux_texture_path) : game_(game), map_text_path_(map_texture_path), unit_text_path_(unit_texture_path), building_text_path_(buildings_texture_path), aux_text_path_(aux_texture_path) { }
+Rendering_Engine::Rendering_Engine(std::shared_ptr<Game>& game, const std::string& map_texture_path, const std::string& unit_texture_path, const std::string& buildings_texture_path, const std::string& aux_texture_path, const std::string& font_path) : game_(game), map_text_path_(map_texture_path), unit_text_path_(unit_texture_path), building_text_path_(buildings_texture_path), aux_text_path_(aux_texture_path), font_path_(font_path) { }
 
 void Rendering_Engine::render(size_t window_width, size_t window_height, sf::RenderWindow& window, Render_Map& r_map, Tile_Map& tile_map, Render_Units& r_units, Render_Buildings& r_buildings, Render_Aux& r_aux_, Renderer& renderer)
 {
     
+    window.setPosition(sf::Vector2i(500,500));
+
     if (!r_map.load(map_text_path_)) {
         return;
     }
@@ -19,7 +21,7 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
         return;
     }
 
-    if (!r_aux_.load(aux_text_path_)) {
+    if (!r_aux_.load(aux_text_path_,font_path_)) {
         return;
     }
 
@@ -42,13 +44,14 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
         if (manager.action_ontheway()) {
             r_aux_.draw_unit_highlight(manager.get_priority_coords());
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-            if (tile_map.is_inside_map_pixel(mousePos.x,mousePos.y)) {
-                coordinates<size_t> matrix_pos = tile_map.get_map_coords(mousePos.x,mousePos.y);
-                r_aux_.draw_cursor_highlight(matrix_pos);
-            }
+            coordinates<size_t> target_coord = tile_map.get_map_coords(mousePos.x,mousePos.y);
+            r_aux_.show_text = true;
+            r_aux_.draw_text(mousePos.x,mousePos.y,manager.get_action_info(target_coord,nullptr));
         } else {
             r_aux_.hide_unit_highlight();
             r_aux_.hide_cursor_highlight();
+            r_aux_.show_text = false;
+            r_aux_.draw_text(0,0,"");
         }
 
         std::string output = game_->get_output();
@@ -68,8 +71,6 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
         window.draw(r_buildings);
         window.draw(r_aux_);
         window.display();
-        //std::cout << game_->get_output() << std::endl;
-        //game_->clear_output();
     }
 }
 

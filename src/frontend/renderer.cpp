@@ -61,7 +61,7 @@ void Renderer::initialise_level( size_t level_idx )
 
 void Renderer::start()
 {
-    window_ = Rendering_Engine(game_, TEXTURE_PATH, UNITS_TEXTURE_PATH, BUILDINGS_TEXTURE_PATH, AUX_TEXTURE_PATH);
+    window_ = Rendering_Engine(game_, TEXTURE_PATH, UNITS_TEXTURE_PATH, BUILDINGS_TEXTURE_PATH, AUX_TEXTURE_PATH, FONT_PATH);
     window_.render( width_, height_, *renderable_, *r_map_, *tile_map_, *r_units_, *r_buildings_, *r_aux_, *this );
 }
 

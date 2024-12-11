@@ -3,20 +3,32 @@
 Render_Aux::Render_Aux(std::shared_ptr<Tile_Map>& tile_map) : tile_map_(tile_map), x0y0_(tile_map->Getx0y0()), tileDim_(tile_map->GetTileDim()) {}
 
 
-bool Render_Aux::load(const std::string& aux_texture_path) {
+bool Render_Aux::load(const std::string& aux_texture_path, const std::string& text_font_path) {
     if (!highlight_text.loadFromFile(aux_texture_path)) {
         return false;
     }
+    if (!text_font_.loadFromFile(text_font_path)) {
+        return false;
+    }
     double scale = tileDim_ / highlight_text.getSize().y;
+
     //Setting up sprite for highlight_unit_
-    //highlight_unit_.setTextureRect(sf::IntRect(textW*text_idx,0,textW,textW));
     highlight_unit_.setOrigin(x0y0_.first,x0y0_.second);
     highlight_unit_.setTexture(highlight_text);
     highlight_unit_.scale(scale,scale);
+
     //Setting up sprite for highlight_cursor_
     highlight_cursor_.setOrigin(x0y0_.first,x0y0_.second);
     highlight_cursor_.setTexture(highlight_text);
     highlight_cursor_.scale(scale,scale);
+
+    //Setting up text.
+    action_info_text_.setFont(text_font_);
+    action_info_text_.setFillColor(sf::Color::Red);
+    action_info_text_.setOutlineColor(sf::Color::Black);
+    action_info_text_.setCharacterSize(12);
+    action_info_text_.setOutlineThickness(3);
+
     hide_cursor_highlight();
     hide_unit_highlight();
     return true;
@@ -29,6 +41,7 @@ void Render_Aux::update() {
         x0y0_ = map_x0y0;
         tileDim_ = map_tile_dim;
     }
+
 }
 
 void Render_Aux::draw_unit_highlight(const coordinates<size_t>& coords) {
@@ -56,6 +69,17 @@ void Render_Aux::draw_highlight(const coordinates<size_t>& coords, sf::Sprite& h
     case 2:
         highlight_sprite.setPosition(x0y0_.first+coords.x*tileDim_,x0y0_.second+coords.y*tileDim_);
         break;
+    }
+}
+
+void Render_Aux::draw_text(int pixel_x, int pixel_y, const std::string& msg) {
+    bool cursor_inside_map = tile_map_->is_inside_map_pixel(pixel_x,pixel_y);
+    bool tile_visible = tile_map_->is_tile_drawn(tile_map_->get_map_coords(pixel_x,pixel_y));
+    if (show_text && cursor_inside_map && tile_visible) {
+        action_info_text_.setString(msg);
+        action_info_text_.setPosition(pixel_x+50,pixel_y);
+    } else {
+        action_info_text_.setString("");
     }
 }
 

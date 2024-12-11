@@ -44,11 +44,21 @@ public:
      */
     bool enqueue_item_action(coordinates<size_t> target);
 
+    std::string get_action_info(const coordinates<size_t>& potential_target, Item* action_item) const;
+
 private:
     std::weak_ptr<Game> game_;
     const coordinates<size_t> invalid_coord = coordinates<size_t>(-1,-1);
     coordinates<size_t> action_origin = invalid_coord;
     Unit* priority_unit_ = nullptr; //Potential action source.
+
+    std::string get_movement_action_info(const coordinates<size_t>& potential_target) const;
+    std::string get_item_action_info(const coordinates<size_t>& potential_target, Item* action_item) const;
+
+    bool can_priority_unit_move_to(const coordinates<size_t>& potential_target) const;
+
+    bool can_priority_unit_attack_to(const coordinates<size_t>& potential_target, const Weapon& weapon_item) const;
+
 };
 
 #endif
