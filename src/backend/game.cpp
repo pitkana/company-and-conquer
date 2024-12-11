@@ -83,6 +83,11 @@ std::unordered_map<int, std::vector<Unit>*> Game::get_units_map() {
 }
 
 void Game::update_visible_tiles() {
+    if (!(active_team_idx_ >= 0 && active_team_idx_ < teams_.size())) {
+        visible_coords.clear();
+        return;
+    }
+
     std::vector<Unit>& active_units = teams_[active_team_idx_].get_units();
     std::vector<coordinates<size_t>> visible_coords_vec;
     for (auto& unit : active_units) {
