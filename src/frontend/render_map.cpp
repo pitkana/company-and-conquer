@@ -25,7 +25,7 @@ void Render_Map::draw_map() {
     float y0 = x0y0_.second;
     for (int i = 0; i <  mapWidth; i++) {
         for (int j = 0; j < mapHeight; j++) {
-            int32_t tile = (tile_map_->is_tile_drawn(i, j)) ? map.get_terrain(j,i)->texture() + 1 : 0;
+            int32_t tile = (tile_map_->is_tile_drawn(i, j)) ? map.get_terrain(j,i)->texture() : 0;
             int tu = tile % (g_texture.getSize().x / g_texture.getSize().y);
             int tv = tile / (g_texture.getSize().x / g_texture.getSize().y);
             int tile_idx = (i*mapHeight+j)*4;
