@@ -30,13 +30,14 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
         if (manager->action_ontheway()) {
             r_aux_->draw_unit_highlight(manager->get_priority_coords());
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-            if (tile_map->is_inside_map_pixel(mousePos.x,mousePos.y)) {
-                coordinates<size_t> matrix_pos = tile_map->get_map_coords(mousePos.x,mousePos.y);
-                r_aux_->draw_cursor_highlight(matrix_pos);
-            }
+            coordinates<size_t> target_coord = tile_map->get_map_coords(mousePos.x,mousePos.y);
+            r_aux_->show_text = true;
+            r_aux_->draw_text(mousePos.x,mousePos.y,manager->get_action_info(target_coord,nullptr));
         } else {
             r_aux_->hide_unit_highlight();
             r_aux_->hide_cursor_highlight();
+            r_aux_->show_text = false;
+            r_aux_->draw_text(0,0,"");
         }
 
         std::string output = game_->get_output();
@@ -54,8 +55,6 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
         window.draw(gui_);
 
         window.display();
-        //std::cout << game_->get_output() << std::endl;
-        //game_->clear_output();
     }
 }
 
@@ -185,5 +184,9 @@ void Rendering_Engine::events(Tile_Map& tile_map, sf::RenderWindow& target, sf::
                 std::cout << "Item action failed!" << std::endl;
             }
         }
+    }
+
+    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::X) {
+        game_->undo_action(game_->get_active_team()->get_id());
     }
 }

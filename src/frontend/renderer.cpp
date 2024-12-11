@@ -14,6 +14,7 @@ Renderer::Renderer( size_t width, size_t height ) : width_(width), height_(heigh
     unit_text_path_ = UNITS_TEXTURE_PATH;
     building_text_path_ = BUILDINGS_TEXTURE_PATH;
     aux_text_path_ = AUX_TEXTURE_PATH;
+    text_font_path_ = FONT_PATH;
 
     // we initialise the objects for the game, window, and the renderables
     game_ = std::make_shared<Game>( height, width );
@@ -99,7 +100,7 @@ void Renderer::initialise_level( size_t level_idx )
         return;
     }
 
-    if (!r_aux_->load(aux_text_path_)) {
+    if (!r_aux_->load(aux_text_path_, text_font_path_)) {
         return;
     }
     
@@ -123,7 +124,7 @@ void Renderer::start()
         return;
     }
 
-    if (!r_aux_->load(aux_text_path_)) {
+    if (!r_aux_->load(aux_text_path_, text_font_path_)) {
         return;
     }
 

@@ -70,6 +70,7 @@ class Renderer
         std::string unit_text_path_;
         std::string building_text_path_;
         std::string aux_text_path_;
+        std::string text_font_path_;
 };
 
 #endif

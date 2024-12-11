@@ -150,8 +150,9 @@ void Game::undo_action(int team_id) {
     } else {
         executing_unit.has_added_action = false;
     }
-    update_visible_tiles();
     action->undo(*this);
+
+    update_visible_tiles();
 }
 
 void Game::end_team_turns(int team_id) {

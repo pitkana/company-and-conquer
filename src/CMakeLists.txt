@@ -47,7 +47,9 @@ add_compile_definitions(BUILDINGS_TEXTURE_PATH="${BUILDINGS_TEXTURE_PATH}")
     # Aux
 set(AUX_TEXTURE_PATH ${CMAKE_SOURCE_DIR}/textures/_aux.png)
 add_compile_definitions(AUX_TEXTURE_PATH="${AUX_TEXTURE_PATH}")
-    
+    # Font
+set(FONT_PATH ${CMAKE_SOURCE_DIR}/textures/font.TTF)
+add_compile_definitions(FONT_PATH="${FONT_PATH}")
 
 # get a lot of warnings
 if(MSVC)

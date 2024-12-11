@@ -390,6 +390,14 @@ std::vector<coordinates<size_t>> Map::get_aoe_affected_coords(const coordinates<
     });
 }
 
+bool Map::los_check_from_A_to_B(const coordinates<size_t>& a, const coordinates<size_t>& b, const uint32_t range) {
+    auto los_tiles = line_of_sight_check(a,range,[this](int64_t y, int64_t x) -> bool {
+        return this->get_terrain(y, x)->can_shoot_through();
+    });
+    auto coord_it = std::find(los_tiles.begin(),los_tiles.end(),b);
+    return coord_it != los_tiles.end();
+}
+
 std::vector< coordinates<size_t> > Map::line_of_sight_check( const coordinates<size_t>& location, const uint32_t range, const std::function<bool(int64_t y, int64_t x)>& predicate) {
     std::vector< coordinates<size_t> > max_range_coords = max_visible_locations( location, range );
     std::vector< coordinates<size_t> > max_range_coords1 = max_visible_locations( location, range - 1 ); // used to fix the error where there would be left some holes in the circle
@@ -518,7 +526,7 @@ inline bool Map::valid_direction( const coordinates<size_t>& location, const coo
 
 std::vector< coordinates<size_t> > Map::possible_tiles_to_move_to( const coordinates<size_t>& location, const uint8_t movement_range )
 {   
-    Timer timer;
+    // Timer timer;
     // this will contain the distance and predecessor of a vertex as: <distance, location of predecessor>
     struct a_vertex
     {
@@ -612,7 +620,7 @@ std::vector< coordinates<size_t> > Map::possible_tiles_to_move_to( const coordin
 
 
 std::vector< coordinates< size_t > > Map::possible_tiles_to_move_to3( const coordinates<size_t>& location, uint8_t movement_range ) {
-    Timer timer;
+    // Timer timer;
     struct Vertex {
         size_t cooldown;
         coordinates<size_t> coords;
@@ -702,7 +710,7 @@ coordinates<size_t> Map::get_closest_accessible_tile(const coordinates<size_t>& 
 
 coordinates<size_t> Map::fastest_movement_to_target(const coordinates<size_t>& location, coordinates<size_t> target, uint8_t movement_range) {
     assert(can_move_to_terrain(target) && "Target coordinates cannot be moved to");
-    Timer timer;
+    // Timer timer;
 
     // If there is somebody on the target tile, get closest other tile
     if (has_unit(target)) {
