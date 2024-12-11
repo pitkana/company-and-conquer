@@ -31,11 +31,9 @@ Renderer::Renderer( size_t width, size_t height ) : width_(width), height_(heigh
 
     // add all the renderables into one object
     // that will be called to make rendering more straightforward
-    renderables_ = std::make_shared<Window_To_Render>();
-
     renderables_->add_drawable( r_map_ );
-    renderables_->add_drawable( r_units_ );
     renderables_->add_drawable( r_buildings_ );
+    renderables_->add_drawable( r_units_ );
     renderables_->add_drawable( r_aux_ );
     renderables_->add_drawable( r_inv_ );
 
@@ -83,8 +81,8 @@ void Renderer::initialise_level( size_t level_idx )
 
     // add all the new renderables
     renderables_->add_drawable( r_map_ );
-    renderables_->add_drawable( r_units_ );
     renderables_->add_drawable( r_buildings_ );
+    renderables_->add_drawable( r_units_ );
     renderables_->add_drawable( r_aux_ );
     renderables_->add_drawable( r_inv_ );
 

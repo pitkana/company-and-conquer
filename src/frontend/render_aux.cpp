@@ -63,8 +63,9 @@ void Render_Aux::hide_cursor_highlight() {
 
 void Render_Aux::draw_highlight(const coordinates<size_t>& coords, sf::Sprite& highlight_sprite, size_t texture_idx) {
     if (!tile_map_->is_inside_map_tile(coords) || !tile_map_->is_tile_drawn(coords)) {
+        //Hide cursor but not unit highlight
         hide_cursor_highlight(); 
-        hide_unit_highlight(); 
+        // hide_unit_highlight(); 
         return;
     }
     highlight_sprite.setTextureRect(sf::IntRect(highlight_text.getSize().y*texture_idx,0,highlight_text.getSize().y,highlight_text.getSize().y));
@@ -85,8 +86,12 @@ void Render_Aux::draw_text(int pixel_x, int pixel_y, const std::string& msg) {
         action_info_text_.setString(msg);
         action_info_text_.setPosition(pixel_x+50,pixel_y);
     } else {
-        action_info_text_.setString("");
+        clear_text();
     }
+}
+
+void Render_Aux::clear_text() {
+    action_info_text_.setString("");
 }
 
 void Render_Aux::hide_highlight(sf::Sprite& highlight_sprite) {

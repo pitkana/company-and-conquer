@@ -14,28 +14,28 @@ public:
     /**
      * @returns True if action is queued.
      */
-    bool action_ontheway() const;
+    bool selected_valid_unit() const;
 
     /**
      * @brief Clears current action.
      */
-    void terminate_action();
+    void deselect_unit();
 
     /**
      * @brief Initiates priority for unit located in origin.
      * 
      * @returns True if successful. False if origin does not have an unit or the unit is dead or if the unit is not in priority team.
      */
-    bool init_priority(const coordinates<size_t>& origin);
+    bool select_unit_on_coords(const coordinates<size_t>& origin);
 
-    const coordinates<size_t>& get_priority_coords() const;
+    const coordinates<size_t>& selected_unit_coords() const;
 
     /**
      * @brief Enqueues movement action for priority_unit_ from action_origin_ to target.
      * 
      * @returns bool based on the fact if enqueing was succesful.
      */
-    bool enqueue_movement_action(coordinates<size_t> target);
+    bool enqueue_movement_action(const coordinates<size_t>& target);
 
     /**
      * @brief Enqueues item action for priority_unit_ from action_origin_ to target.
@@ -44,21 +44,27 @@ public:
      */
     bool enqueue_item_action(coordinates<size_t> target);
 
-    std::string get_action_info(const coordinates<size_t>& potential_target, Item* action_item);
+    std::string get_action_info(const coordinates<size_t>& potential_target, const Item* action_item);
+
+private:
+    void get_movement_action_info(std::stringstream& info_stream, const coordinates<size_t>& potential_target);
+    void get_item_action_info(std::stringstream& info_stream, const coordinates<size_t>& potential_target, const Item* action_item);
+
+    bool can_selected_unit_move_to(const coordinates<size_t>& potential_target) const;
+    bool can_selected_unit_attack_to(const coordinates<size_t>& potential_target) const;
+
+    bool are_valid_coords(const coordinates<size_t>& coords) const;
 
 private:
     std::weak_ptr<Game> game_;
-    const coordinates<size_t> invalid_coord = coordinates<size_t>(-1,-1);
-    coordinates<size_t> action_origin = invalid_coord;
-    Unit* priority_unit_ = nullptr; //Potential action source.
 
-    void get_movement_action_info(std::stringstream& info_stream, const coordinates<size_t>& potential_target);
-    void get_item_action_info(std::stringstream& info_stream, const coordinates<size_t>& potential_target, Item* action_item);
+    coordinates<size_t> selected_unit_coords_ = invalid_coord;
+    Unit* selected_unit_ptr_ = nullptr; //Potential action source.
+    std::vector<coordinates<size_t>> coords_selected_unit_can_move_to_;
+    std::vector<coordinates<size_t>> coords_selected_unit_can_shoot_to_;
 
-    bool can_priority_unit_move_to(const coordinates<size_t>& potential_target) const;
 
-    bool can_priority_unit_attack_to(const coordinates<size_t>& potential_target, const Weapon& weapon_item) const;
-
+    static inline const coordinates<size_t> invalid_coord = coordinates<size_t>(-1,-1);
 };
 
 #endif

@@ -23,6 +23,7 @@ public:
 
     void draw_unit_highlight(const coordinates<size_t>& coords);
     void draw_text(int pixel_x, int pixel_y, const std::string& msg);
+    void clear_text();
     void draw_cursor_highlight(int pixel_x, int pixel_y);
     void draw_cursor_highlight(const coordinates<size_t>& coords);
     void hide_unit_highlight();

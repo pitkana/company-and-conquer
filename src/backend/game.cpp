@@ -100,7 +100,7 @@ void Game::update_visible_tiles() {
     visible_coords = visible_coords_vec;
 }
 
-std::vector<coordinates<size_t>> Game::get_visible_tiles() {
+const std::vector<coordinates<size_t>>& Game::get_visible_tiles() {
     return visible_coords;
 }
 

@@ -27,8 +27,8 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
         window.clear(sf::Color::Black);
         key_inputs(1, 1, renderer);
 
-        if (manager->action_ontheway()) {
-            r_aux_->draw_unit_highlight(manager->get_priority_coords());
+        if (manager->selected_valid_unit()) {
+            r_aux_->draw_unit_highlight(manager->selected_unit_coords());
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
             r_aux_->draw_cursor_highlight(mousePos.x,mousePos.y);
             coordinates<size_t> target_coord = tile_map->get_map_coords(mousePos.x,mousePos.y);
@@ -37,8 +37,9 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
         } else {
             r_aux_->hide_unit_highlight();
             r_aux_->hide_cursor_highlight();
+
             r_aux_->show_text = false;
-            r_aux_->draw_text(0,0,"");
+            r_aux_->clear_text();
         }
 
         std::string output = game_->get_output();
@@ -144,7 +145,7 @@ void Rendering_Engine::events(Tile_Map& tile_map, sf::RenderWindow& target, sf::
             
 
 
-            if (manager.action_ontheway()) {
+            if (manager.selected_valid_unit()) {
                 manager.enqueue_movement_action(matrix_pos);
             }
         }
@@ -157,7 +158,7 @@ void Rendering_Engine::events(Tile_Map& tile_map, sf::RenderWindow& target, sf::
             Map& map = tile_map.GetMap();
             if (map.has_unit(mouse_coords)) {
                 Unit* target_unit = map.get_unit(mouse_coords);
-                if (manager.init_priority(mouse_coords)) {
+                if (manager.select_unit_on_coords(mouse_coords)) {
                     std::cout << "Init priority!" << std::endl;
                 } else {
                     std::cout << "Failed!" << std::endl;
@@ -167,7 +168,7 @@ void Rendering_Engine::events(Tile_Map& tile_map, sf::RenderWindow& target, sf::
         }
     }
     if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Escape) {
-        manager.terminate_action();
+        manager.deselect_unit();
     }
     if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space) {
         game_->next_turn();
@@ -177,7 +178,7 @@ void Rendering_Engine::events(Tile_Map& tile_map, sf::RenderWindow& target, sf::
     }
     if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Z) {
         sf::Vector2i mousePos = sf::Mouse::getPosition(target);
-        if (tile_map.is_inside_map_pixel(mousePos.x,mousePos.y) && manager.action_ontheway()) {
+        if (tile_map.is_inside_map_pixel(mousePos.x,mousePos.y) && manager.selected_valid_unit()) {
             coordinates<size_t> mouse_coords = tile_map.get_map_coords(mousePos.x,mousePos.y);
             if (manager.enqueue_item_action(mouse_coords)) {
                 std::cout << "Item action success!" << std::endl;

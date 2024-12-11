@@ -15,7 +15,7 @@ bool Tile_Map::is_tile_drawn(size_t x, size_t y) const {
 }
 
 bool Tile_Map::is_tile_drawn(const coordinates<size_t>& coords) const {
-    std::vector<coordinates<size_t>> visible_coords = game_->get_visible_tiles();
+    const std::vector<coordinates<size_t>>& visible_coords = game_->get_visible_tiles();
     auto coord_it = std::find(visible_coords.begin(), visible_coords.end(), coords);
     return ((!fog_of_war) || (coord_it != visible_coords.end()));
 }
@@ -45,13 +45,13 @@ std::pair<int,int> Tile_Map::get_tile_coords(const coordinates<size_t>& coords) 
 
 
 coordinates<size_t> Tile_Map::get_map_coords(int pixel_x, int pixel_y) const {
-    float x = ( pixel_x - x0y0_.first ) / tileDim_;
-    float y = ( pixel_y - x0y0_.second ) / tileDim_;
+    size_t x = std::floor(( pixel_x - x0y0_.first ) / tileDim_);
+    size_t y = std::floor(( pixel_y - x0y0_.second ) / tileDim_);
     return coordinates<size_t>( x , y );
 }
 
 bool Tile_Map::is_inside_map_tile(int x, int y) const {
-    return (x >= 0 && x < GetMap().width()) && (y >= 0 && y < GetMap().height());
+    return GetMap().are_valid_coords(y, x);
 }
 
 bool Tile_Map::is_inside_map_tile(const coordinates<size_t>& coords) const {

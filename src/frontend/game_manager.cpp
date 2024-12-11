@@ -3,66 +3,78 @@
 
 Game_Manager::Game_Manager(std::weak_ptr<Game> game) : game_(game) {}
 
-bool Game_Manager::action_ontheway() const {
-    return action_origin != invalid_coord && priority_unit_ != nullptr;
+bool Game_Manager::selected_valid_unit() const {
+    return selected_unit_coords_ != invalid_coord && selected_unit_ptr_ != nullptr;
 }
 
-void Game_Manager::terminate_action() {
-    action_origin = invalid_coord;
-    priority_unit_ = nullptr;
+//NOTE: call when changing turn or deselecting unit
+void Game_Manager::deselect_unit() {
+    selected_unit_coords_ = invalid_coord;
+    selected_unit_ptr_ = nullptr;
+
+    coords_selected_unit_can_move_to_.clear();
+    coords_selected_unit_can_shoot_to_.clear();
 }
 
-bool Game_Manager::init_priority(const coordinates<size_t>& origin) {
+//NOTE: call when selecting unit
+bool Game_Manager::select_unit_on_coords(const coordinates<size_t>& origin) {
     std::shared_ptr<Game> game = game_.lock();
     if (!game->get_map().has_unit(origin) || !(game->game_started())) return false;
 
     Unit* unit_ptr = game->get_map().get_unit(origin);
-
     if (unit_ptr->is_dead() || game->get_unit_team_id(unit_ptr->get_id()) != game->get_active_team()->get_id()) return false;
 
-    action_origin = origin;
-    priority_unit_ = unit_ptr;
+    selected_unit_coords_ = origin;
+    selected_unit_ptr_ = unit_ptr;
+
+    // Calculate these coordinates only once per selection of unit
+    coords_selected_unit_can_move_to_ = game->get_map().possible_tiles_to_move_to3(origin, unit_consts.move_range);
+    coords_selected_unit_can_shoot_to_ = game->get_map().tiles_can_shoot_on(origin, unit_consts.visual_range);
+
     return true;
 }
 
-const coordinates<size_t>& Game_Manager::get_priority_coords() const { return action_origin; }
+const coordinates<size_t>& Game_Manager::selected_unit_coords() const { return selected_unit_coords_; }
 
-bool Game_Manager::enqueue_movement_action(coordinates<size_t> target) {
+bool Game_Manager::enqueue_movement_action(const coordinates<size_t>& target) {
     std::shared_ptr<Game> game = game_.lock();
-    if (!action_ontheway() || priority_unit_->has_moved || !(can_priority_unit_move_to(target))) return false;
+    if (!selected_valid_unit() || selected_unit_ptr_->has_moved || !(can_selected_unit_move_to(target))) return false;
 
-    std::shared_ptr<MovementAction> next_action = std::make_shared<MovementAction>(action_origin,target,*priority_unit_);
-    if (!(game_.lock()->add_action(next_action,game_.lock()->get_active_team()->get_id()))) return false;
+    std::shared_ptr<MovementAction> next_action = std::make_shared<MovementAction>(selected_unit_coords_,target,*selected_unit_ptr_);
+    if (!(game->add_action(next_action, game->get_active_team()->get_id()))) return false;
 
-    terminate_action();
+    deselect_unit();
     return true;
 }
 
 bool Game_Manager::enqueue_item_action(coordinates<size_t> target) {
-    if (!action_ontheway() || !priority_unit_->has_weapon()) return false;
-    if (!game_.lock()->get_map().los_check_from_A_to_B(action_origin,target,5)) return false;
-    std::shared_ptr<WeaponAction> next_action = std::make_shared<WeaponAction>(*priority_unit_->get_weapons()[0],target,*priority_unit_);
+    if (!selected_valid_unit()) return false;
+    if (!can_selected_unit_attack_to(target)) return false;
+
+    std::shared_ptr<WeaponAction> next_action = std::make_shared<WeaponAction>(*selected_unit_ptr_->get_weapons()[0],target,*selected_unit_ptr_);
     if (!(game_.lock()->add_action(next_action,game_.lock()->get_active_team()->get_id()))) return false;
 
-    terminate_action();
+    deselect_unit();
     return true;
 }
 
-std::string Game_Manager::get_action_info(const coordinates<size_t>& potential_target, Item* action_item) {
-    if (!action_ontheway()) return "";
+
+std::string Game_Manager::get_action_info(const coordinates<size_t>& potential_target, const Item* action_item) {
+    if (!selected_valid_unit()) return "";
+
     std::stringstream ss;
-    ss << "Unit " << priority_unit_->get_id() << "\n";
+    ss << selected_unit_ptr_->get_name() << "\n";
     get_movement_action_info(ss,potential_target);
     get_item_action_info(ss,potential_target,action_item);
     return ss.str();
 }
 
 void Game_Manager::get_movement_action_info(std::stringstream& info_stream, const coordinates<size_t>& potential_target) {
-    if (!action_ontheway()) return;
+    if (!selected_valid_unit()) return;
     Map& map = game_.lock()->get_map();
-    if (priority_unit_->has_moved) {
+    if (selected_unit_ptr_->has_moved) {
         info_stream << "has already moved\n";
-    } else if (can_priority_unit_move_to(potential_target)) {
+    } else if (can_selected_unit_move_to(potential_target)) {
         info_stream << "can move here\n";
     } else {
         info_stream << "cannot move here\n";
@@ -70,9 +82,9 @@ void Game_Manager::get_movement_action_info(std::stringstream& info_stream, cons
     return;
 }
 
-void Game_Manager::get_item_action_info(std::stringstream& info_stream, const coordinates<size_t>& potential_target, Item* action_item) {
-    if (!action_ontheway()) return;
-    Map& map = game_.lock()->get_map();
+// NOTE: update these strings
+void Game_Manager::get_item_action_info(std::stringstream& info_stream, const coordinates<size_t>& potential_target, const Item* action_item) {
+    if (!selected_valid_unit()) return;
     if (action_item == nullptr) info_stream <<  "has no items\n"; return;
     if (action_item->is_weapon()) {
         info_stream << action_item->get_name();
@@ -87,19 +99,23 @@ void Game_Manager::get_item_action_info(std::stringstream& info_stream, const co
 }
 
 
-bool Game_Manager::can_priority_unit_move_to(const coordinates<size_t>& potential_target) const {
-    if (!action_ontheway()) return false;
+bool Game_Manager::can_selected_unit_move_to(const coordinates<size_t>& potential_target) const {
+    if (!selected_valid_unit() || !are_valid_coords(potential_target)) return false;
     Map& map = game_.lock()->get_map();
-    if (map.has_unit(potential_target) || map.has_building(potential_target)) return false;
-    auto possible_tiles = map.possible_tiles_to_move_to(action_origin,5);
-    auto tile_it = std::find(possible_tiles.begin(),possible_tiles.end(),potential_target);
-    return tile_it != possible_tiles.end();
+    if (!map.can_move_to_coords(potential_target)) return false;
+
+    auto it = std::find(coords_selected_unit_can_move_to_.begin(), coords_selected_unit_can_move_to_.end(), potential_target);
+    return it != coords_selected_unit_can_move_to_.end();
 }
 
-bool Game_Manager::can_priority_unit_attack_to(const coordinates<size_t>& potential_target, const Weapon& weapon_item) const {
-    if (!action_ontheway()) return false;
+bool Game_Manager::can_selected_unit_attack_to(const coordinates<size_t>& potential_target) const {
+    if (!selected_valid_unit() || !are_valid_coords(potential_target)) return false;
+
+    auto it = std::find(coords_selected_unit_can_shoot_to_.begin(), coords_selected_unit_can_shoot_to_.end(), potential_target);
+    return it != coords_selected_unit_can_shoot_to_.end();
+}
+
+bool Game_Manager::are_valid_coords(const coordinates<size_t>& coords) const {
     Map& map = game_.lock()->get_map();
-    if (!map.has_unit(potential_target)) return false;
-    if (!map.los_check_from_A_to_B(action_origin,potential_target,5)) return false;
-    return true;
+    return map.are_valid_coords(coords);
 }
