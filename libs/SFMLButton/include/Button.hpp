@@ -88,8 +88,8 @@ class Button
         void setLabelColor(sf::Color color);
         void setLabelColor(sf::Color color, sf::Color hover, sf::Color press);
 
-        void set_activation_function(std::function<void(const std::shared_ptr<Game>&, size_t, size_t)>);
-        bool activate(const std::shared_ptr<Game>& game, size_t y, size_t x);
+        void set_activation_function(std::function<void()>);
+        bool activate();
 
         bool isHover = false;
         bool isPressed = false;
@@ -111,7 +111,7 @@ class Button
         ColorSet buttonColorSet;
         ColorSet labelColorSet = ColorSet(sf::Color::Black) ;
 
-        std::function<void(const std::shared_ptr<Game>&, size_t, size_t)> activation_function;
+        std::function<void()> activation_function;
 
 
 

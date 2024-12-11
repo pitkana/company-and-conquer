@@ -30,6 +30,8 @@ public:
 
     const coordinates<size_t>& selected_unit_coords() const;
 
+    Unit* selected_unit_ptr();
+
     /**
      * @brief Enqueues movement action for priority_unit_ from action_origin_ to target.
      * 
@@ -42,9 +44,15 @@ public:
      * 
      * @returns bool based on the fact if enqueing was succesful.
      */
-    bool enqueue_item_action(coordinates<size_t> target);
+    bool enqueue_item_action(coordinates<size_t> target, const Item* action_item);
+
+    bool undo_action();
+
+    void next_turn();
 
     std::string get_action_info(const coordinates<size_t>& potential_target, const Item* action_item);
+
+    Map& get_map();
 
 private:
     void get_movement_action_info(std::stringstream& info_stream, const coordinates<size_t>& potential_target);

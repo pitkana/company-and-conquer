@@ -8,8 +8,10 @@
 #include "unit.hpp"
 
 
-GUI::GUI(std::shared_ptr<Game> game):
-    game_(game), map_(&game->get_map()) {}
+GUI::GUI() {}
+
+GUI::GUI(std::shared_ptr<Game_Manager> game_manager):
+    game_manager_(std::move(game_manager)), map_(&game_manager_->get_map()) {}
 
 void GUI::initialize() {
     if (!font_->loadFromFile(GUI_FONT_PATH)) {
@@ -33,18 +35,9 @@ void GUI::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 }
 
 void GUI::update() {
-    if (!map_->are_valid_coords(active_coords))
-        return;
-
-    if (map_->has_unit(active_coords)){
-        initialize_inventory();
-    } else {
-        inventory_buttons_.isActive = false;
-        unit_buttons_.isActive = false;
-    }
-
+    update_inventory();
     // Set it to false after update so dont keep updating
-    active_coords_changed = false;
+    selected_unit_changed_ = false;
 }
 
 bool GUI::execute_button_actions(sf::RenderWindow& window, sf::Event& event) {
@@ -54,7 +47,7 @@ bool GUI::execute_button_actions(sf::RenderWindow& window, sf::Event& event) {
         if (button->isPressed) {
 
             if (button->isActive) {
-                button->activate(game_, active_coords.y, active_coords.x);
+                button->activate();
             }
             return true;
         } 
@@ -65,43 +58,40 @@ bool GUI::execute_button_actions(sf::RenderWindow& window, sf::Event& event) {
 
 void GUI::click_on_coords(size_t y, size_t x) {
     coordinates<size_t> clicked_coords(x, y);
-    if (use_active_item_on_coords(clicked_coords)) return;
 
-    if (active_coords == clicked_coords){
-        active_coords_changed = false;
+    // if (use_active_item_on_coords(clicked_coords)) return;
+    if (active_item != nullptr) {
+        //If action succeeded, deselect the active item
+        if (game_manager_->enqueue_item_action(clicked_coords, active_item.get()))
+            active_item = nullptr;
         return;
     }
 
-    if (enqueue_movement(clicked_coords)) return;
-
-    active_unit_ptr = map_->get_unit(clicked_coords);
-
-    // Don't select unit that isn't controllable
-    if (!selected_unit_in_active_team()){
-        active_unit_ptr = nullptr;
+    // If clicked on own team's unit, select that before trying to move on their square
+    if (game_manager_->select_unit_on_coords(clicked_coords)) {
+        active_item = nullptr;
+        selected_unit_changed_ = true;
+        return;
     }
-    active_coords = std::move(clicked_coords);
-    active_coords_changed = true;
-}
 
-bool GUI::selected_unit_in_active_team() const {
-    if (active_unit_ptr == nullptr) return false;
-    return game_->get_unit_team_id(active_unit_ptr->get_id()) == game_->get_active_team()->get_id();
+    // At last try to move the selected unit
+    game_manager_->enqueue_movement_action(clicked_coords);
 }
 
 void GUI::initialize_main_buttons() {
     main_buttons_.isActive = true;
 }
 
-void GUI::initialize_inventory() {
+void GUI::update_inventory() {
     // Don't show inventory of inactive team's units
-    if (!selected_unit_in_active_team()) {
+    if (!game_manager_->selected_valid_unit()) {
         inventory_buttons_.clear_buttons();
+        inventory_buttons_.isActive = false;
         return;
     }
 
 
-    if (!active_coords_changed) {
+    if (!selected_unit_changed_) {
         // If no active item 
         if (active_item == nullptr) {
             inventory_buttons_.clear_deactivate_button();
@@ -113,7 +103,7 @@ void GUI::initialize_inventory() {
 
         RectButton button(*font_, true, {30, 460});
         button.setButtonLabel(20, "Deselect item");
-        button.set_activation_function([this](const std::shared_ptr<Game>& game, size_t y, size_t x) {
+        button.set_activation_function([this]() {
             this->active_item = nullptr;
         });
 
@@ -126,14 +116,14 @@ void GUI::initialize_inventory() {
     inventory_buttons_.clear_buttons();
 
     float curr_x = 30;
-    const std::vector<std::shared_ptr<const Item>>& inventory = active_unit_ptr->get_inventory();
+    const std::vector<std::shared_ptr<const Item>>& inventory = game_manager_->selected_unit_ptr()->get_inventory();
 
     for (unsigned int i = 0; i < unit_consts.inventory_size; i++) {
         RectButton button(*font_, true, {curr_x, 500});
         if (i < inventory.size()) {
             const std::shared_ptr<const Item>& item = inventory[i];
             button.setButtonLabel(20, inventory[i]->get_name());
-            button.set_activation_function([this, item](const std::shared_ptr<Game>& game, size_t y, size_t x) {
+            button.set_activation_function([this, item]() {
                 this->active_item = item;
             });
 
@@ -171,36 +161,4 @@ std::vector<RectButton*> GUI::get_all_buttons() {
     add_ptrs_to_vec(buttons, unit_buttons_.buttons);
 
     return buttons;
-}
-
-bool GUI::use_active_item_on_coords(const coordinates<size_t>& coords) {
-    if (!selected_unit_in_active_team() ||
-        active_item == nullptr ||
-        active_unit_ptr->has_added_action) return false;
-
-    std::vector<coordinates<size_t>> coords_can_shoot_on = map_->tiles_can_shoot_on(active_coords, unit_consts.visual_range);
-    if (auto it = std::find(coords_can_shoot_on.begin(), coords_can_shoot_on.end(), coords);
-        it == coords_can_shoot_on.end()) return false;
-
-    Team* active_team = game_->get_active_team();
-    std::shared_ptr<Action> action = active_item->get_action(coords, *active_unit_ptr);
-
-    //After successful action, deactivate item
-    active_item = nullptr;
-    return game_->add_action(std::move(action), game_->get_active_team()->get_id());
-}
-
-bool GUI::enqueue_movement(const coordinates<size_t>& coords) {
-    if (!selected_unit_in_active_team() ||
-        active_unit_ptr->has_moved) return false;
-
-    std::vector<coordinates<size_t>> coords_can_move_to = map_->possible_tiles_to_move_to3(active_coords, unit_consts.move_range);
-    if (auto it = std::find(coords_can_move_to.begin(), coords_can_move_to.end(), coords);
-        it == coords_can_move_to.end()) return false;
-
-    Team* active_team = game_->get_active_team();
-    std::shared_ptr<Action> movement = std::make_shared<MovementAction>(active_coords, coords, *active_unit_ptr);
-    game_->add_action(std::move(movement), active_team->get_id());
-
-    return true;
 }

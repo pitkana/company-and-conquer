@@ -1,7 +1,10 @@
 #include "game_manager.hpp"
 
-
 Game_Manager::Game_Manager(std::weak_ptr<Game> game) : game_(game) {}
+
+Map& Game_Manager::get_map() {
+    return game_.lock()->get_map();
+}
 
 bool Game_Manager::selected_valid_unit() const {
     return selected_unit_coords_ != invalid_coord && selected_unit_ptr_ != nullptr;
@@ -36,10 +39,14 @@ bool Game_Manager::select_unit_on_coords(const coordinates<size_t>& origin) {
 
 const coordinates<size_t>& Game_Manager::selected_unit_coords() const { return selected_unit_coords_; }
 
+Unit* Game_Manager::selected_unit_ptr() {
+    return selected_unit_ptr_;
+}
+
 bool Game_Manager::enqueue_movement_action(const coordinates<size_t>& target) {
-    std::shared_ptr<Game> game = game_.lock();
     if (!selected_valid_unit() || selected_unit_ptr_->has_moved || !(can_selected_unit_move_to(target))) return false;
 
+    std::shared_ptr<Game> game = game_.lock();
     std::shared_ptr<MovementAction> next_action = std::make_shared<MovementAction>(selected_unit_coords_,target,*selected_unit_ptr_);
     if (!(game->add_action(next_action, game->get_active_team()->get_id()))) return false;
 
@@ -47,17 +54,34 @@ bool Game_Manager::enqueue_movement_action(const coordinates<size_t>& target) {
     return true;
 }
 
-bool Game_Manager::enqueue_item_action(coordinates<size_t> target) {
+bool Game_Manager::enqueue_item_action(coordinates<size_t> target, const Item* action_item) {
     if (!selected_valid_unit()) return false;
     if (!can_selected_unit_attack_to(target)) return false;
+    assert(action_item != nullptr && "Gave nullptr to enqueue_item_action");
 
-    std::shared_ptr<WeaponAction> next_action = std::make_shared<WeaponAction>(*selected_unit_ptr_->get_weapons()[0],target,*selected_unit_ptr_);
+    std::shared_ptr<Action> next_action = action_item->get_action(target, *selected_unit_ptr_);
     if (!(game_.lock()->add_action(next_action,game_.lock()->get_active_team()->get_id()))) return false;
 
     deselect_unit();
     return true;
 }
 
+bool Game_Manager::undo_action() {
+    std::shared_ptr<Game> game = game_.lock();
+    // If an action was undone
+    if (game->undo_action(game->get_active_team()->get_id())) {
+        deselect_unit();
+        return true;
+    }
+
+    return false;
+}
+
+void Game_Manager::next_turn() {
+    std::shared_ptr<Game> game = game_.lock();
+    game->next_turn();
+    deselect_unit();
+}
 
 std::string Game_Manager::get_action_info(const coordinates<size_t>& potential_target, const Item* action_item) {
     if (!selected_valid_unit()) return "";

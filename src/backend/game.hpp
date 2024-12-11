@@ -98,7 +98,7 @@ public:
      */
     void execute_action(std::shared_ptr<Action> action);
 
-    void undo_action(int team_id);
+    bool undo_action(int team_id);
 
     //End the turn, thus executing all of the selected actions
     void end_team_turns(int team_id);

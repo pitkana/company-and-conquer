@@ -133,13 +133,13 @@ void Game::execute_action(std::shared_ptr<Action> action) {
     action->execute(*this, get_unit_location(action->get_unit().get_id()));
 }
 
-void Game::undo_action(int team_id) {
+bool Game::undo_action(int team_id) {
     Team& team = get_team_by_id(team_id);
 
     std::shared_ptr<Action> action = team.undo_action();
     // If no actions were queued, return early
     if (action == nullptr) {
-        return;
+        return false;
     }
 
     Unit& executing_unit = action->get_unit();
@@ -153,6 +153,8 @@ void Game::undo_action(int team_id) {
     action->undo(*this);
 
     update_visible_tiles();
+
+    return true;
 }
 
 void Game::end_team_turns(int team_id) {

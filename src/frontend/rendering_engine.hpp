@@ -74,7 +74,7 @@ private:
     /**
      * @brief Events are also handled with bunch of if statements in sfml.
      */
-    void events(Tile_Map& tile_map, sf::RenderWindow& target, sf::Event event, Game_Manager& manager);
+    void events(/* Tile_Map& tile_map,  */sf::RenderWindow& target, sf::Event event, /* Game_Manager& manager, */ Renderer& renderer);
     std::shared_ptr<Game> game_;
 
     std::string text_path_;
@@ -82,10 +82,10 @@ private:
 
     // members that make it possible to handle logic, they will be obtained from the Renderer object
     // Pointers to the same objects are also stored in the Renderer object, but 
-    std::shared_ptr<Render_Map> r_map;
-    std::shared_ptr<Tile_Map> tile_map;
+    std::shared_ptr<Render_Map> r_map_;
+    std::shared_ptr<Tile_Map> tile_map_;
     std::shared_ptr<Render_Aux> r_aux_;
-    std::shared_ptr<Game_Manager> manager;
+    std::shared_ptr<Game_Manager> manager_;
 
 
     static inline const float move_speed = 5;
