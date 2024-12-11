@@ -44,7 +44,7 @@ public:
      */
     bool enqueue_item_action(coordinates<size_t> target);
 
-    std::string get_action_info(const coordinates<size_t>& potential_target, Item* action_item) const;
+    std::string get_action_info(const coordinates<size_t>& potential_target, Item* action_item);
 
 private:
     std::weak_ptr<Game> game_;
@@ -52,8 +52,8 @@ private:
     coordinates<size_t> action_origin = invalid_coord;
     Unit* priority_unit_ = nullptr; //Potential action source.
 
-    std::string get_movement_action_info(const coordinates<size_t>& potential_target) const;
-    std::string get_item_action_info(const coordinates<size_t>& potential_target, Item* action_item) const;
+    void get_movement_action_info(std::stringstream& info_stream, const coordinates<size_t>& potential_target);
+    void get_item_action_info(std::stringstream& info_stream, const coordinates<size_t>& potential_target, Item* action_item);
 
     bool can_priority_unit_move_to(const coordinates<size_t>& potential_target) const;
 
