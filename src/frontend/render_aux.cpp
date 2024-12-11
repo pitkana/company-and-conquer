@@ -15,12 +15,12 @@ bool Render_Aux::load(const std::string& aux_texture_path, const std::string& te
     //Setting up sprite for highlight_unit_
     highlight_unit_.setOrigin(x0y0_.first,x0y0_.second);
     highlight_unit_.setTexture(highlight_text);
-    highlight_unit_.scale(scale,scale);
+    highlight_unit_.setScale(scale,scale);
 
     //Setting up sprite for highlight_cursor_
     highlight_cursor_.setOrigin(x0y0_.first,x0y0_.second);
     highlight_cursor_.setTexture(highlight_text);
-    highlight_cursor_.scale(scale,scale);
+    highlight_cursor_.setScale(scale,scale);
 
     //Setting up text.
     action_info_text_.setFont(text_font_);
@@ -37,15 +37,16 @@ bool Render_Aux::load(const std::string& aux_texture_path, const std::string& te
 void Render_Aux::update() {
     std::pair<int,int> map_x0y0 = tile_map_->Getx0y0();
     int map_tile_dim = tile_map_->GetTileDim();
-    if (x0y0_.first != map_x0y0.first || x0y0_.second != map_x0y0.second || tileDim_ != map_tile_dim) {
-        x0y0_ = map_x0y0;
-        tileDim_ = map_tile_dim;
-    }
-
+    x0y0_ = map_x0y0;
+    tileDim_ = map_tile_dim;
 }
 
 void Render_Aux::draw_unit_highlight(const coordinates<size_t>& coords) {
     draw_highlight(coords,highlight_unit_,1);
+}
+
+void Render_Aux::draw_cursor_highlight(int pixel_x, int pixel_y) {
+    draw_highlight(tile_map_->get_map_coords(pixel_x,pixel_y),highlight_cursor_,2);
 }
 
 void Render_Aux::draw_cursor_highlight(const coordinates<size_t>& coords) {
@@ -61,6 +62,11 @@ void Render_Aux::hide_cursor_highlight() {
 }
 
 void Render_Aux::draw_highlight(const coordinates<size_t>& coords, sf::Sprite& highlight_sprite, size_t texture_idx) {
+    if (!tile_map_->is_inside_map_tile(coords) || !tile_map_->is_tile_drawn(coords)) {
+        hide_cursor_highlight(); 
+        hide_unit_highlight(); 
+        return;
+    }
     highlight_sprite.setTextureRect(sf::IntRect(highlight_text.getSize().y*texture_idx,0,highlight_text.getSize().y,highlight_text.getSize().y));
     switch (texture_idx) {
     case 1:

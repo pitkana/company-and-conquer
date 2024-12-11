@@ -15,7 +15,7 @@ bool Render_Buildings::load(const std::string& buildings_texture_path) {
         sprite.setOrigin(x0y0_.first,x0y0_.second);
         sprite.setTexture(buildings_text);
         double scale = tileDim_ / textW;
-        sprite.scale(scale,scale);
+        sprite.setScale(scale,scale);
     }
     draw_buildings();
     return true;

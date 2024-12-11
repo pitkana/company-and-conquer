@@ -20,7 +20,7 @@ bool Render_Units::load(const std::string& unit_texture_path) {
             sprite.setOrigin(x0y0_.first,x0y0_.second);
             sprite.setTexture(unit_text);
             double scale = tileDim_ / textW;
-            sprite.scale(scale,scale);
+            sprite.setScale(scale,scale);
         }
     }
     draw_units();

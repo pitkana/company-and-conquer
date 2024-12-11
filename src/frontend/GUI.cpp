@@ -12,7 +12,7 @@ GUI::GUI(std::shared_ptr<Game> game):
     game_(game), map_(&game->get_map()) {}
 
 void GUI::initialize() {
-    if (!font_->loadFromFile("fonts/NotoSans-Bold.ttf")) {
+    if (!font_->loadFromFile(GUI_FONT_PATH)) {
         assert(false && "Loading font failed");
     }
 

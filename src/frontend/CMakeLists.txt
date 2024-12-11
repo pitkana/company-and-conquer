@@ -36,3 +36,5 @@ add_compile_definitions(AUX_TEXTURE_PATH="${AUX_TEXTURE_PATH}")
     # Font
 set(FONT_PATH ${CMAKE_SOURCE_DIR}/textures/font.TTF)
 add_compile_definitions(FONT_PATH="${FONT_PATH}")
+set(GUI_FONT_PATH ${CMAKE_SOURCE_DIR}/fonts/NotoSans-Bold.ttf)
+add_compile_definitions(GUI_FONT_PATH="${GUI_FONT_PATH}")

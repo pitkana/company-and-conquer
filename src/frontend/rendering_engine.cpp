@@ -30,6 +30,7 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
         if (manager->action_ontheway()) {
             r_aux_->draw_unit_highlight(manager->get_priority_coords());
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+            r_aux_->draw_cursor_highlight(mousePos.x,mousePos.y);
             coordinates<size_t> target_coord = tile_map->get_map_coords(mousePos.x,mousePos.y);
             r_aux_->show_text = true;
             r_aux_->draw_text(mousePos.x,mousePos.y,manager->get_action_info(target_coord,nullptr));
