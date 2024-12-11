@@ -181,4 +181,8 @@ void Rendering_Engine::events(Tile_Map& tile_map, sf::RenderWindow& target, sf::
             }
         }
     }
+
+    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::X) {
+        game_->undo_action(game_->get_active_team()->get_id());
+    }
 }
