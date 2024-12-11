@@ -513,7 +513,7 @@ inline bool Map::valid_direction( const coordinates<size_t>& location, const coo
 
 std::vector< coordinates<size_t> > Map::possible_tiles_to_move_to( const coordinates<size_t>& location, const uint8_t movement_range )
 {   
-    Timer timer;
+    // Timer timer;
     // this will contain the distance and predecessor of a vertex as: <distance, location of predecessor>
     struct a_vertex
     {
@@ -607,7 +607,7 @@ std::vector< coordinates<size_t> > Map::possible_tiles_to_move_to( const coordin
 
 
 std::vector< coordinates< size_t > > Map::possible_tiles_to_move_to3( const coordinates<size_t>& location, uint8_t movement_range ) {
-    Timer timer;
+    // Timer timer;
     struct Vertex {
         size_t cooldown;
         coordinates<size_t> coords;
@@ -697,7 +697,7 @@ coordinates<size_t> Map::get_closest_accessible_tile(const coordinates<size_t>& 
 
 coordinates<size_t> Map::fastest_movement_to_target(const coordinates<size_t>& location, coordinates<size_t> target, uint8_t movement_range) {
     assert(can_move_to_terrain(target) && "Target coordinates cannot be moved to");
-    Timer timer;
+    // Timer timer;
 
     // If there is somebody on the target tile, get closest other tile
     if (has_unit(target)) {
