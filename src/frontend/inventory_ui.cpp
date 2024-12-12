@@ -22,6 +22,15 @@ void Inventory_UI::update_inventory(const std::span<const std::shared_ptr<const 
     }
 }
 
+bool Inventory_UI::load(const std::string& texture_path)
+{
+    if (!texture_.loadFromFile(texture_path)) {
+        return false;
+    }
+
+    return true;
+}
+
 void Inventory_UI::update()
 {
     update_background();
@@ -46,8 +55,8 @@ std::unique_ptr<sf::Sprite> Inventory_UI::render_item(const Item& an_item, size_
 
     sf::Texture texture;
     texture.create(width, height);
-    sf::Uint8* pixels = new sf::Uint8[width * height * 4](0xff);
-    texture.update(pixels);
+    // sf::Uint8* pixels = new sf::Uint8[width * height * 4](0xff);
+    // texture.update(pixels);
 
     item->setTexture( texture );
 

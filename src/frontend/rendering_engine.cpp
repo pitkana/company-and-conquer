@@ -3,9 +3,7 @@
 
 
 
-Rendering_Engine::Rendering_Engine(std::shared_ptr<Game>& game, size_t width, size_t height) : game_(game) { 
-    gui_.initialize();
-}
+Rendering_Engine::Rendering_Engine(std::shared_ptr<Game>& game, size_t width, size_t height) : game_(game) { }
 
 void Rendering_Engine::render(size_t window_width, size_t window_height, sf::RenderWindow& window, Renderer& renderer, const std::shared_ptr<Window_To_Render>& renderables)
 {
@@ -32,10 +30,10 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
 
         if (manager_->selected_valid_unit()) {
             r_aux_->draw_unit_highlight(manager_->selected_unit_coords());
-            r_aux_->draw_cursor_highlight(mousePos.x,mousePos.y);
+            r_aux_->draw_cursor_highlight(mousePos.x, mousePos.y);
             coordinates<size_t> target_coord = tile_map_->get_map_coords(mousePos.x,mousePos.y);
             r_aux_->show_text = true;
-            r_aux_->draw_text(mousePos.x,mousePos.y,manager_->get_action_info(target_coord,nullptr));
+            r_aux_->draw_text(mousePos.x,mousePos.y, manager_->get_action_info(target_coord, nullptr));
         } else {
             r_aux_->hide_unit_highlight();
             r_aux_->hide_cursor_highlight();

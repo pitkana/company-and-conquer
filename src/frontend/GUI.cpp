@@ -22,6 +22,10 @@ void GUI::initialize() {
 
     initialize_main_buttons();
 
+    if ( !r_inv_->load( INVENTORY_TEXTURE_PATH ) ) {
+        assert(false && "Loading inventory image failed");
+    }
+
 }
 
 void GUI::draw(sf::RenderTarget& target, sf::RenderStates states) const {
@@ -39,6 +43,7 @@ void GUI::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 
 void GUI::update() {
     update_inventory();
+    r_inv_->update();
     // Set it to false after update so dont keep updating
     selected_unit_changed_ = false;
 }
@@ -101,7 +106,7 @@ void GUI::initialize_main_buttons() {
     RectButton next_unit_button(*font_, true, {curr_x, 650});
     next_unit_button.setButtonLabel(20, " Next unit ");
     next_unit_button.set_activation_function([this]() {
-        this->game_manager_->cycle_units(700, 700);
+        this->game_manager_->cycle_units(width_, width_);
         this->selected_unit_changed_ = true;
         active_item = nullptr;
     });
@@ -140,6 +145,12 @@ void GUI::update_inventory() {
         return;
     }
 
+    // we calculate some sizes for the buttons depending on the window size
+    float button_width = width_ / 6 - padding;
+    float button_height = height_ / 6 - padding;
+
+    // also calculate the relative position of the first item buttom
+    sf::Vector2f pos = { (width_ / 6) + padding / 2, height_ - (height_ / 6 - padding / 2)};
 
     if (!selected_unit_changed_) {
         // If no active item 
@@ -152,7 +163,7 @@ void GUI::update_inventory() {
         // so we render it at the new place
         if (inventory_buttons_.deactivate_button_exists()) inventory_buttons_.clear_deactivate_button();
 
-        RectButton button(*font_, true, {active_item_pos_.x, active_item_pos_.y - width_ / 10});
+        RectButton button(*font_, true, {active_item_pos_.x, active_item_pos_.y - padding});
         button.setButtonLabel(20, "Deselect item");
         button.set_activation_function([this]() {
             this->active_item = nullptr;
@@ -166,7 +177,7 @@ void GUI::update_inventory() {
 
     inventory_buttons_.clear_buttons();
 
-    sf::Vector2f pos = { 2 * (width_ / 8), height_ - (height_ / 14)};
+    
     
 
     float curr_x = 30;
@@ -175,7 +186,7 @@ void GUI::update_inventory() {
     // r_inv_->update_inventory( std::span<const std::shared_ptr<const Item>>{inventory} );
 
     for (unsigned int i = 0; i < unit_consts.inventory_size; i++) {
-        RectButton button(*font_, true, pos);
+        RectButton button(*font_, {button_width, button_height}, pos);
         if (i < inventory.size()) {
             const std::shared_ptr<const Item>& item = inventory[i];
             button.setButtonLabel(20, inventory[i]->get_name());

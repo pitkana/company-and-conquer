@@ -21,7 +21,7 @@ class Inventory_UI : public Auxiliary_renderable
 
         // the padding of the item images from the sides of the inventory rectangle and from each other
         // the value is in pixels
-        static const size_t padding = 10;
+        static const size_t padding = 50;
         /**
          * @brief Used to update which inventory to render, the std::span creates a
          * non-owning container for the std::vector in which the items are stored in the Unit.
@@ -35,6 +35,8 @@ class Inventory_UI : public Auxiliary_renderable
          * 
          */
         void display_inv( const bool display_inv );
+
+        bool load(const std::string& texture_path);
 
         void update() override;
         
@@ -66,22 +68,28 @@ class Inventory_UI : public Auxiliary_renderable
          */
         void update_background()
         {
-            size_t width = window_width_ / 2 + padding * 4;
-            size_t height = window_height_ - (window_height_ / 8) + padding * 2;
+            float width = (2*window_width_) / 3;   // the calculation comes from 4 / 6, where 4 is the amount of items
+            float height = (window_height_ / 6);
 
-            sf::Vector2f pos = { 2 * (window_width_ / 8) - padding * 2, window_height_ - (window_height_ / 8)};
+            float scale_x = width / texture_.getSize().x;
+            float scale_y = height / texture_.getSize().y;
+
+            background_.setTexture( texture_, true );
+            background_.setScale( scale_x, scale_y );
+
+            sf::Vector2f pos = { (window_width_ / 6), window_height_ - (window_height_ / 6)};
 
             background_.setPosition( pos );
 
-            sf::Texture texture;
-            texture.create(width, height);
+
             //sf::Uint8* pixels = new sf::Uint8[width * height * 4](0xff);
-            background_.setTexture( texture, true );
-            background_.setColor( sf::Color(255, 255, 255) );
+            
+            //background_.setColor( sf::Color(255, 255, 255) );
         }
 
 
         sf::Sprite background_;
+        sf::Texture texture_;
         std::vector<std::unique_ptr<sf::Sprite>> items_list_;
         size_t window_width_ = 0;
         size_t window_height_ = 0;

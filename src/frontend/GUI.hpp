@@ -53,6 +53,9 @@ class Unit;
 class GUI : public Auxiliary_renderable
 {
 public:
+    static const size_t padding = 10;
+
+
     GUI() {};
     GUI(std::shared_ptr<Game_Manager> manager, size_t width, size_t height);
 
@@ -97,7 +100,7 @@ private:
 
     size_t width_ = 0;
     size_t height_ = 0;
-    size_t padding = 10;
+    
 
     RectButtonGroup main_buttons_;
     RectButtonGroup unit_buttons_;
