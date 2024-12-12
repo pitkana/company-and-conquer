@@ -23,8 +23,6 @@ public:
 private:
     std::shared_ptr<Tile_Map> tile_map_;
     std::unordered_map<std::shared_ptr<Building>,sf::Sprite> building_sprite_map_;
-    std::pair<int,int> x0y0_;
-    int tileDim_;
     sf::Texture buildings_text;
     
     void draw_buildings();

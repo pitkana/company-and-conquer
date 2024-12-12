@@ -71,7 +71,7 @@ public:
     /**
      * @brief Gets the top-left pixel coordinates of the entire map.
      */
-    std::pair<int,int> Getx0y0() const;
+    std::pair<float,float> Getx0y0() const;
     Map& GetMap() const;
     std::weak_ptr<Game> GetGame() const;
     void SetGame( std::shared_ptr<Game> game );

@@ -119,7 +119,7 @@ std::vector<std::shared_ptr<Building>> Map::get_all_buildings() const {
         for (size_t x = 0; x < width(); ++x) {
             std::shared_ptr<Building> b_ptr = all_buildings_(y,x);
             if (b_ptr != nullptr) {
-                out.push_back(b_ptr);
+                out.push_back(std::move(b_ptr));
             }
         }
     }
