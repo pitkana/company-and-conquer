@@ -3,6 +3,7 @@
 #include <cassert>
 #include <variant>
 
+#include "enemy_ai.hpp"
 #include "game.hpp"
 #include "map.hpp"
 #include "action.hpp"
@@ -88,13 +89,14 @@ void Game::update_visible_tiles() {
         return;
     }
 
-    std::vector<Unit>& active_units = teams_[active_team_idx_].get_units();
+    std::vector<Unit*> active_units = teams_[active_team_idx_].get_alive_units();
     std::vector<coordinates<size_t>> visible_coords_vec;
-    for (auto& unit : active_units) {
-        coordinates<size_t> unit_location = map_.get_unit_location(&unit);
-        std::vector<coordinates<size_t>> visible_coords_unit = map_.tiles_unit_sees(unit_location,5);
+    for (Unit* unit : active_units) {
+        coordinates<size_t> unit_location = map_.get_unit_location(unit);
+        std::vector<coordinates<size_t>> visible_coords_unit = map_.tiles_unit_sees(unit_location, unit_consts.visual_range);
         visible_coords_vec.insert(visible_coords_vec.end(),visible_coords_unit.begin(),visible_coords_unit.end());
     }
+
     std::sort(visible_coords_vec.begin(),visible_coords_vec.end());
     std::unique(visible_coords_vec.begin(),visible_coords_vec.end());
     visible_coords = visible_coords_vec;
@@ -102,6 +104,11 @@ void Game::update_visible_tiles() {
 
 const std::vector<coordinates<size_t>>& Game::get_visible_tiles() {
     return visible_coords;
+}
+
+void Game::set_ai_controlled_team(int team_id) {
+    Team& team = get_team_by_id(team_id);
+    enemy_ai_ = std::make_unique<EnemyAI>(*this, team);
 }
 
 bool Game::add_action(std::shared_ptr<Action> action, int team_id) {
@@ -208,7 +215,13 @@ void Game::next_turn() {
     end_team_turns(teams_[active_team_idx_].get_id());
     next_team();
     if (active_team_idx_ == -1) return;
-    output_ << "Team " << teams_[active_team_idx_].get_id() << " turn\n";
+
+    int active_team_id = teams_[active_team_idx_].get_id();
+    output_ << "Team " << active_team_id << " turn\n";
+    if (enemy_ai_ != nullptr && enemy_ai_->team_id() == active_team_id) {
+        enemy_ai_->generate_whole_teams_turns();
+        next_turn();
+    }
     update_visible_tiles();
 }
 

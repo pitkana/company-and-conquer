@@ -103,7 +103,7 @@ void GUI::next_turn() {
 void GUI::initialize_main_buttons() {
 
     float curr_x = 50;
-    RectButton next_unit_button(*font_, true, {curr_x, 650});
+    RectButton next_unit_button(*font_, true, {curr_x, 600});
     next_unit_button.setButtonLabel(20, " Next unit ");
     next_unit_button.set_activation_function([this]() {
         this->game_manager_->cycle_units(width_, width_);
@@ -113,7 +113,7 @@ void GUI::initialize_main_buttons() {
 
     curr_x += next_unit_button.button.getSize().x + 20;
 
-    RectButton end_turn_button(*font_, true, {curr_x, 650});
+    RectButton end_turn_button(*font_, true, {curr_x, 600});
     end_turn_button.setButtonLabel(20, " End turn ");
     end_turn_button.set_activation_function([this]() {
         this->game_manager_->next_turn();
@@ -122,7 +122,14 @@ void GUI::initialize_main_buttons() {
 
     curr_x += end_turn_button.button.getSize().x + 20;
 
-    RectButton deselect_unit_button(*font_, true, {curr_x, 650});
+    RectButton undo_action_button(*font_, true, {curr_x, 600});
+    undo_action_button.setButtonLabel(20, " Undo action ");
+    undo_action_button.set_activation_function([this]() {
+        this->undo_action();
+    });
+    curr_x += undo_action_button.button.getSize().x + 20;
+
+    RectButton deselect_unit_button(*font_, true, {curr_x, 600});
     deselect_unit_button.setButtonLabel(20, " Deselect unit ");
     deselect_unit_button.set_activation_function([this]() {
         this->game_manager_->deselect_unit();
@@ -131,6 +138,7 @@ void GUI::initialize_main_buttons() {
 
     main_buttons_.buttons.push_back(std::move(next_unit_button));
     main_buttons_.buttons.push_back(std::move(end_turn_button));
+    main_buttons_.buttons.push_back(std::move(undo_action_button));
     main_buttons_.buttons.push_back(std::move(deselect_unit_button));
 
 
