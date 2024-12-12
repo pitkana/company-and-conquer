@@ -44,7 +44,6 @@ class Renderer
         std::shared_ptr<Render_Aux>& get_r_aux() { return r_aux_; }
         std::shared_ptr<Window_To_Render>& get_renderables() { return renderables_; }
         std::shared_ptr<Inventory_UI>& get_r_inv() { return r_inv_; }
-        std::shared_ptr<Game_Manager>& get_manager() { return manager_; }
 
 
     private:
@@ -55,7 +54,6 @@ class Renderer
         std::shared_ptr<Game> game_;  // current level
         Map_Builder builder_ = Map_Builder{};
         Rendering_Engine window_; // the class that contains logic for rendering
-        std::shared_ptr<Game_Manager> manager_;
 
         std::shared_ptr<Tile_Map> tile_map_;
         std::shared_ptr<Render_Map> r_map_;

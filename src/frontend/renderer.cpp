@@ -105,8 +105,6 @@ void Renderer::initialise_level( size_t level_idx )
     game_->init_game();
 
     window_.get_game() = game_;
-
-    manager_ = std::make_shared<Game_Manager>(game_);
 }
 
 void Renderer::start()

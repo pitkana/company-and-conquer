@@ -4,12 +4,13 @@
 #include "game.hpp"
 #include "action.hpp"
 
+class Tile_Map;
 /**
  * @brief Used through the UI to manage turns in Game class.
  */
 class Game_Manager {
 public:
-    Game_Manager(std::weak_ptr<Game> game);
+    Game_Manager(std::weak_ptr<Game> game, std::weak_ptr<Tile_Map> tile_map);
 
     /**
      * @returns True if action is queued.
@@ -50,6 +51,8 @@ public:
 
     void next_turn();
 
+    void cycle_units(int window_width, int window_height);
+
     std::string get_action_info(const coordinates<size_t>& potential_target, const Item* action_item);
 
     Map& get_map();
@@ -65,12 +68,14 @@ private:
 
 private:
     std::weak_ptr<Game> game_;
+    std::weak_ptr<Tile_Map> tile_map_;
 
     coordinates<size_t> selected_unit_coords_ = invalid_coord;
     Unit* selected_unit_ptr_ = nullptr; //Potential action source.
     std::vector<coordinates<size_t>> coords_selected_unit_can_move_to_;
     std::vector<coordinates<size_t>> coords_selected_unit_can_shoot_to_;
 
+    int unit_cycle_idx_ = 0;
 
     static inline const coordinates<size_t> invalid_coord = coordinates<size_t>(-1,-1);
 };

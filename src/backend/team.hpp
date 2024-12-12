@@ -37,6 +37,9 @@ public:
     [[nodiscard]]
     std::vector<Unit>& get_units();
 
+    [[nodiscard]]
+    std::vector<Unit*> get_alive_units();
+
     //const version of get_units
     [[nodiscard]]
     const std::vector<Unit>& get_units() const;

@@ -14,7 +14,9 @@ void rendering_engine_test() {
     Team team2;
     Unit unit1("0");
     Unit unit2("1");
+    Unit unit3("2");
     team1.add_unit(unit1);
+    team1.add_unit(unit3);
     team2.add_unit(unit2);
     test_game.add_team(team1);
     test_game.add_team(team2);
@@ -23,10 +25,12 @@ void rendering_engine_test() {
     u1->add_item(std::make_shared<Weapon>("gun1",100,100,0));
     u1->add_item(ConstItem::turret_barrel);
     u1->add_item(ConstItem::turret_legs);
+    Unit* u3 = &t1.get_units()[1];
     Team& t2 = test_game.get_teams()[1];
     Unit* u2 = &t2.get_units()[0];
     u2->add_item(std::make_shared<Weapon>("gun2",100,100,0));
     test_map.add_unit(0,0,u1);
+    test_map.add_unit(2, 2, u3);
     test_map.add_unit(5,5,u2);
     renderer.start();
 }

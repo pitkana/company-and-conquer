@@ -67,6 +67,17 @@ const std::vector<Unit>& Team::get_units() const {
     return units_;
 }
 
+std::vector<Unit*> Team::get_alive_units() {
+    std::vector<Unit*> units;
+    for (Unit& unit : units_) {
+        if (unit.is_dead()) continue;
+
+        units.push_back(&unit);
+    }
+
+    return units;
+}
+
 size_t Team::team_size() const {
     return units_.size();
 }

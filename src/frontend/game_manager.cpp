@@ -1,6 +1,7 @@
 #include "game_manager.hpp"
+#include "tile_map.hpp"
 
-Game_Manager::Game_Manager(std::weak_ptr<Game> game) : game_(game) {}
+Game_Manager::Game_Manager(std::weak_ptr<Game> game, std::weak_ptr<Tile_Map> tile_map) : game_(game), tile_map_(tile_map) {}
 
 Map& Game_Manager::get_map() {
     return game_.lock()->get_map();
@@ -82,6 +83,17 @@ void Game_Manager::next_turn() {
     std::shared_ptr<Game> game = game_.lock();
     game->next_turn();
     deselect_unit();
+}
+
+void Game_Manager::cycle_units(int window_width, int window_height) {
+    std::vector<Unit*> active_team_alive_units = game_.lock()->get_active_team()->get_alive_units();
+    unit_cycle_idx_ = (unit_cycle_idx_ + 1) % active_team_alive_units.size();
+    
+    Unit* next_unit_ptr = active_team_alive_units[unit_cycle_idx_];
+    coordinates<size_t> next_unit_coords = get_map().get_unit_location(next_unit_ptr);
+
+    select_unit_on_coords(next_unit_coords);
+    tile_map_.lock()->center_at(next_unit_coords, window_width, window_height);
 }
 
 std::string Game_Manager::get_action_info(const coordinates<size_t>& potential_target, const Item* action_item) {

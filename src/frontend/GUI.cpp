@@ -79,6 +79,15 @@ void GUI::click_on_coords(size_t y, size_t x) {
 }
 
 void GUI::initialize_main_buttons() {
+
+    RectButton button(*font_, true, {100, 650});
+    button.setButtonLabel(20, "Next unit");
+    button.set_activation_function([this]() {
+        this->game_manager_->cycle_units(700, 700);
+        this->selected_unit_changed_ = true;
+    });
+    main_buttons_.buttons.push_back(std::move(button));
+
     main_buttons_.isActive = true;
 }
 

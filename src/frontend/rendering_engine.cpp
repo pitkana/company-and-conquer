@@ -10,7 +10,7 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
     r_map_ = renderer.get_r_map();
     tile_map_ = renderer.get_tile_map();
     r_aux_ = renderer.get_r_aux();
-    manager_ = renderer.get_manager();
+    manager_ = std::make_shared<Game_Manager>(game_, tile_map_);
 
     gui_ = GUI(manager_);
     gui_.initialize();
@@ -144,8 +144,8 @@ void Rendering_Engine::events(sf::RenderWindow& target, sf::Event event, Rendere
         r_map_ = renderer.get_r_map();
         tile_map_ = renderer.get_tile_map();
         r_aux_ = renderer.get_r_aux();
-        manager_ = renderer.get_manager();
 
+        manager_ = std::make_shared<Game_Manager>(game_, tile_map_);
         gui_ = GUI(manager_);
         gui_.initialize();
     }
