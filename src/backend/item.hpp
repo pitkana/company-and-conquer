@@ -32,6 +32,9 @@ public:
     [[nodiscard]]
     const std::string& get_description() const;
 
+    [[nodiscard]]
+    virtual std::string get_info(const coordinates<size_t>& from_coords, const coordinates<size_t>& target_coords) const = 0;
+
     virtual inline constexpr bool is_weapon() const = 0;
     virtual inline constexpr bool is_healing_item() const = 0;
     virtual inline constexpr bool is_building_part() const = 0;
@@ -56,6 +59,8 @@ public:
     [[nodiscard]]
     virtual std::shared_ptr<Action> get_action(coordinates<size_t> target, Unit& executing_unit) const;
 
+    float calculate_damage_dealt(int distance) const;
+
     int get_accuracy() const {
         return accuracy_;
     }
@@ -71,6 +76,9 @@ public:
     int get_aoe() const {
         return area_of_effect_;
     }
+
+    [[nodiscard]]
+    virtual std::string get_info(const coordinates<size_t>& from_coords, const coordinates<size_t>& target_coords) const;
 
     virtual inline constexpr bool is_weapon() const { return true; }
     virtual inline constexpr bool is_healing_item() const { return false; }
@@ -108,6 +116,9 @@ public:
         return area_of_effect_;
     }
 
+    [[nodiscard]]
+    virtual std::string get_info(const coordinates<size_t>& from_coords, const coordinates<size_t>& target_coords) const;
+
     virtual inline constexpr bool is_weapon() const { return false; }
     virtual inline constexpr bool is_healing_item() const { return true; }
     virtual inline constexpr bool is_building_part() const { return false; }
@@ -136,6 +147,11 @@ public:
      */
     [[nodiscard]]
     std::shared_ptr<Building> get_building() const;
+
+    [[nodiscard]]
+    virtual std::string get_info([[maybe_unused]] const coordinates<size_t>& from_coords, [[maybe_unused]] const coordinates<size_t>& taret_coords) const {
+        return get_description();
+    }
 
     virtual inline constexpr bool is_weapon() const { return false; }
     virtual inline constexpr bool is_healing_item() const { return false; }

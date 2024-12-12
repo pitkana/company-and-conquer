@@ -39,16 +39,13 @@ int Unit::change_hp_by(int amount) {
     return changed_hp;
 }
 
-bool Unit::deal_damage(const Weapon& weapon, unsigned int distance_from) {
-    if (hit_chance(generator) > weapon.get_accuracy()) {
+bool Unit::deal_damage(float damage, int accuracy) {
+    if (hit_chance(generator) > accuracy) {
         return false;
-    } else {
-        double falloff_rate = (100.0 - (double)weapon.get_falloff())/100.0;
-        double falloff_effect = std::pow(falloff_rate, (double)distance_from);
-        int final_dmg = (int)round(weapon.get_damage() * falloff_effect);
-        change_hp_by(-final_dmg);
-        return true;
     }
+
+    change_hp_by(-damage);
+    return true;
 }
 
 int Unit::heal(const HealingItem &heal_item) {
