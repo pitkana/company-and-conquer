@@ -48,8 +48,8 @@ add_compile_definitions(BUILDINGS_TEXTURE_PATH="${BUILDINGS_TEXTURE_PATH}")
 set(AUX_TEXTURE_PATH ${CMAKE_SOURCE_DIR}/textures/_aux.png)
 add_compile_definitions(AUX_TEXTURE_PATH="${AUX_TEXTURE_PATH}")
 
-set(INVENTORY_TEXTURE_PATH ${CMAKE_SOURCE_DIR}/textures/inventory.png)
-add_compile_definitions(INVENTORY_TEXTURE_PATH="${INVENTORY_TEXTURE_PATH}")
+# set(INVENTORY_TEXTURE_PATH ${CMAKE_SOURCE_DIR}/textures/inventory.png)
+# add_compile_definitions(INVENTORY_TEXTURE_PATH="${INVENTORY_TEXTURE_PATH}")
 
     # Font
 set(FONT_PATH ${CMAKE_SOURCE_DIR}/textures/font.TTF)
