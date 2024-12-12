@@ -1,6 +1,6 @@
 #include "rendering_engine.hpp"
 #include "renderer.hpp"
-
+#include "game_logs.hpp"
 
 
 Rendering_Engine::Rendering_Engine(std::shared_ptr<Game>& game, size_t width, size_t height) : game_(game) { }
@@ -13,6 +13,8 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
 
     gui_ = GUI(manager_, window_width, window_height);
     gui_.initialize();
+
+    std::shared_ptr<Game_Logs>& logs = renderer.get_logs();
 
     // run the program as long as the window is open
     while (window.isOpen())
@@ -38,13 +40,21 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
             r_aux_->hide_unit_highlight();
             r_aux_->hide_cursor_highlight();
             r_aux_->show_text = false;
-            r_aux_->clear_text();
+            r_aux_->clear_cursor_text();
         }
+
+
 
         std::string output = game_->get_output();
         if (output.size() > 0) {
             std::cout << output << std::endl;
+            logs->add_logs(output);
             game_->clear_output();
+        }
+        if (logs->show_logs) {
+            r_aux_->draw_logs(logs->get_logs());
+        } else {
+            r_aux_->clear_logs();
         }
 
         //Every render target needs to be updated after changes.
@@ -144,6 +154,18 @@ void Rendering_Engine::events(sf::RenderWindow& target, sf::Event event, Rendere
     if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::X) {
         gui_.undo_action();
     }
+
+    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::B) {
+        renderer.get_logs()->show_logs = !renderer.get_logs()->show_logs;
+    } 
+
+    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Up) {
+        renderer.get_logs()->change_start(-1);
+    } 
+
+    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Down) {
+        renderer.get_logs()->change_start(1);
+    } 
 
     if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::R) {
         renderer.initialise_level(1);

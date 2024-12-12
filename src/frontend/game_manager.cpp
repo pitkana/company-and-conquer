@@ -101,7 +101,7 @@ std::string Game_Manager::get_action_info(const coordinates<size_t>& potential_t
 
     std::stringstream ss;
     get_tile_info(ss,potential_target);
-    ss << selected_unit_ptr_->get_name() << "\n";
+    ss << "Current Unit " << selected_unit_ptr_->get_name() << "\n";
     get_movement_action_info(ss,potential_target);
     get_item_action_info(ss,potential_target,action_item);
     return ss.str();
@@ -153,7 +153,7 @@ void Game_Manager::get_tile_info(std::stringstream& info_stream, const coordinat
     } else {
         info_stream << "Friendly ";
     }
-    info_stream << target_unit_ptr->get_id() << " " << target_unit_ptr->get_hp() << "hp";
+    info_stream << target_unit_ptr->get_id() << " " << target_unit_ptr->get_hp() << "hp\n";
 }
 
 bool Game_Manager::can_selected_unit_move_to(const coordinates<size_t>& potential_target) const {

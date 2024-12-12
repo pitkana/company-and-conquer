@@ -45,7 +45,7 @@ void Renderer::initialise_level( size_t level_idx )
 
     // create the new Game object with the new level
     game_ = std::make_shared<Game>( test_map_width, test_map_height );
-
+    logs_ = std::make_shared<Game_Logs>(10);
     // Unit* jack = new Unit("Jack");
     //
     // jack->add_item(ConstItem::medic_tent_tent);

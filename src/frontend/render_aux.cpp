@@ -22,12 +22,18 @@ bool Render_Aux::load(const std::string& aux_texture_path, const std::string& te
     highlight_cursor_.setTexture(highlight_text);
     highlight_cursor_.setScale(scale,scale);
 
-    //Setting up text.
+    //Setting up cursor text.
     action_info_text_.setFont(text_font_);
     action_info_text_.setFillColor(sf::Color::Red);
     action_info_text_.setOutlineColor(sf::Color::Black);
     action_info_text_.setCharacterSize(12);
     action_info_text_.setOutlineThickness(3);
+
+    //Setting up log text.
+    log_text_.setFont(text_font_);
+    log_text_.setFillColor(sf::Color::Blue);
+    log_text_.setCharacterSize(16);
+    log_text_.setOrigin(-10,-10);
 
     hide_cursor_highlight();
     hide_unit_highlight();
@@ -86,12 +92,24 @@ void Render_Aux::draw_text(int pixel_x, int pixel_y, const std::string& msg) {
         action_info_text_.setString(msg);
         action_info_text_.setPosition(pixel_x+50,pixel_y);
     } else {
-        clear_text();
+        clear_cursor_text();
     }
 }
 
-void Render_Aux::clear_text() {
+void Render_Aux::draw_logs(const std::string& logs) {
+    log_text_.setString(logs);
+    return;
+}
+
+
+void Render_Aux::clear_cursor_text() {
     action_info_text_.setString("");
+    return;
+}
+
+void Render_Aux::clear_logs() {
+    log_text_.setString("");
+    return;
 }
 
 void Render_Aux::hide_highlight(sf::Sprite& highlight_sprite) {

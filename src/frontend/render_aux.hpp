@@ -23,7 +23,9 @@ public:
 
     void draw_unit_highlight(const coordinates<size_t>& coords);
     void draw_text(int pixel_x, int pixel_y, const std::string& msg);
-    void clear_text();
+    void draw_logs(const std::string& logs);
+    void clear_logs();
+    void clear_cursor_text();
     void draw_cursor_highlight(int pixel_x, int pixel_y);
     void draw_cursor_highlight(const coordinates<size_t>& coords);
     void hide_unit_highlight();
@@ -33,6 +35,7 @@ private:
     sf::Sprite highlight_unit_;
     sf::Sprite highlight_cursor_;
     sf::Text action_info_text_;
+    sf::Text log_text_;
     std::shared_ptr<Tile_Map> tile_map_;
     std::pair<int,int> x0y0_;
     int tileDim_;
@@ -46,8 +49,8 @@ private:
         target.draw(highlight_unit_,states);
         target.draw(highlight_cursor_,states);
         target.draw(action_info_text_);
+        target.draw(log_text_);
     }
 };
-
 
 #endif
