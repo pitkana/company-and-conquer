@@ -237,12 +237,18 @@ void EnemyAI::generate_turn(Unit &unit) {
     game_.add_action(std::move(movement_action), team_.get_id());
 
     std::shared_ptr<Action> action = generate_action(unit, movement_target);
+    if (action == nullptr) return;
     game_.add_action(std::move(action), team_.get_id());
 }
 
 
 void EnemyAI::generate_whole_teams_turns() {
     for (Unit& unit : team_.get_units()) {
+        if (unit.is_dead()) continue;
         generate_turn(unit);
     }
+}
+
+int EnemyAI::team_id() const {
+    return team_.get_id();
 }

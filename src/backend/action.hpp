@@ -92,6 +92,7 @@ public:
 
     [[nodiscard]]
     virtual bool is_movement() const {return false;}
+
 private:
     // Coordinates of the unit who does this action at the point of execution
     const Weapon& weapon_;

@@ -128,6 +128,8 @@ public:
      */
     void generate_whole_teams_turns();
 
+    int team_id() const;
+
 private:
     Game& game_;
     Map& map_;

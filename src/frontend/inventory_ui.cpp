@@ -2,8 +2,6 @@
 
 
 
-
-
 Inventory_UI::Inventory_UI(const size_t width, const size_t height) : window_width_(width), window_height_(height)
 {
     items_list_.reserve( unit_consts.inventory_size );
@@ -13,15 +11,24 @@ Inventory_UI::Inventory_UI(const size_t width, const size_t height) : window_wid
 
 
 
-void Inventory_UI::update_inventory(std::span<std::shared_ptr<const Item>> items)
+void Inventory_UI::update_inventory(const std::span<const std::shared_ptr<const Item>> items)
 {
     items_list_.clear();
 
     size_t idx = 0;
-    for ( std::shared_ptr<const Item>& an_item : items ) {
+    for ( const std::shared_ptr<const Item>& an_item : items ) {
         items_list_.push_back( render_item(*an_item, idx) );
         idx++;
     }
+}
+
+bool Inventory_UI::load(const std::string& texture_path)
+{
+    if (!texture_.loadFromFile(texture_path)) {
+        return false;
+    }
+
+    return true;
 }
 
 void Inventory_UI::update()
@@ -48,8 +55,8 @@ std::unique_ptr<sf::Sprite> Inventory_UI::render_item(const Item& an_item, size_
 
     sf::Texture texture;
     texture.create(width, height);
-    sf::Uint8* pixels = new sf::Uint8[width * height * 4](0xff);
-    texture.update(pixels);
+    // sf::Uint8* pixels = new sf::Uint8[width * height * 4](0xff);
+    // texture.update(pixels);
 
     item->setTexture( texture );
 

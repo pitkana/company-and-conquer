@@ -61,7 +61,7 @@ public:
      */
     int change_hp_by(int amount);
 
-    bool deal_damage(const Weapon& weapon, unsigned int distance_from);
+    bool deal_damage(float damage, int accuracy);
 
     /**
      * @brief Heals this unit by the amount specified by parameter item

@@ -61,5 +61,3 @@ dkms.conf
 
 # Build directory
 build
-
-.gitignore

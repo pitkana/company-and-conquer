@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <cassert>
 #include <iostream>
+#include <span>
 
 #include "coordinates.hpp"
 #include "GUI.hpp"
@@ -8,10 +9,11 @@
 #include "unit.hpp"
 
 
-GUI::GUI() {}
-
-GUI::GUI(std::shared_ptr<Game_Manager> game_manager):
-    game_manager_(std::move(game_manager)), map_(&game_manager_->get_map()) {}
+GUI::GUI(std::shared_ptr<Game_Manager> manager, size_t width, size_t height):
+    game_manager_(manager), width_(width), height_(height), map_(&game_manager_->get_map())
+{
+    r_inv_ = std::make_shared<Inventory_UI>( width, height_ ); // render_window_->getSize().x, render_window_->getSize().y );
+}
 
 void GUI::initialize() {
     if (!font_->loadFromFile(GUI_FONT_PATH)) {
@@ -19,6 +21,10 @@ void GUI::initialize() {
     }
 
     initialize_main_buttons();
+
+    if ( !r_inv_->load( INVENTORY_TEXTURE_PATH ) ) {
+        assert(false && "Loading inventory image failed");
+    }
 
 }
 
@@ -30,12 +36,14 @@ void GUI::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     }
 
     if (inventory_buttons_.isActive) {
+        target.draw( *r_inv_ );
         draw_button_group(target, inventory_buttons_);
     }
 }
 
 void GUI::update() {
     update_inventory();
+    r_inv_->update();
     // Set it to false after update so dont keep updating
     selected_unit_changed_ = false;
 }
@@ -78,34 +86,59 @@ void GUI::click_on_coords(size_t y, size_t x) {
     game_manager_->enqueue_movement_action(clicked_coords);
 }
 
+void GUI::deselect_unit() {
+    game_manager_->deselect_unit();
+    active_item = nullptr;
+}
+
+void GUI::undo_action() {
+    game_manager_->undo_action();
+}
+
+void GUI::next_turn() {
+    game_manager_->next_turn();
+    active_item = nullptr;
+}
+
 void GUI::initialize_main_buttons() {
 
     float curr_x = 50;
-    RectButton next_unit_button(*font_, true, {curr_x, 650});
+    RectButton next_unit_button(*font_, true, {curr_x, 600});
     next_unit_button.setButtonLabel(20, " Next unit ");
     next_unit_button.set_activation_function([this]() {
-        this->game_manager_->cycle_units(700, 700);
+        this->game_manager_->cycle_units(width_, width_);
         this->selected_unit_changed_ = true;
+        active_item = nullptr;
     });
 
     curr_x += next_unit_button.button.getSize().x + 20;
 
-    RectButton end_turn_button(*font_, true, {curr_x, 650});
+    RectButton end_turn_button(*font_, true, {curr_x, 600});
     end_turn_button.setButtonLabel(20, " End turn ");
     end_turn_button.set_activation_function([this]() {
         this->game_manager_->next_turn();
+        active_item = nullptr;
     });
 
     curr_x += end_turn_button.button.getSize().x + 20;
 
-    RectButton deselect_unit_button(*font_, true, {curr_x, 650});
+    RectButton undo_action_button(*font_, true, {curr_x, 600});
+    undo_action_button.setButtonLabel(20, " Undo action ");
+    undo_action_button.set_activation_function([this]() {
+        this->undo_action();
+    });
+    curr_x += undo_action_button.button.getSize().x + 20;
+
+    RectButton deselect_unit_button(*font_, true, {curr_x, 600});
     deselect_unit_button.setButtonLabel(20, " Deselect unit ");
     deselect_unit_button.set_activation_function([this]() {
         this->game_manager_->deselect_unit();
+        active_item = nullptr;
     });
 
     main_buttons_.buttons.push_back(std::move(next_unit_button));
     main_buttons_.buttons.push_back(std::move(end_turn_button));
+    main_buttons_.buttons.push_back(std::move(undo_action_button));
     main_buttons_.buttons.push_back(std::move(deselect_unit_button));
 
 
@@ -120,6 +153,12 @@ void GUI::update_inventory() {
         return;
     }
 
+    // we calculate some sizes for the buttons depending on the window size
+    float button_width = width_ / 6 - padding;
+    float button_height = height_ / 6 - padding;
+
+    // also calculate the relative position of the first item buttom
+    sf::Vector2f pos = { (width_ / 6) + padding / 2, height_ - (height_ / 6 - padding / 2)};
 
     if (!selected_unit_changed_) {
         // If no active item 
@@ -128,10 +167,11 @@ void GUI::update_inventory() {
             return;
         }
 
-        // If deselect button already exists, return
-        if (inventory_buttons_.deactivate_button_exists()) return;
+        // If deselect button already exists, remove it 
+        // so we render it at the new place
+        if (inventory_buttons_.deactivate_button_exists()) inventory_buttons_.clear_deactivate_button();
 
-        RectButton button(*font_, true, {30, 460});
+        RectButton button(*font_, true, {active_item_pos_.x, active_item_pos_.y - padding});
         button.setButtonLabel(20, "Deselect item");
         button.set_activation_function([this]() {
             this->active_item = nullptr;
@@ -145,16 +185,22 @@ void GUI::update_inventory() {
 
     inventory_buttons_.clear_buttons();
 
+    
+    
+
     float curr_x = 30;
     const std::vector<std::shared_ptr<const Item>>& inventory = game_manager_->selected_unit_ptr()->get_inventory();
 
+    // r_inv_->update_inventory( std::span<const std::shared_ptr<const Item>>{inventory} );
+
     for (unsigned int i = 0; i < unit_consts.inventory_size; i++) {
-        RectButton button(*font_, true, {curr_x, 500});
+        RectButton button(*font_, {button_width, button_height}, pos);
         if (i < inventory.size()) {
             const std::shared_ptr<const Item>& item = inventory[i];
             button.setButtonLabel(20, inventory[i]->get_name());
-            button.set_activation_function([this, item]() {
+            button.set_activation_function([this, item, pos]() {
                 this->active_item = item;
+                this->active_item_pos_ = pos;
             });
 
         } else {
@@ -162,7 +208,7 @@ void GUI::update_inventory() {
             button.toggle_button_disabled();
         }
 
-        curr_x += button.button.getSize().x + 20;
+        pos.x += button.button.getSize().x + padding;
         inventory_buttons_.buttons.push_back(std::move(button));
     }
 
@@ -171,7 +217,7 @@ void GUI::update_inventory() {
     {
         RectButton button(*font_, true, {curr_x, 500});
         button.setButtonLabel(20, building->get_name());
-        button.set_activation_function([this, building]() {
+        button.set_activation_function([this, building, pos]() {
             this->active_item = building->get_item();
         });
 

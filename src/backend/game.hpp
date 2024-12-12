@@ -16,6 +16,7 @@
 #include "map_builder.hpp"
 
 class Action;
+class EnemyAI;
 
 //Game class that instances the playing of a level
 class Game {
@@ -69,6 +70,8 @@ public:
      * @returns Visibles coords in a vector.
      */
     const std::vector<coordinates<size_t>>& get_visible_tiles();
+
+    void set_ai_controlled_team(int team_id);
 
     /**
      * @brief Used map_ to calculate all visible coords for the active team.
@@ -141,6 +144,8 @@ private:
     std::stringstream output_;
     int active_team_idx_ = -1;
     std::vector<coordinates<size_t>> visible_coords;
+
+    std::shared_ptr<EnemyAI> enemy_ai_;
 
     /**
      * @returns Increments active_team_it_. If end then jump to begin.

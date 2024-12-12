@@ -20,22 +20,8 @@ Renderer::Renderer( size_t width, size_t height ) : width_(width), height_(heigh
     game_ = std::make_shared<Game>( height, width );
     
     render_window_ = std::make_shared<sf::RenderWindow>(sf::VideoMode(width, height), "Game");
-
-    tile_map_ = std::make_shared<Tile_Map>( game_, 100 );
-    r_map_ = std::make_shared<Render_Map>( tile_map_ );
     renderables_ = std::make_shared<Window_To_Render>();
-    r_units_ = std::make_shared<Render_Units>( tile_map_ );
-    r_buildings_ = std::make_shared<Render_Buildings>( tile_map_ );
-    r_aux_ = std::make_shared<Render_Aux>( tile_map_ ); 
-    r_inv_ = std::make_shared<Inventory_UI>( width, height );
 
-    // add all the renderables into one object
-    // that will be called to make rendering more straightforward
-    renderables_->add_drawable( r_map_ );
-    renderables_->add_drawable( r_buildings_ );
-    renderables_->add_drawable( r_units_ );
-    renderables_->add_drawable( r_aux_ );
-    renderables_->add_drawable( r_inv_ );
 
     
 }
@@ -74,17 +60,17 @@ void Renderer::initialise_level( size_t level_idx )
     r_units_ = std::make_shared<Render_Units>( tile_map_ );
     r_buildings_ = std::make_shared<Render_Buildings>( tile_map_ );
     r_aux_ = std::make_shared<Render_Aux>( tile_map_ ); 
-    r_inv_ = std::make_shared<Inventory_UI>( render_window_->getSize().x, render_window_->getSize().y );
+    
 
     // clear out the old renderables
     renderables_->clear();
 
-    // add all the new renderables
+    // add all the renderables into one object
+    // that will be called to make rendering more straightforward
     renderables_->add_drawable( r_map_ );
     renderables_->add_drawable( r_buildings_ );
     renderables_->add_drawable( r_units_ );
     renderables_->add_drawable( r_aux_ );
-    renderables_->add_drawable( r_inv_ );
 
     
     if (!r_map_->load(map_text_path_)) {
@@ -126,7 +112,7 @@ void Renderer::start()
 
     game_->init_game();
 
-    window_ = Rendering_Engine(game_);
+    window_ = Rendering_Engine(game_, render_window_->getSize().x, render_window_->getSize().y);
     window_.render( width_, height_, *render_window_, *this, renderables_);
 }
 

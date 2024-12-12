@@ -73,7 +73,7 @@ void Tile_Map::center_at(const coordinates<size_t>& coords, int window_width, in
 int Tile_Map::GetTileDim() const {
     return tileDim_;
 }
-std::pair<int,int> Tile_Map::Getx0y0() const {
+std::pair<float,float> Tile_Map::Getx0y0() const {
     return x0y0_;
 }
 

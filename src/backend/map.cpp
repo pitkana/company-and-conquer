@@ -119,7 +119,7 @@ std::vector<std::shared_ptr<Building>> Map::get_all_buildings() const {
         for (size_t x = 0; x < width(); ++x) {
             std::shared_ptr<Building> b_ptr = all_buildings_(y,x);
             if (b_ptr != nullptr) {
-                out.push_back(b_ptr);
+                out.push_back(std::move(b_ptr));
             }
         }
     }
@@ -544,6 +544,7 @@ std::vector< coordinates<size_t> > Map::possible_tiles_to_move_to( const coordin
     };
     // cant use unordered_set with coordinates without making a hash function so I used a vector.
     std::vector<bool> is_processed( width() * height(), false ); 
+    is_processed[location.y * width() + location.x] = true;
 
     // this will contain the distance and predecessor of each vertex as: <distance, location of predecessor>
     Matrix< a_vertex > vertex_attributes(height(), width(), { std::numeric_limits<size_t>::max(), coordinates<size_t>{0, 0} });
@@ -583,33 +584,30 @@ std::vector< coordinates<size_t> > Map::possible_tiles_to_move_to( const coordin
 
         // add the tile's coordinates into the return container only if their distance 
         // is equal or less than the given <movement_range>
-        tiles_that_are_close_enough.emplace_back( curr.second.x, curr.second.y );
+        if (location != curr.second)
+            tiles_that_are_close_enough.emplace_back( curr.second.x, curr.second.y );
         
 
-        // check if we've already computed the current vertex
-        if ( !(is_processed[ curr.second.y * width() + curr.second.x ]) ) {
+        // the tile is only connected to 4 other tiles in the main directions
+        for ( const coordinates<int32_t>& a_direction : directions_vectors_ ) {
 
-            // the tile is only connected to 4 other tiles in the main directions
-            for ( const coordinates<int32_t>& a_direction : directions_vectors_ ) {
+            // check if the direction is valid before doing the relaxation of path
+            // created this <valid_direction> method to not put all the if-statements into one clutter
+            if ( valid_direction( curr.second, a_direction ) ) {
 
-                // check if the direction is valid before doing the relaxation of path
-                // created this <valid_direction> method to not put all the if-statements into one clutter
-                if ( valid_direction( curr.second, a_direction ) ) {
+                // for different directions we have a different increment in the indexing
+                aux = curr.second + a_direction;
 
-                    // for different directions we have a different increment in the indexing
-                    aux = curr.second + a_direction;
+                // check if we've already processed the tile
+                if ( !(is_processed[ aux.y * width() + aux.x ] )) {   
+                    Relax( curr, aux, all_terrains_( aux.y, aux.x )->movement_cost() );
 
-                    // check if we've already processed the tile
-                    if ( !(is_processed[ aux.y * width() + aux.x ] )) {   
-                        Relax( curr, aux, all_terrains_( aux.y, aux.x )->movement_cost() );
-
-                        distances.emplace( vertex_attributes( aux.y, aux.x ).first, aux );
-                    }
+                    distances.emplace( vertex_attributes( aux.y, aux.x ).first, aux );
                 }
             }
-
-            is_processed[ curr.second.y * width() + curr.second.x ] = true;
         }
+
+        is_processed[ curr.second.y * width() + curr.second.x ] = true;
 
         
     }
@@ -627,8 +625,10 @@ std::vector< coordinates< size_t > > Map::possible_tiles_to_move_to3( const coor
     };
 
     std::vector<bool> visited(width() * height(), false);
-    //initialize result vector with the given location
-    std::vector<coordinates<size_t>> result(1, location);
+
+    std::vector<coordinates<size_t>> result;
+    // Don't add starting location to result
+    visited[location.y * width() + location.x] = true;
 
     // Queue of vertices that will be visited in the search.
     std::deque<Vertex> vertex_queue;

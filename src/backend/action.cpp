@@ -16,6 +16,8 @@ void MovementAction::execute(Game& game, coordinates<size_t> unit_location [[may
     } else {
         game.get_output_stream() << " Failure!\n";
     }
+
+    has_been_executed_ = true;
 }
 
 void MovementAction::undo(Game &game) {
@@ -25,18 +27,26 @@ void MovementAction::undo(Game &game) {
 /* ----- WeaponAction ----- */
 
 void WeaponAction::execute(Game &game, coordinates<size_t> unit_location) {
-    if (executing_unit_.is_dead()) return;
-    game.get_output_stream() << "Unit: " << executing_unit_.get_id() << " attacks with weapon: " << weapon_.get_name() << " result: ";
     if (!has_been_executed_) { 
+        if (executing_unit_.is_dead()) return;
+        game.get_output_stream() << "Unit: " << executing_unit_.get_id() << " attacks with weapon: " << weapon_.get_name() << " result: ";
+
         if (weapon_.get_aoe() == 0) { //Single target attack
             Unit* target_unit = game.get_map().get_unit(target_.y, target_.x);
+
             if (target_unit == nullptr) {
                 game.get_output_stream() << "failure, no target enemy found.\n";
                 return;
             }
-            if (target_unit->deal_damage(weapon_, unit_location.distance_to(target()))) {
+
+            int distance = unit_location.distance_to(target_);
+
+            // Hit enemy
+            if (target_unit->deal_damage(weapon_.calculate_damage_dealt(distance), weapon_.get_accuracy())) {
                 game.get_output_stream() << "success, dealt " << weapon_.get_damage() << " damage to enemy unit " << target_unit->get_id() <<
                 " enemy has " << target_unit->get_hp() << " hp.\n";
+            } else {
+                game.get_output_stream() << executing_unit_.get_name() << " missed!\n";
             }
 
         } else { // Area of effect attack
@@ -47,7 +57,13 @@ void WeaponAction::execute(Game &game, coordinates<size_t> unit_location) {
                 if (target_unit == nullptr) continue;
 
                 // Distance is calculated from the origin of the AoE (aka target), not from the unit that executes this action
-                target_unit->deal_damage(weapon_, target_.distance_to(coords));
+                int distance = target_.distance_to(coords);
+                if (target_unit->deal_damage(weapon_.calculate_damage_dealt(distance), weapon_.get_accuracy())) {
+                    game.get_output_stream() << "success, dealt " << weapon_.get_damage() << " damage to enemy unit " << target_unit->get_id() <<
+                        " enemy has " << target_unit->get_hp() << " hp.\n";
+                } else {
+                    game.get_output_stream() << executing_unit_.get_name() << " missed!\n";
+                }
             }
         }
     }
@@ -58,9 +74,9 @@ void WeaponAction::execute(Game &game, coordinates<size_t> unit_location) {
 /* ----- HealingAction ----- */
 
 void HealingAction::execute(Game &game, coordinates<size_t> unit_location) {
-    if (executing_unit_.is_dead()) return;
 
     if (!has_been_executed_) {
+        if (executing_unit_.is_dead()) return;
         if (healing_item_.get_aoe() == 0) { // Single target healing
             Unit* target_unit = game.get_map().get_unit(target_.y, target_.x);
             if (target_unit == nullptr) return;
