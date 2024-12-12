@@ -31,7 +31,7 @@ add_compile_definitions(UNITS_TEXTURE_PATH="${UNITS_TEXTURE_PATH}")
 set(BUILDINGS_TEXTURE_PATH ${CMAKE_SOURCE_DIR}/graphics/buildings.png)
 add_compile_definitions(BUILDINGS_TEXTURE_PATH="${BUILDINGS_TEXTURE_PATH}")
     # Aux
-set(AUX_TEXTURE_PATH ${CMAKE_SOURCE_DIR}/graphics/aux.png)
+set(AUX_TEXTURE_PATH ${CMAKE_SOURCE_DIR}/graphics/_aux.png)
 add_compile_definitions(AUX_TEXTURE_PATH="${AUX_TEXTURE_PATH}")
     # Font
 set(FONT_PATH ${CMAKE_SOURCE_DIR}/fonts/font.TTF)
