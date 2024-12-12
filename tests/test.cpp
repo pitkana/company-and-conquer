@@ -1,8 +1,7 @@
 
-#include "render_window_test.hpp"
-#include "render_map_test.hpp"
+#include "shop_ui_test.hpp"
 
 int main() {
-  rendering_engine_test();
+  shop_ui_test();
   return 0;
 }

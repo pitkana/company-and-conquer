@@ -16,7 +16,9 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 
 # add the executable target
 add_executable(test
-        scenario_test.cpp)
+        scenario_test.cpp
+        shop_ui_test.cpp
+        shop_ui_test.hpp)
 
 target_sources(test PUBLIC ${SOURCES})
 target_include_directories(test PUBLIC .)
