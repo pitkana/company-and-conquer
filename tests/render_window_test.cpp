@@ -32,5 +32,7 @@ void rendering_engine_test() {
     test_map.add_unit(0,0,u1);
     test_map.add_unit(2, 2, u3);
     test_map.add_unit(5,5,u2);
+
+    test_game.set_ai_controlled_team(t2.get_id());
     renderer.start();
 }
