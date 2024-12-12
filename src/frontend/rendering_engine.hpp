@@ -70,7 +70,7 @@ private:
      * @param moveSpeed Determines how much the tiles will be moved.
      * @param zoom How fast the zoom will be.
      */
-    void key_inputs(float moveSpeed, float zoom, Renderer& renderer);
+    void handle_continuous_inputs(float moveSpeed, float zoom, Renderer& renderer, const sf::Vector2i& mouse_pos);
     /**
      * @brief Events are also handled with bunch of if statements in sfml.
      */
@@ -88,8 +88,9 @@ private:
     std::shared_ptr<Game_Manager> manager_;
 
 
-    static inline const float move_speed = 5;
+    static inline const float move_speed = 8;
     static inline const float zoom_speed = 1;
+    static inline const float screen_area_to_move_screen_ = 0.05f;
 
 };
 

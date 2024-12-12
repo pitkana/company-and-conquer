@@ -26,11 +26,11 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
         }
 
         window.clear(sf::Color::Black);
-        key_inputs(1, 1, renderer);
+        sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+        handle_continuous_inputs(1, 1, renderer, mousePos);
 
         if (manager_->selected_valid_unit()) {
             r_aux_->draw_unit_highlight(manager_->selected_unit_coords());
-            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
             r_aux_->draw_cursor_highlight(mousePos.x,mousePos.y);
             coordinates<size_t> target_coord = tile_map_->get_map_coords(mousePos.x,mousePos.y);
             r_aux_->show_text = true;
@@ -74,7 +74,7 @@ std::shared_ptr<Game>& Rendering_Engine::get_game()
 /**
  * sf::Transformable apparently has a move method. Maybe we should use that.  
  */
-void Rendering_Engine::key_inputs(float moveSpeed, float zoom, Renderer& renderer) {
+void Rendering_Engine::handle_continuous_inputs(float moveSpeed, float zoom, Renderer& renderer, const sf::Vector2i& mouse_pos) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
         tile_map_->move(-moveSpeed,0);
     }
@@ -87,14 +87,20 @@ void Rendering_Engine::key_inputs(float moveSpeed, float zoom, Renderer& rendere
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
         tile_map_->move(0,moveSpeed);
     }
-/*
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F)) {
-        r_map.zoom(1, renderer.width(), renderer.height());
+
+    if (mouse_pos.x >= renderer.width() * (1 - screen_area_to_move_screen_)) {
+        tile_map_->move(-moveSpeed, 0);
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::G)) {
-        r_map.zoom(-1, renderer.width(), renderer.height());
+    if (mouse_pos.x <= renderer.width() * screen_area_to_move_screen_) {
+        tile_map_->move(moveSpeed, 0);
     }
-*/
+
+    if (mouse_pos.y >= renderer.width() * (1 - screen_area_to_move_screen_)) {
+        tile_map_->move(0, -moveSpeed);
+    }
+    if (mouse_pos.y <= renderer.height() * screen_area_to_move_screen_) {
+        tile_map_->move(0, moveSpeed);
+    }
 }
 
 void Rendering_Engine::events(sf::RenderWindow& target, sf::Event event, Renderer& renderer) {
