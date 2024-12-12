@@ -88,6 +88,11 @@ void Rendering_Engine::handle_continuous_inputs(float moveSpeed, float zoom, Ren
         tile_map_->move(0,moveSpeed);
     }
 
+
+    if (!(mouse_pos.x >= 0 && mouse_pos.x < renderer.width() &&
+        mouse_pos.y >= 0 && mouse_pos.y < renderer.height())) 
+        return;
+
     if (mouse_pos.x >= renderer.width() * (1 - screen_area_to_move_screen_)) {
         tile_map_->move(-moveSpeed, 0);
     }
@@ -129,17 +134,17 @@ void Rendering_Engine::events(sf::RenderWindow& target, sf::Event event, Rendere
         }
     }
     if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Escape) {
-        manager_->deselect_unit();
+        gui_.deselect_unit();
     }
     if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space) {
-        manager_->next_turn();
+        gui_.next_turn();
     }
     if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::F) {
         tile_map_->fog_of_war = !tile_map_->fog_of_war;
     }
 
     if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::X) {
-        manager_->undo_action();
+        gui_.undo_action();
     }
 
     if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::R) {

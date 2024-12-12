@@ -78,6 +78,20 @@ void GUI::click_on_coords(size_t y, size_t x) {
     game_manager_->enqueue_movement_action(clicked_coords);
 }
 
+void GUI::deselect_unit() {
+    game_manager_->deselect_unit();
+    active_item = nullptr;
+}
+
+void GUI::undo_action() {
+    game_manager_->undo_action();
+}
+
+void GUI::next_turn() {
+    game_manager_->next_turn();
+    active_item = nullptr;
+}
+
 void GUI::initialize_main_buttons() {
 
     float curr_x = 50;
@@ -86,6 +100,7 @@ void GUI::initialize_main_buttons() {
     next_unit_button.set_activation_function([this]() {
         this->game_manager_->cycle_units(700, 700);
         this->selected_unit_changed_ = true;
+        active_item = nullptr;
     });
 
     curr_x += next_unit_button.button.getSize().x + 20;
@@ -94,6 +109,7 @@ void GUI::initialize_main_buttons() {
     end_turn_button.setButtonLabel(20, " End turn ");
     end_turn_button.set_activation_function([this]() {
         this->game_manager_->next_turn();
+        active_item = nullptr;
     });
 
     curr_x += end_turn_button.button.getSize().x + 20;
@@ -102,6 +118,7 @@ void GUI::initialize_main_buttons() {
     deselect_unit_button.setButtonLabel(20, " Deselect unit ");
     deselect_unit_button.set_activation_function([this]() {
         this->game_manager_->deselect_unit();
+        active_item = nullptr;
     });
 
     main_buttons_.buttons.push_back(std::move(next_unit_button));

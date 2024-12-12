@@ -62,6 +62,10 @@ public:
 
     void click_on_coords(size_t y, size_t x);
 
+    void deselect_unit();
+    void undo_action();
+    void next_turn();
+
 private:
     bool selected_unit_in_active_team() const;
 
