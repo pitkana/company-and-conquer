@@ -15,8 +15,9 @@ void shop_ui_test()
     std::map<std::shared_ptr<const Item>, int> catalogue{{std::static_pointer_cast<Item>(rifle), 100}, {std::static_pointer_cast<Item>(bandage), 50}, {std::static_pointer_cast<Item>(pistol), 75}};
 
     Shop shop = Shop(catalogue, 5, 600);
+    Renderer renderer = Renderer(1, 1);
 
-    ShopUI ui = ShopUI(shop);
+    ShopUI ui = ShopUI(shop, renderer);
 
     ui.initialize();
 

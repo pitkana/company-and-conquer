@@ -123,7 +123,6 @@ void Renderer::start_shop()
 {
     Shop shop = scenario_->get_shop();
     shop_ui_ = std::make_shared<ShopUI>(shop, *this);
-    window_ = sf::RenderWindow();
 }
 
 void Renderer::initialize_scenario()

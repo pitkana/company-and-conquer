@@ -1,7 +1,7 @@
 
-#include "scenario_test.hpp"
+#include "integration_test.hpp"
 
 int main() {
-  scenario_test();
+  integration_test();
   return 0;
 }
