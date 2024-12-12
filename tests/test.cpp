@@ -1,7 +1,7 @@
 
-#include "shop_ui_test.hpp"
+#include "file_selector_test.hpp"
 
 int main() {
-  shop_ui_test();
+  file_selector_test();
   return 0;
 }

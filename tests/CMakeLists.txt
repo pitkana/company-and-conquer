@@ -18,7 +18,10 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 add_executable(test
         scenario_test.cpp
         shop_ui_test.cpp
-        shop_ui_test.hpp)
+        shop_ui_test.hpp
+        file_selector_test.cpp
+        file_selector_test.hpp
+        ../libs/tinyfiledialogs/tinyfiledialogs.c)
 
 target_sources(test PUBLIC ${SOURCES})
 target_include_directories(test PUBLIC .)
@@ -35,6 +38,8 @@ set_target_properties(backend PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(test PRIVATE frontend)
 target_include_directories(test PRIVATE ../src/frontend)
 set_target_properties(frontend PROPERTIES LINKER_LANGUAGE CXX)
+
+target_include_directories(test PRIVATE ../libs/tinyfiledialogs)
 
 # For relative paths.
     # Maps
