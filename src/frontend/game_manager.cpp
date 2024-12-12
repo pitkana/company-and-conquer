@@ -57,6 +57,7 @@ bool Game_Manager::enqueue_movement_action(const coordinates<size_t>& target) {
 bool Game_Manager::enqueue_item_action(coordinates<size_t> target, const Item* action_item) {
     if (!selected_valid_unit()) return false;
     if (!can_selected_unit_attack_to(target)) return false;
+    if (selected_unit_ptr_->has_added_action) return false;
     assert(action_item != nullptr && "Gave nullptr to enqueue_item_action");
 
     std::shared_ptr<Action> next_action = action_item->get_action(target, *selected_unit_ptr_);
@@ -109,7 +110,8 @@ void Game_Manager::get_movement_action_info(std::stringstream& info_stream, cons
 // NOTE: update these strings
 void Game_Manager::get_item_action_info(std::stringstream& info_stream, const coordinates<size_t>& potential_target, const Item* action_item) {
     if (!selected_valid_unit()) return;
-    if (action_item == nullptr) info_stream <<  "has no items\n"; return;
+    if (selected_unit_ptr_->has_added_action) { info_stream << "item action already queued\n"; return; }
+    if (action_item == nullptr) { info_stream <<  "has no items\n"; return; }
     if (action_item->is_weapon()) {
         info_stream << action_item->get_name();
     } else if (action_item->is_healing_item()) {

@@ -7,6 +7,7 @@
 #include "building_part_type.hpp"
 #include "item.hpp"
 #include "const_items.hpp"
+#include "texture_idx.hpp"
 
 class Action; //forward declaration
 class Unit;
@@ -64,8 +65,12 @@ class Turret : public Building {
 public:
     Turret(): Building("turret", ConstItem::turret_weapon) {}
 
-    virtual size_t get_texture_idx() const { return 1; };
-
+    virtual size_t get_texture_idx() const { 
+        if (is_ready()) { return TextureIdx::turret_complete; }
+        if (has_barrel()) { return TextureIdx::turret_gun; }
+        if (has_legs()) { return TextureIdx::turret_legs; }
+        return 0;
+    };
     [[nodiscard]]
     virtual bool is_ready() const;
     [[nodiscard]]
@@ -109,7 +114,12 @@ class MedicTent : public Building {
 public:
     MedicTent(): Building("medic tent", ConstItem::medic_tent_heal_item) {}
 
-    virtual size_t get_texture_idx() const { return 2; };
+    virtual size_t get_texture_idx() const { 
+        if (is_ready()) { return TextureIdx::med_tent_complete; }
+        if (has_tent()) { return TextureIdx::med_tent_tent; }
+        if (has_medkit()) { return TextureIdx::med_tent_meds; }
+        return 0;
+    };
 
     [[nodiscard]]
     virtual bool is_ready() const;
