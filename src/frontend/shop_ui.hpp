@@ -6,9 +6,14 @@
 #include <SFML/Graphics.hpp>
 #include <../../libs/SFMLButton/include/sfmlbutton.hpp>
 
+#include "renderer.hpp"
+
+class Renderer;
+
 class ShopUI : public sf::Drawable {
     private:
         Shop& shop_;
+        Renderer& renderer_;
 
         std::vector<RectButton> catalogue_buttons_;
         std::vector<RectButton> owned_buttons_;
@@ -38,7 +43,7 @@ class ShopUI : public sf::Drawable {
 
         void initialize();
 
-        ShopUI(Shop& shop) : shop_(shop) {}
+        ShopUI(Shop& shop, Renderer& renderer) : shop_(shop), renderer_(renderer) {}
 
         bool execute_button_actions(sf::RenderWindow& window, sf::Event& event);
 

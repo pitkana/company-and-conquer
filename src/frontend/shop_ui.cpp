@@ -140,7 +140,7 @@ void ShopUI::load_game_button()
     button.set_activation_function([this]()
     {
         Team team = shop_.form_team();
-        team_ = &team;
+        renderer_.ready_game();
     });
     game_button_.push_back(button);
 }

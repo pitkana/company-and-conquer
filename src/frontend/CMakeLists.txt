@@ -15,6 +15,7 @@ target_link_libraries(frontend PRIVATE SFMLButton)
 
 target_include_directories(frontend PRIVATE ${SFML_SOURCE_DIR}/include)
 target_include_directories(frontend PRIVATE ${CMAKE_SOURCE_DIR}/libs/SFMLButton/include)
+target_include_directories(frontend PRIVATE ../../libs/tinyfiledialogs/tinyfiledialogs.h)
 
 # For relative paths.
     # Maps

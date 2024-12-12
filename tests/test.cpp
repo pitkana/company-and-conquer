@@ -1,7 +1,7 @@
 
-#include "file_selector_test.hpp"
+#include "scenario_test.hpp"
 
 int main() {
-  file_selector_test();
+  scenario_test();
   return 0;
 }

@@ -1,5 +1,7 @@
 #include "renderer.hpp"
 #include "rendering_engine.hpp"
+#include "shop_ui.hpp"
+#include "../../libs/tinyfiledialogs/tinyfiledialogs.h"
 
 
 /**
@@ -43,7 +45,7 @@ Renderer::Renderer( size_t width, size_t height ) : width_(width), height_(heigh
 
 void Renderer::initialise_level( size_t level_idx )
 {
-    // used for storing the tiles corresponding character in the level map 
+    // used for storing the tiles corresponding character in the level map
     std::vector<std::vector<char>> terrain_vec;
 
     if ( level_idx == 0 ) {
@@ -52,7 +54,7 @@ void Renderer::initialise_level( size_t level_idx )
     if ( level_idx == 1 ) {
         terrain_vec = builder_.read_map_file(TESTMAP_PATH1);
     }
-    
+
 
     size_t test_map_height = terrain_vec.size();
     size_t test_map_width = terrain_vec[0].size();
@@ -107,6 +109,50 @@ void Renderer::initialise_level( size_t level_idx )
     window_.get_game() = game_;
 
     manager_ = std::make_shared<Game_Manager>(game_);
+}
+
+void Renderer::load_scenario()
+{
+    char const * filters[1] = { "*.yaml" };
+    char const * selection = tinyfd_openFileDialog("Select a scenario", "./scenarios/", 1, filters, NULL, 0);
+    ScenarioLoader loader = ScenarioLoader(selection);
+    scenario_ = std::make_shared<Scenario>(loader.load_scenario());
+}
+
+void Renderer::start_shop()
+{
+    Shop shop = scenario_->get_shop();
+    shop_ui_ = std::make_shared<ShopUI>(shop, *this);
+    window_ = sf::RenderWindow();
+}
+
+void Renderer::initialize_scenario()
+{
+    load_scenario();
+    start_shop();
+    while (!game_ready_)
+    {
+        sf::Event event;
+        while (render_window_->pollEvent(event))
+        {
+            shop_ui_->execute_button_actions(*render_window_, event);
+            if (event.type == sf::Event::Closed)
+            {
+                render_window_->close();
+            }
+        }
+        render_window_->clear();
+        shop_ui_->update();
+        render_window_->draw(*shop_ui_);
+        render_window_->display();
+    }
+    game_ = std::make_shared<Game>(scenario_->generate_game());
+    start();
+}
+
+void Renderer::ready_game()
+{
+    game_ready_ = true;
 }
 
 void Renderer::start()
