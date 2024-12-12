@@ -27,7 +27,7 @@ class Inventory_UI : public Auxiliary_renderable
          * non-owning container for the std::vector in which the items are stored in the Unit.
          * This way passing the whole container as a parameter is efficient.
          */
-        void update_inventory(std::span<std::shared_ptr<const Item>> items);
+        void update_inventory(const std::span<const std::shared_ptr<const Item>> items);
 
         /**
          * @brief A setter used for if a Unit is clicked or not, if the player does not click a Unit,
@@ -50,19 +50,17 @@ class Inventory_UI : public Auxiliary_renderable
     private:
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override
         {
+            target.draw(background_);
 
-            if ( display_inv_ ) {
-                target.draw(background_);
-
-                for ( const std::unique_ptr<sf::Sprite>& spr : items_list_ ) 
-                {
-                    target.draw(*spr, states);
-                }
-            } 
+            for ( const std::unique_ptr<sf::Sprite>& spr : items_list_ ) 
+            {
+                target.draw(*spr, states);
+            }
+            
         }
 
         /**
-         * @brief Used for updating the background_ member, so it doesnt have
+         * @brief Used for updating the background_ member, written as own function so it doesnt have
          * to be explicitly written into multiple methods
          * 
          */
@@ -71,7 +69,7 @@ class Inventory_UI : public Auxiliary_renderable
             size_t width = window_width_ / 2 + padding * 4;
             size_t height = window_height_ - (window_height_ / 8) + padding * 2;
 
-            sf::Vector2f pos = { 2 * (window_width_ / 8), window_height_ - (window_height_ / 8)};
+            sf::Vector2f pos = { 2 * (window_width_ / 8) - padding * 2, window_height_ - (window_height_ / 8)};
 
             background_.setPosition( pos );
 
@@ -87,7 +85,7 @@ class Inventory_UI : public Auxiliary_renderable
         std::vector<std::unique_ptr<sf::Sprite>> items_list_;
         size_t window_width_ = 0;
         size_t window_height_ = 0;
-        bool display_inv_ = false;
+        bool display_inv_ = true;
 };
 
 #endif

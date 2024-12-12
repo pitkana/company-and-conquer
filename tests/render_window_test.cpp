@@ -6,7 +6,7 @@
 //Press space to end turn.
 //Log messages will appear in terminal.
 void rendering_engine_test() {
-    Renderer renderer(700,700);
+    Renderer renderer(900,900);
     renderer.initialise_level(0);
     Game& test_game = renderer.get_game();
     Map& test_map = test_game.get_map();

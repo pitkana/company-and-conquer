@@ -32,7 +32,7 @@ public:
      * @param game A pointer to the game object
      * @param texture_path A path to the texture file.
      */
-    Rendering_Engine(std::shared_ptr<Game>& game);
+    Rendering_Engine(std::shared_ptr<Game>& game, size_t widht, size_t height);
 
     /**
      * @brief draws stuff to sfml window it.

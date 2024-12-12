@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <cassert>
 #include <iostream>
+#include <span>
 
 #include "coordinates.hpp"
 #include "GUI.hpp"
@@ -8,10 +9,11 @@
 #include "unit.hpp"
 
 
-GUI::GUI() {}
-
-GUI::GUI(std::shared_ptr<Game_Manager> game_manager):
-    game_manager_(std::move(game_manager)), map_(&game_manager_->get_map()) {}
+GUI::GUI(std::shared_ptr<Game_Manager> manager, size_t width, size_t height):
+    game_manager_(manager), width_(width), height_(height), map_(&game_manager_->get_map())
+{
+    r_inv_ = std::make_shared<Inventory_UI>( width, height_ ); // render_window_->getSize().x, render_window_->getSize().y );
+}
 
 void GUI::initialize() {
     if (!font_->loadFromFile(GUI_FONT_PATH)) {
@@ -30,6 +32,7 @@ void GUI::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     }
 
     if (inventory_buttons_.isActive) {
+        target.draw( *r_inv_ );
         draw_button_group(target, inventory_buttons_);
     }
 }
@@ -145,10 +148,11 @@ void GUI::update_inventory() {
             return;
         }
 
-        // If deselect button already exists, return
-        if (inventory_buttons_.deactivate_button_exists()) return;
+        // If deselect button already exists, remove it 
+        // so we render it at the new place
+        if (inventory_buttons_.deactivate_button_exists()) inventory_buttons_.clear_deactivate_button();
 
-        RectButton button(*font_, true, {30, 460});
+        RectButton button(*font_, true, {active_item_pos_.x, active_item_pos_.y - width_ / 10});
         button.setButtonLabel(20, "Deselect item");
         button.set_activation_function([this]() {
             this->active_item = nullptr;
@@ -162,16 +166,22 @@ void GUI::update_inventory() {
 
     inventory_buttons_.clear_buttons();
 
+    sf::Vector2f pos = { 2 * (width_ / 8), height_ - (height_ / 14)};
+    
+
     float curr_x = 30;
     const std::vector<std::shared_ptr<const Item>>& inventory = game_manager_->selected_unit_ptr()->get_inventory();
 
+    // r_inv_->update_inventory( std::span<const std::shared_ptr<const Item>>{inventory} );
+
     for (unsigned int i = 0; i < unit_consts.inventory_size; i++) {
-        RectButton button(*font_, true, {curr_x, 500});
+        RectButton button(*font_, true, pos);
         if (i < inventory.size()) {
             const std::shared_ptr<const Item>& item = inventory[i];
             button.setButtonLabel(20, inventory[i]->get_name());
-            button.set_activation_function([this, item]() {
+            button.set_activation_function([this, item, pos]() {
                 this->active_item = item;
+                this->active_item_pos_ = pos;
             });
 
         } else {
@@ -179,7 +189,7 @@ void GUI::update_inventory() {
             button.toggle_button_disabled();
         }
 
-        curr_x += button.button.getSize().x + 20;
+        pos.x += button.button.getSize().x + padding;
         inventory_buttons_.buttons.push_back(std::move(button));
     }
 
@@ -188,7 +198,7 @@ void GUI::update_inventory() {
     {
         RectButton button(*font_, true, {curr_x, 500});
         button.setButtonLabel(20, building->get_name());
-        button.set_activation_function([this, building]() {
+        button.set_activation_function([this, building, pos]() {
             this->active_item = building->get_item();
         });
 

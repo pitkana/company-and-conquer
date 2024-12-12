@@ -3,16 +3,17 @@
 
 
 
-Rendering_Engine::Rendering_Engine(std::shared_ptr<Game>& game) : game_(game) {}
+Rendering_Engine::Rendering_Engine(std::shared_ptr<Game>& game, size_t width, size_t height) : game_(game) { 
+    gui_.initialize();
+}
 
 void Rendering_Engine::render(size_t window_width, size_t window_height, sf::RenderWindow& window, Renderer& renderer, const std::shared_ptr<Window_To_Render>& renderables)
 {
-    r_map_ = renderer.get_r_map();
     tile_map_ = renderer.get_tile_map();
     r_aux_ = renderer.get_r_aux();
     manager_ = std::make_shared<Game_Manager>(game_, tile_map_);
 
-    gui_ = GUI(manager_);
+    gui_ = GUI(manager_, window_width, window_height);
     gui_.initialize();
 
     // run the program as long as the window is open
@@ -94,17 +95,17 @@ void Rendering_Engine::handle_continuous_inputs(float moveSpeed, float zoom, Ren
         return;
 
     if (mouse_pos.x >= renderer.width() * (1 - screen_area_to_move_screen_)) {
-        tile_map_->move(-moveSpeed, 0);
+        tile_map_->move(-moveSpeed / 2, 0);
     }
     if (mouse_pos.x <= renderer.width() * screen_area_to_move_screen_) {
-        tile_map_->move(moveSpeed, 0);
+        tile_map_->move(moveSpeed / 2, 0);
     }
 
     if (mouse_pos.y >= renderer.width() * (1 - screen_area_to_move_screen_)) {
-        tile_map_->move(0, -moveSpeed);
+        tile_map_->move(0, -moveSpeed / 2);
     }
     if (mouse_pos.y <= renderer.height() * screen_area_to_move_screen_) {
-        tile_map_->move(0, moveSpeed);
+        tile_map_->move(0, moveSpeed / 2);
     }
 }
 
@@ -152,12 +153,10 @@ void Rendering_Engine::events(sf::RenderWindow& target, sf::Event event, Rendere
 
         // have to update these pointers right after initialising a new level so we
         // don't try to call the old objects and get segfault
-        r_map_ = renderer.get_r_map();
         tile_map_ = renderer.get_tile_map();
         r_aux_ = renderer.get_r_aux();
 
-        manager_ = std::make_shared<Game_Manager>(game_, tile_map_);
-        gui_ = GUI(manager_);
+        gui_ = GUI(manager_, target.getSize().x, target.getSize().y);
         gui_.initialize();
     }
 }

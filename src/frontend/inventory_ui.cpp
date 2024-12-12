@@ -2,8 +2,6 @@
 
 
 
-
-
 Inventory_UI::Inventory_UI(const size_t width, const size_t height) : window_width_(width), window_height_(height)
 {
     items_list_.reserve( unit_consts.inventory_size );
@@ -13,12 +11,12 @@ Inventory_UI::Inventory_UI(const size_t width, const size_t height) : window_wid
 
 
 
-void Inventory_UI::update_inventory(std::span<std::shared_ptr<const Item>> items)
+void Inventory_UI::update_inventory(const std::span<const std::shared_ptr<const Item>> items)
 {
     items_list_.clear();
 
     size_t idx = 0;
-    for ( std::shared_ptr<const Item>& an_item : items ) {
+    for ( const std::shared_ptr<const Item>& an_item : items ) {
         items_list_.push_back( render_item(*an_item, idx) );
         idx++;
     }
