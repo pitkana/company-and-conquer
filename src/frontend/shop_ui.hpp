@@ -14,14 +14,17 @@ class ShopUI : public sf::Drawable {
         std::vector<RectButton> owned_buttons_;
         std::vector<RectButton> unit_buttons_;
         std::vector<RectButton> unit_owned_buttons_;
+        std::vector<RectButton> game_button_;
 
         void update_catalogue();
         void update_owned();
         void update_units();
         void update_unit_inventory();
+        void load_game_button();
 
         Unit* active_unit_ = nullptr;
         std::shared_ptr<const Item> active_item_;
+        Team* team_ = nullptr;
 
         std::unique_ptr<sf::Font> font_ = std::make_unique<sf::Font>();
 
@@ -29,8 +32,7 @@ class ShopUI : public sf::Drawable {
         bool units_loaded_ = false;
         bool new_items_ = false;
         bool unit_changed_ = false;
-
-
+        bool game_button_loaded_ = false;
 
     public:
 

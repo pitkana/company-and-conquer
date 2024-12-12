@@ -132,6 +132,19 @@ void ShopUI::update_unit_inventory()
     }
 }
 
+void ShopUI::load_game_button()
+{
+    game_button_loaded_ = true;
+    RectButton button = RectButton(*font_, true, {30, 230});
+    button.setButtonLabel(20, "Start Game");
+    button.set_activation_function([this]()
+    {
+        Team team = shop_.form_team();
+        team_ = &team;
+    });
+    game_button_.push_back(button);
+}
+
 void ShopUI::update()
 {
     if (!catalogue_loaded_)
@@ -150,6 +163,10 @@ void ShopUI::update()
     {
         update_unit_inventory();
     }
+    if (!game_button_loaded_)
+    {
+        load_game_button();
+    }
 }
 
 void ShopUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -167,6 +184,10 @@ void ShopUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
         button.draw(target);
     }
     for (auto button : unit_owned_buttons_)
+    {
+        button.draw(target);
+    }
+    for (auto button : game_button_)
     {
         button.draw(target);
     }
