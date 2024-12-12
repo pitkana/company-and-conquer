@@ -1,4 +1,5 @@
 #include <memory>
+#include <random>
 #include <algorithm>
 #include <queue>
 #include <utility>
@@ -488,6 +489,7 @@ std::vector< coordinates<size_t> > Map::line_of_sight_check( const coordinates<s
 
 std::vector< coordinates<size_t> > Map::get_neighbouring_coordinates( const coordinates<size_t>& location )
 {
+    static auto rng = std::default_random_engine();
 
     std::vector< coordinates<size_t> > possible_locations;
     possible_locations.reserve(4);
@@ -502,6 +504,8 @@ std::vector< coordinates<size_t> > Map::get_neighbouring_coordinates( const coor
         }
     }
 
+    //Return in random order each time for some variation
+    std::shuffle(possible_locations.begin(), possible_locations.end(), rng);
     return possible_locations;
 }
 
@@ -709,121 +713,100 @@ coordinates<size_t> Map::get_closest_accessible_tile(const coordinates<size_t>& 
 }
 
 coordinates<size_t> Map::fastest_movement_to_target(const coordinates<size_t>& location, coordinates<size_t> target, uint8_t movement_range) {
-    assert(can_move_to_terrain(target) && "Target coordinates cannot be moved to");
-    // Timer timer;
+    Timer timer;
+    struct Vertex {
+        size_t cooldown;
+        coordinates<size_t> coords;
+    };
 
-    // If there is somebody on the target tile, get closest other tile
+    assert(can_move_to_terrain(target) && "Target coordinates cannot be moved to");
     if (has_unit(target)) {
         target = get_closest_accessible_tile(target);
     }
 
-    // this will contain the distance and predecessor of a vertex as: <distance, location of predecessor>
-    struct a_vertex
-    {
-        size_t first;
-        coordinates<size_t> second;
+    std::vector<bool> visited(width() * height(), false);
+    Matrix<coordinates<size_t>> parents(width() * height());
+    parents(location) = location;
 
-        inline bool operator < ( const a_vertex& a ) const noexcept
-        {
-            return first < a.first;
-        }
-        inline bool operator > ( const a_vertex& a ) const noexcept
-        {
-            return first > a.first;
-        }
-    };
-    // cant use unordered_set with coordinates without making a hash function so I used a vector.
-    std::vector<bool> is_processed( width() * height(), false ); 
+    // Queue of vertices that will be visited in the search.
+    std::deque<Vertex> vertex_queue;
+    // List of vertices that have a movement cost greater than 1 and thus won't be searched until that many movements have been used
+    std::list<Vertex> waiting_vertices;
 
-    // this will contain the distance and predecessor of each vertex as: <distance, location of predecessor>
-    Matrix< a_vertex > vertex_attributes(height(), width(), { std::numeric_limits<size_t>::max(), coordinates<size_t>{0, 0} });
-    vertex_attributes( location.y, location.x ) = { 0, location };
+    // Add starting location to queue and mark it as visited
+    vertex_queue.emplace_back(0, location);
+    visited[location.y * width() + location.x] = true;
+    uint8_t movements_left = movement_range;
 
-
-    auto Relax = [&vertex_attributes, this]( const a_vertex& curr, const coordinates<size_t>& a_neighbour, size_t weight ) -> void
-    {
-        if ( ( curr.first + weight < vertex_attributes( a_neighbour.y, a_neighbour.x ).first ) && (can_move_to_coords(a_neighbour)) ) {
-            //vertex_attributes( a_neighbour.y, a_neighbour.x ) = { vertex_attributes( curr.y, curr.x ).first + weight, curr };
-            vertex_attributes( a_neighbour.y, a_neighbour.x ).first = curr.first + weight;
-            vertex_attributes( a_neighbour.y, a_neighbour.x ).second = curr.second;
-        }
-    };
-
+    while (!vertex_queue.empty()) {
+        // Store how many tiles to visit in this movement
+        int current_size = vertex_queue.size();
     
-    a_vertex curr;
-    coordinates<size_t> aux; // well use this in the following loop
+        for (int i = 0; i < current_size; i++) {
+            const Vertex& current_vertex = vertex_queue.front();
 
-    // very interesting template constructor for std::priority_queue, we need it to make it possible to use std::pair in it
-    // it basically orders the pairs by the first element into a min-heap
-    std::priority_queue< a_vertex, std::vector<a_vertex>, std::greater<a_vertex> > distances;
-    distances.push( vertex_attributes( location.y, location.x ) );
+            std::vector<coordinates<size_t>> neighbours = get_neighbouring_coordinates(current_vertex.coords);
+            for (const auto& neighbour : neighbours) {
+                // Get this neighbour's terrain, check if the neighbour was already visited or if you can move to it.
+                // If visited or can't move, skip it, otherwise visit it and mark it as visited
+                const std::shared_ptr<Terrain>& neighbour_terrain = all_terrains_[neighbour];
+                if (visited[neighbour.y * width() + neighbour.x]|| !can_move_to_coords(neighbour)) continue;
+                visited[neighbour.y * width() + neighbour.x] = true;
+                parents(neighbour) = current_vertex.coords;
 
-    std::vector< coordinates<size_t> > tiles_that_are_close_enough;
+                if (neighbour == target) { //Found target, backtrack and create a path
+                    std::vector<coordinates<size_t>> path;
+                    coordinates<size_t> current = neighbour;
 
-    while ( !(distances.empty()) ) {
-        curr = distances.top();
-        distances.pop();
-
-
-        // add the tile's coordinates into the return container only if their distance 
-        // is equal or less than the given <movement_range>
-        tiles_that_are_close_enough.emplace_back( curr.second.x, curr.second.y );
-        
-
-        // check if we've already computed the current vertex
-        if ( !(is_processed[ curr.second.y * width() + curr.second.x ]) ) {
-
-            // the tile is only connected to 4 other tiles in the main directions
-            for ( const coordinates<int32_t>& a_direction : directions_vectors_ ) {
-
-                // check if the direction is valid before doing the relaxation of path
-                // created this <valid_direction> method to not put all the if-statements into one clutter
-                if ( valid_direction( curr.second, a_direction ) ) {
-
-                    // for different directions we have a different increment in the indexing
-                    aux = curr.second + a_direction;
-
-                    // check if we've already processed the tile
-                    if ( !(is_processed[ aux.y * width() + aux.x ] )) {   
-                        Relax( curr, aux, all_terrains_( aux.y, aux.x )->movement_cost() );
-
-                        distances.emplace( vertex_attributes( aux.y, aux.x ).first, aux );
-                        if (target == aux) {
-                            std::vector<coordinates<size_t>> path;
-                            coordinates<size_t> current = aux;
-
-                            while (current != location) {
-                                path.push_back(current);
-                                current = vertex_attributes(current).second;
-                            }
-
-                            size_t i = path.size();
-                            int range_left = movement_range;
-                            while (i > 0) {
-                                i--;
-                                range_left -= all_terrains_(path[i])->movement_cost();
-
-                                // If no move range to move or this is the last coordinate in the path, return
-                                if (range_left <= 0 || i == 0) {
-                                    return path[i];
-                                }
-
-                            }
-                        }
+                    while (current != location) { //Loop until we're at the starting location
+                        path.push_back(current);
+                        current = parents(current);
                     }
+
+                    size_t i = path.size();
+                    int range_left = movement_range;
+                    while (i > 0) {
+                        i--;
+                        range_left -= all_terrains_(path[i])->movement_cost();
+
+                        // If no move range to move or this is the last coordinate in the path, return
+                        if (range_left <= 0 || i == 0) {
+                            return path[i];
+                        }
+
+                    }
+
+                }
+
+                // If it costs only 1 movement action to move into this tile, add it to the queue straight away.
+                // Otherwise add it to waiting_vertices
+                if (neighbour_terrain->movement_cost() > 1) {
+                    waiting_vertices.emplace_back(neighbour_terrain->movement_cost(), neighbour);
+                } else {
+                    vertex_queue.emplace_back(0, neighbour);
                 }
             }
-
-            is_processed[ curr.second.y * width() + curr.second.x ] = true;
+            vertex_queue.pop_front();
         }
-
         
+        // Loop through waiting vertices, decrease each vertex's cooldown and if it reaches 0, remove it from waiting_vertices
+        // and add it to the queue of vertices to visit on the next movement
+        auto it = waiting_vertices.begin();
+        while (it != waiting_vertices.end()) {
+            auto waiting_vertex_it = it++;
+            Vertex& waiting_vertex = *waiting_vertex_it;
+            if (--waiting_vertex.cooldown <= 0) {
+                vertex_queue.push_back(std::move(waiting_vertex));
+                waiting_vertices.erase(waiting_vertex_it);
+            }
+        }
+        movements_left--;
     }
 
-    assert(false && "this probably shouldnt be reached ever");
-    return {0, 0};
-
+    // The target tile or the one selected near it was unreachable, return the starting location
+    return location;
 }
+
 
 
 void Map::print_map() const {
