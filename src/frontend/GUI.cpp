@@ -166,6 +166,18 @@ void GUI::update_inventory() {
         inventory_buttons_.buttons.push_back(std::move(button));
     }
 
+    if (Building* building = map_->get_building(game_manager_->selected_unit_coords()).get();
+        building != nullptr && building->is_ready()) 
+    {
+        RectButton button(*font_, true, {curr_x, 500});
+        button.setButtonLabel(20, building->get_name());
+        button.set_activation_function([this, building]() {
+            this->active_item = building->get_item();
+        });
+
+        inventory_buttons_.buttons.push_back(std::move(button));
+    }
+
     inventory_buttons_.isActive = true;
 }
 

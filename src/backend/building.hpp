@@ -22,6 +22,10 @@ public:
 
     virtual size_t get_texture_idx() const { return 0; };
 
+    const std::string& get_name() const {
+        return name_;
+    }
+
     //Check if this specific part is already added to this building
     [[nodiscard]]
     virtual bool has_part(const BuildingPart& part) const;
