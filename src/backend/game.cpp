@@ -230,8 +230,8 @@ Team* Game::get_active_team() {
 }
 
 Team* Game::get_winner() {
-    std::vector<Team*> alive_teams;
-    std::copy_if(teams_.begin(),teams_.end(),std::back_inserter(alive_teams),[](Team* team){ return !team->all_dead();});
-    return (alive_teams.size() == 1) ? alive_teams[0] : nullptr; 
+    std::vector<Team> alive_teams;
+    std::copy_if(teams_.begin(),teams_.end(),std::back_inserter(alive_teams),[](Team team){ return !team.all_dead();});
+    return (alive_teams.size() == 1) ? &alive_teams[0] : nullptr; 
 }
 

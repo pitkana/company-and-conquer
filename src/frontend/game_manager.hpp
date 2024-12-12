@@ -60,9 +60,10 @@ public:
 private:
     void get_movement_action_info(std::stringstream& info_stream, const coordinates<size_t>& potential_target);
     void get_item_action_info(std::stringstream& info_stream, const coordinates<size_t>& potential_target, const Item* action_item);
+    void get_tile_info(std::stringstream& info_stream, const coordinates<size_t>& potential_target);
 
     bool can_selected_unit_move_to(const coordinates<size_t>& potential_target) const;
-    bool can_selected_unit_attack_to(const coordinates<size_t>& potential_target) const;
+    bool can_selected_unit_use_item_to(const coordinates<size_t>& potential_target) const;
 
     bool are_valid_coords(const coordinates<size_t>& coords) const;
 

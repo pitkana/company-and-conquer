@@ -204,3 +204,5 @@ std::vector<RectButton*> GUI::get_all_buttons() {
 
     return buttons;
 }
+
+const Item* GUI::get_active_item() const { return active_item.get(); }

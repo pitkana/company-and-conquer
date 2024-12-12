@@ -34,7 +34,7 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
             r_aux_->draw_cursor_highlight(mousePos.x,mousePos.y);
             coordinates<size_t> target_coord = tile_map_->get_map_coords(mousePos.x,mousePos.y);
             r_aux_->show_text = true;
-            r_aux_->draw_text(mousePos.x,mousePos.y,manager_->get_action_info(target_coord,nullptr));
+            r_aux_->draw_text(mousePos.x,mousePos.y,manager_->get_action_info(target_coord,gui_.get_active_item()));
         } else {
             r_aux_->hide_unit_highlight();
             r_aux_->hide_cursor_highlight();
@@ -87,7 +87,7 @@ void Rendering_Engine::handle_continuous_inputs(float moveSpeed, float zoom, Ren
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
         tile_map_->move(0,moveSpeed);
     }
-
+/*
     if (mouse_pos.x >= renderer.width() * (1 - screen_area_to_move_screen_)) {
         tile_map_->move(-moveSpeed, 0);
     }
@@ -101,6 +101,7 @@ void Rendering_Engine::handle_continuous_inputs(float moveSpeed, float zoom, Ren
     if (mouse_pos.y <= renderer.height() * screen_area_to_move_screen_) {
         tile_map_->move(0, moveSpeed);
     }
+*/
 }
 
 void Rendering_Engine::events(sf::RenderWindow& target, sf::Event event, Renderer& renderer) {

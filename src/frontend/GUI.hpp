@@ -62,6 +62,8 @@ public:
 
     void click_on_coords(size_t y, size_t x);
 
+    const Item* get_active_item() const;
+
 private:
     bool selected_unit_in_active_team() const;
 

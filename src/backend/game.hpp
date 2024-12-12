@@ -133,6 +133,8 @@ public:
 
     Team* get_active_team();
 
+    Team* get_winner();
+
 private:
     std::vector<Team> teams_;
     Map map_;

@@ -87,5 +87,5 @@ int Team::get_id() const {
 }
 
 bool Team::all_dead() const {
-    return (std::all_of(units_.begin(),units_.end(),[&](Unit& unit) {return unit.is_dead();}));
+    return (std::all_of(units_.begin(),units_.end(),[](Unit unit) {return unit.is_dead();}));
 }

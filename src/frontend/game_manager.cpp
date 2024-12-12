@@ -57,7 +57,7 @@ bool Game_Manager::enqueue_movement_action(const coordinates<size_t>& target) {
 
 bool Game_Manager::enqueue_item_action(coordinates<size_t> target, const Item* action_item) {
     if (!selected_valid_unit()) return false;
-    if (!can_selected_unit_attack_to(target)) return false;
+    if (!can_selected_unit_use_item_to(target)) return false;
     if (selected_unit_ptr_->has_added_action) return false;
     assert(action_item != nullptr && "Gave nullptr to enqueue_item_action");
 
@@ -100,6 +100,7 @@ std::string Game_Manager::get_action_info(const coordinates<size_t>& potential_t
     if (!selected_valid_unit()) return "";
 
     std::stringstream ss;
+    get_tile_info(ss,potential_target);
     ss << selected_unit_ptr_->get_name() << "\n";
     get_movement_action_info(ss,potential_target);
     get_item_action_info(ss,potential_target,action_item);
@@ -123,19 +124,37 @@ void Game_Manager::get_movement_action_info(std::stringstream& info_stream, cons
 void Game_Manager::get_item_action_info(std::stringstream& info_stream, const coordinates<size_t>& potential_target, const Item* action_item) {
     if (!selected_valid_unit()) return;
     if (selected_unit_ptr_->has_added_action) { info_stream << "item action already queued\n"; return; }
-    if (action_item == nullptr) { info_stream <<  "has no items\n"; return; }
+    if (action_item == nullptr) { return; }
+    info_stream << "Using item: " << action_item->get_name() << "\n";
+    bool can_use = can_selected_unit_use_item_to(potential_target); 
     if (action_item->is_weapon()) {
-        info_stream << action_item->get_name();
+        if (can_use) { info_stream << "Can attack here"; }
+        else { info_stream << "Can not attack here"; }
     } else if (action_item->is_healing_item()) {
-        info_stream << action_item->get_name();
+        if (can_use) { info_stream << "Can heal here"; }
+        else { info_stream << "Can not heal here"; }
     } else if (action_item->is_building_part()) {
-        info_stream << action_item->get_name();
+        if (can_use) { info_stream << "Can buil here"; }
+        else { info_stream << "Can not build here"; }
     } else {
         info_stream << "Unknown item";
     }
     return;
 }
 
+void Game_Manager::get_tile_info(std::stringstream& info_stream, const coordinates<size_t>& potential_target) {
+    if (!are_valid_coords(potential_target) || !(game_.lock()->game_started())) return;
+    info_stream << potential_target << "\n";
+    Unit* target_unit_ptr = game_.lock()->get_map().get_unit(potential_target);
+    Team* active_unit_team = game_.lock()->get_active_team();
+    if (target_unit_ptr == nullptr) return;
+    if (active_unit_team->get_unit(target_unit_ptr->get_id()) == nullptr) {
+        info_stream << "Enemy ";
+    } else {
+        info_stream << "Friendly ";
+    }
+    info_stream << target_unit_ptr->get_id() << " " << target_unit_ptr->get_hp() << "hp";
+}
 
 bool Game_Manager::can_selected_unit_move_to(const coordinates<size_t>& potential_target) const {
     if (!selected_valid_unit() || !are_valid_coords(potential_target)) return false;
@@ -146,7 +165,7 @@ bool Game_Manager::can_selected_unit_move_to(const coordinates<size_t>& potentia
     return it != coords_selected_unit_can_move_to_.end();
 }
 
-bool Game_Manager::can_selected_unit_attack_to(const coordinates<size_t>& potential_target) const {
+bool Game_Manager::can_selected_unit_use_item_to(const coordinates<size_t>& potential_target) const {
     if (!selected_valid_unit() || !are_valid_coords(potential_target)) return false;
 
     auto it = std::find(coords_selected_unit_can_shoot_to_.begin(), coords_selected_unit_can_shoot_to_.end(), potential_target);
