@@ -85,3 +85,7 @@ size_t Team::team_size() const {
 int Team::get_id() const {
     return team_id_;
 }
+
+bool Team::all_dead() const {
+    return (std::all_of(units_.begin(),units_.end(),[&](Unit& unit) {return unit.is_dead();}));
+}

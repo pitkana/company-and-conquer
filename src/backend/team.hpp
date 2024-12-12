@@ -33,6 +33,8 @@ public:
     //Get unit by id, pointer since unit by that id might not exist
     Unit* get_unit(int id);
 
+    bool all_dead() const;
+
     //return reference to units vector
     [[nodiscard]]
     std::vector<Unit>& get_units();
