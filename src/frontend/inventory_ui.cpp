@@ -49,7 +49,7 @@ std::unique_ptr<sf::Sprite> Inventory_UI::render_item(const Item& an_item, size_
     size_t height = window_height_ - (window_height_ / 8) + padding * 2;
 
     std::unique_ptr<sf::Sprite> item = std::make_unique<sf::Sprite>();
-    sf::Vector2f pos = {( 2 + position_idx) *(window_width_ / 8) + padding, window_height_ - (window_height_ / 8) + padding};
+    sf::Vector2f pos = {static_cast<float>(( 2 + position_idx) *(window_width_ / 8) + padding), static_cast<float>(window_height_ - (window_height_ / 8) + padding)};
 
     item->setPosition( pos );
 

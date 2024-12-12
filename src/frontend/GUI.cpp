@@ -158,7 +158,7 @@ void GUI::update_inventory() {
     float button_height = height_ / 6 - padding;
 
     // also calculate the relative position of the first item buttom
-    sf::Vector2f pos = { (width_ / 6) + padding / 2, height_ - (height_ / 6 - padding / 2)};
+    sf::Vector2f pos = { static_cast<float>((width_ / 6) + padding / 2), static_cast<float>(height_ - (height_ / 6 - padding / 2))};
 
     if (!selected_unit_changed_) {
         // If no active item 
@@ -167,12 +167,15 @@ void GUI::update_inventory() {
             return;
         }
 
-        // If deselect button already exists, remove it 
-        // so we render it at the new place
-        if (inventory_buttons_.deactivate_button_exists()) inventory_buttons_.clear_deactivate_button();
+        // If active item has changed, redraw the deactivate button on top of currently active item
+        if (!active_item_changed_)
+            return;
 
-        RectButton button(*font_, true, {active_item_pos_.x, active_item_pos_.y - padding});
-        button.setButtonLabel(20, "Deselect item");
+        active_item_changed_ = false;
+        inventory_buttons_.clear_deactivate_button();
+
+        RectButton button(*font_, true, {active_item_pos_.x, active_item_pos_.y - 4 * padding});
+        button.setButtonLabel(20, " Deselect item ");
         button.set_activation_function([this]() {
             this->active_item = nullptr;
         });
@@ -201,6 +204,7 @@ void GUI::update_inventory() {
             button.set_activation_function([this, item, pos]() {
                 this->active_item = item;
                 this->active_item_pos_ = pos;
+                this->active_item_changed_ = true;
             });
 
         } else {
@@ -215,10 +219,12 @@ void GUI::update_inventory() {
     if (Building* building = map_->get_building(game_manager_->selected_unit_coords()).get();
         building != nullptr && building->is_ready()) 
     {
-        RectButton button(*font_, true, {curr_x, 500});
+        RectButton button(*font_, {button_width, button_height}, pos);
         button.setButtonLabel(20, building->get_name());
         button.set_activation_function([this, building, pos]() {
             this->active_item = building->get_item();
+            this->active_item_pos_ = pos;
+            this->active_item_changed_ = true;
         });
 
         inventory_buttons_.buttons.push_back(std::move(button));

@@ -93,6 +93,7 @@ private:
     bool selected_unit_changed_ = false;
 
     std::shared_ptr<const Item> active_item;
+    bool active_item_changed_ = false;
     sf::Vector2f active_item_pos_;
 
     std::unique_ptr<sf::Font> font_ = std::make_unique<sf::Font>();

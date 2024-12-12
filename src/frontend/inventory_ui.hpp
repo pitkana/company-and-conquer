@@ -77,7 +77,7 @@ class Inventory_UI : public Auxiliary_renderable
             background_.setTexture( texture_, true );
             background_.setScale( scale_x, scale_y );
 
-            sf::Vector2f pos = { (window_width_ / 6), window_height_ - (window_height_ / 6)};
+            sf::Vector2f pos = {static_cast<float>((window_width_ / 6)), static_cast<float>(window_height_ - (window_height_ / 6))};
 
             background_.setPosition( pos );
 
