@@ -8,3 +8,5 @@ enum class BuildingPartType : uint8_t {
     MedicTentMedkit = 2,
     MedicTentTent = 3
 };
+
+

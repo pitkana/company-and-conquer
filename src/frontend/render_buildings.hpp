@@ -29,7 +29,10 @@ private:
     
     void draw_buildings();
 
+    void update_sprite_map();
+
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
+        //Buildings need to be built in a certain order.
         for (auto spr : building_sprite_map_) {
             target.draw(spr.second,states);
         }

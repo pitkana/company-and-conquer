@@ -20,14 +20,13 @@ void rendering_engine_test() {
     test_game.add_team(team2);
     Team& t1 = test_game.get_teams()[0];
     Unit* u1 = &t1.get_units()[0];
-    u1->add_item(std::make_shared<Weapon>("gun",100,100,0));
+    u1->add_item(std::make_shared<Weapon>("gun1",100,100,0));
+    u1->add_item(ConstItem::turret_barrel);
+    u1->add_item(ConstItem::turret_legs);
     Team& t2 = test_game.get_teams()[1];
     Unit* u2 = &t2.get_units()[0];
+    u2->add_item(std::make_shared<Weapon>("gun2",100,100,0));
     test_map.add_unit(0,0,u1);
     test_map.add_unit(5,5,u2);
-    std::shared_ptr<Building> tent = std::make_shared<MedicTent>();
-    std::shared_ptr<Building> turret = std::make_shared<Turret>();;
-    test_map.add_building(tent,2,2);
-    test_map.add_building(turret,2,1);
     renderer.start();
 }
