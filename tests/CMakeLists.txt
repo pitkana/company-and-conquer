@@ -21,7 +21,6 @@ add_executable(test
         shop_ui_test.hpp
         file_selector_test.cpp
         file_selector_test.hpp
-        ../libs/tinyfiledialogs/tinyfiledialogs.c
         integration_test.cpp)
 
 target_sources(test PUBLIC ${SOURCES})

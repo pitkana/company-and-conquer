@@ -233,5 +233,13 @@ bool ShopUI::execute_button_actions(sf::RenderWindow& window, sf::Event& event) 
         }
     }
 
+    for (auto button : game_button_) {
+        button.getButtonStatus(window, event);
+        if (button.isPressed) {
+            button.activate();
+            return true;
+        }
+    }
+
     return false;
 }

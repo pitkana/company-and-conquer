@@ -8,6 +8,7 @@ Game Scenario::generate_game() {
     std::vector<Unit> player_units = player_team.get_units();
     std::vector<Unit> enemy_units = enemy_team_.get_units();
 
+
     for (unsigned int i = 0; i < player_units.size(); i++) {
         Unit* player_unit = &player_units[i];
         coordinates player_position = player_positions_[i];
@@ -20,6 +21,7 @@ Game Scenario::generate_game() {
     }
 
     Game game = Game(map_);
+
     game.add_team(player_team);
     game.add_team(enemy_team_);
 

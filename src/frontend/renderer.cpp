@@ -1,7 +1,7 @@
 #include "renderer.hpp"
 #include "rendering_engine.hpp"
 #include "shop_ui.hpp"
-#include "../../libs/tinyfiledialogs/tinyfiledialogs.h"
+#include "tinyfiledialogs.h"
 
 
 /**
@@ -123,6 +123,7 @@ void Renderer::start_shop()
 {
     Shop shop = scenario_->get_shop();
     shop_ui_ = std::make_shared<ShopUI>(shop, *this);
+    shop_ui_->initialize();
 }
 
 void Renderer::initialize_scenario()
@@ -146,6 +147,49 @@ void Renderer::initialize_scenario()
         render_window_->display();
     }
     game_ = std::make_shared<Game>(scenario_->generate_game());
+
+    // store the pointer to the new level into the <tile_map_>, and
+    // add it into the renderable,
+    // also do this for every other object
+    tile_map_ = std::make_shared<Tile_Map>( game_, 100 );
+    r_map_ = std::make_shared<Render_Map>( tile_map_ );
+    r_units_ = std::make_shared<Render_Units>( tile_map_ );
+    r_buildings_ = std::make_shared<Render_Buildings>( tile_map_ );
+    r_aux_ = std::make_shared<Render_Aux>( tile_map_ );
+    r_inv_ = std::make_shared<Inventory_UI>( render_window_->getSize().x, render_window_->getSize().y );
+
+    // clear out the old renderables
+    renderables_->clear();
+
+    // add all the new renderables
+    renderables_->add_drawable( r_map_ );
+    renderables_->add_drawable( r_buildings_ );
+    renderables_->add_drawable( r_units_ );
+    renderables_->add_drawable( r_aux_ );
+    renderables_->add_drawable( r_inv_ );
+
+
+    if (!r_map_->load(map_text_path_)) {
+        return;
+    }
+    if (!r_units_->load(unit_text_path_)) {
+        return;
+    }
+
+    if (!r_buildings_->load(building_text_path_)) {
+        return;
+    }
+
+    if (!r_aux_->load(aux_text_path_, text_font_path_)) {
+        return;
+    }
+
+    game_->init_game();
+
+    window_.get_game() = game_;
+
+    manager_ = std::make_shared<Game_Manager>(game_);
+
     start();
 }
 
