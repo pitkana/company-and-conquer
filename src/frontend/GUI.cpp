@@ -114,7 +114,7 @@ void GUI::initialize_main_buttons() {
     RectButton next_unit_button(*font_, true, pos);
     next_unit_button.setButtonLabel(20, " Next unit ");
     next_unit_button.set_activation_function([this]() {
-        this->game_manager_->cycle_units(width_, width_);
+        this->game_manager_->cycle_units(width_, height_);
         this->selected_unit_changed_ = true;
         active_item = nullptr;
     });
