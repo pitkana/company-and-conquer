@@ -18,8 +18,9 @@ Scenario ScenarioLoader::load_scenario() {
         Map map = construct_map();
         Team enemy_team = construct_enemy();
         Shop shop = construct_shop();
+        bool multiplayer = get_multiplayer();
 
-        Scenario scenario = Scenario(enemy_team, map, shop, enemy_positions_, player_positions_);
+        Scenario scenario = Scenario(enemy_team, map, shop, enemy_positions_, player_positions_, multiplayer);
 
         return scenario;
     }
@@ -122,5 +123,13 @@ int ScenarioLoader::get_player_team_size() {
         return scenario_["team_size"].as<int>();
     } catch (std::exception &e) {
         throw std::runtime_error("Could not find team size: " + std::string(e.what()));
+    }
+}
+
+bool ScenarioLoader::get_multiplayer() {
+    try {
+        return scenario_["multiplayer"].as<bool>();
+    } catch (std::exception &e) {
+        return false;
     }
 }

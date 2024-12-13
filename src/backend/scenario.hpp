@@ -11,15 +11,20 @@ class Scenario {
     Shop shop_;
     Map map_;
 
+    bool multiplayer_;
+
     std::vector<coordinates<size_t>> enemy_positions_;
     std::vector<coordinates<size_t>> player_positions_;
 
   public:
 
-    Scenario(Team enemy_team, Map map, Shop shop, std::vector<coordinates<size_t>> enemy_positions, std::vector<coordinates<size_t>> player_positions) : enemy_team_(enemy_team), shop_(shop), map_(map), enemy_positions_(enemy_positions), player_positions_(player_positions) {}
+    Scenario(Team enemy_team, Map map, Shop shop, std::vector<coordinates<size_t>> enemy_positions, std::vector<coordinates<size_t>> player_positions, bool multiplayer) : enemy_team_(enemy_team), shop_(shop), map_(map), enemy_positions_(enemy_positions), player_positions_(player_positions), multiplayer_(multiplayer) {}
 
     Shop& get_shop() { return shop_; }
 
+    [[nodiscard]] bool get_multiplayer() const { return multiplayer_; }
+
     Game generate_game();
+
 
 };

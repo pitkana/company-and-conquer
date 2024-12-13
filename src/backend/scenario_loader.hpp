@@ -25,6 +25,7 @@ private:
     Map construct_map();
 
     int get_player_team_size();
+    bool get_multiplayer();
 
     std::vector<coordinates<size_t>> enemy_positions_;
     std::vector<coordinates<size_t>> player_positions_;
