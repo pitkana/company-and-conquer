@@ -47,16 +47,16 @@ void Render_Aux::update() {
     return; //Does nothing in case of this class. Just required in the parent class.
 }
 
-void Render_Aux::draw_unit_highlight(const coordinates<size_t>& coords) {
-    draw_highlight(coords,highlight_unit_,1);
+void Render_Aux::show_unit_highlight(const coordinates<size_t>& coords) {
+    show_highlight(coords,highlight_unit_,1);
 }
 
-void Render_Aux::draw_cursor_highlight(int pixel_x, int pixel_y) {
-    draw_highlight(tile_map_->get_map_coords(pixel_x,pixel_y),highlight_cursor_,2);
+void Render_Aux::show_cursor_highlight(int pixel_x, int pixel_y) {
+    show_highlight(tile_map_->get_map_coords(pixel_x,pixel_y),highlight_cursor_,2);
 }
 
-void Render_Aux::draw_cursor_highlight(const coordinates<size_t>& coords) {
-    draw_highlight(coords,highlight_cursor_,2);
+void Render_Aux::show_cursor_highlight(const coordinates<size_t>& coords) {
+    show_highlight(coords,highlight_cursor_,2);
 }
 
 void Render_Aux::hide_unit_highlight() {
@@ -67,7 +67,7 @@ void Render_Aux::hide_cursor_highlight() {
     hide_highlight(highlight_cursor_);
 }
 
-void Render_Aux::draw_highlight(const coordinates<size_t>& coords, sf::Sprite& highlight_sprite, size_t texture_idx) {
+void Render_Aux::show_highlight(const coordinates<size_t>& coords, sf::Sprite& highlight_sprite, size_t texture_idx) {
     if (!tile_map_->is_inside_map_tile(coords) || !tile_map_->is_tile_drawn(coords)) {
         //Hide cursor but not unit highlight
         hide_cursor_highlight(); 
@@ -87,7 +87,7 @@ void Render_Aux::draw_highlight(const coordinates<size_t>& coords, sf::Sprite& h
     }
 }
 
-void Render_Aux::draw_text(int pixel_x, int pixel_y, const std::string& msg) {
+void Render_Aux::show_cursor_text(int pixel_x, int pixel_y, const std::string& msg) {
     bool cursor_inside_map = tile_map_->is_inside_map_pixel(pixel_x,pixel_y);
     bool tile_visible = tile_map_->is_tile_drawn(tile_map_->get_map_coords(pixel_x,pixel_y));
     if (show_text && cursor_inside_map && tile_visible) {
@@ -98,7 +98,7 @@ void Render_Aux::draw_text(int pixel_x, int pixel_y, const std::string& msg) {
     }
 }
 
-void Render_Aux::draw_logs(const std::string& logs) {
+void Render_Aux::show_logs(const std::string& logs) {
     log_text_.setString(logs);
     return;
 }

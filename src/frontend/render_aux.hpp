@@ -42,17 +42,17 @@ public:
      * 
      * @param coords The desired location.
      */
-    void draw_unit_highlight(const coordinates<size_t>& coords);
+    void show_unit_highlight(const coordinates<size_t>& coords);
 
     /**
      * @brief Makes action_info_text_ show msg string around desired location. Usually mouse pixel coordinates in this case.
      */
-    void draw_text(int pixel_x, int pixel_y, const std::string& msg);
+    void show_cursor_text(int pixel_x, int pixel_y, const std::string& msg);
 
     /**
      * @brief Makes log_text_ show logs string in the top left corner of the screen.
      */
-    void draw_logs(const std::string& logs);
+    void show_logs(const std::string& logs);
 
     /**
      * @brief Hides logs.
@@ -67,8 +67,8 @@ public:
     /**
      * @brief Makes highlight_cursor_ sprite appear around desired location. Pixel coordinates in this case.
      */
-    void draw_cursor_highlight(int pixel_x, int pixel_y);
-    void draw_cursor_highlight(const coordinates<size_t>& coords);
+    void show_cursor_highlight(int pixel_x, int pixel_y);
+    void show_cursor_highlight(const coordinates<size_t>& coords);
 
     /**
      * @brief Hides highlight_unit_ sprite.
@@ -93,7 +93,7 @@ private:
     /**
      * @brief A generalized method used to show a sprite in certain map coords.
      */
-    void draw_highlight(const coordinates<size_t>& coords, sf::Sprite& highlight_sprite, size_t texture_idx);
+    void show_highlight(const coordinates<size_t>& coords, sf::Sprite& highlight_sprite, size_t texture_idx);
 
     /**
      * @brief A generalized method used to hide a sprite.
