@@ -38,6 +38,12 @@ bool Render_Aux::load(const std::string& aux_texture_path, const std::string& te
     log_text_.setCharacterSize(16);
     log_text_.setOrigin(-10,-10);
 
+    //Setting up victory text.
+    victory_text_.setFont(text_font_);
+    victory_text_.setFillColor(sf::Color::White);
+    victory_text_.setCharacterSize(30);
+    victory_text_.setOrigin(-20,-200);
+
     hide_cursor_highlight();
     hide_unit_highlight();
     return true;
@@ -143,3 +149,9 @@ void Render_Aux::hide_highlight(sf::Sprite& highlight_sprite) {
 std::weak_ptr<Tile_Map> Render_Aux::get_tile_map() { return tile_map_; }
 
 void Render_Aux::set_tile_map(std::shared_ptr<Tile_Map>& tile_map) { tile_map_ = tile_map; }
+
+void Render_Aux::show_victory_text(Team& team) {
+    std::stringstream msg;
+    msg << "Team " << team.get_id() << " won!!!!!!!!";
+    return;
+}

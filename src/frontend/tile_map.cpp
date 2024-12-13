@@ -58,7 +58,6 @@ void Tile_Map::center_at(const coordinates<size_t>& coords, int window_width, in
     float window_center_x = window_width / 2;
     float window_center_y = window_height / 2;
     x0y0_ = std::pair<int,int>(window_center_x - tileDim_/2 - coords.x * tileDim_,window_center_y - tileDim_/2 - coords.y * tileDim_);
-    return;
 }
 
 int Tile_Map::get_TileDim() const {

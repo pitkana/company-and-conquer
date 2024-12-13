@@ -16,6 +16,8 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
 
     std::shared_ptr<Game_Logs>& logs = renderer.get_logs();
 
+    bool game_ended = false;
+
     // run the program as long as the window is open
     while (window.isOpen())
     {
@@ -28,6 +30,19 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
         handle_continuous_inputs(window);
 
         window.clear(sf::Color::Black);
+
+        /*
+        game_ended = game_->get_winner() != nullptr;
+        //Victory screen
+        if (game_ended) {
+            Team winning_team = *game_->get_winner();
+            r_aux_->show_victory_text(winning_team);
+            window.draw(*r_aux_);
+            window.display();
+            continue;
+        } 
+        */
+
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
         coordinates<size_t> target_coord = tile_map_->get_map_coords(mousePos.x,mousePos.y);
 
@@ -159,11 +174,6 @@ void Rendering_Engine::events(sf::RenderWindow& target, sf::Event event, Rendere
 
                 case (sf::Keyboard::Space): {
                     gui_.next_turn();
-                    break;
-                }
-
-                case (sf::Keyboard::F): {
-                    tile_map_->fog_of_war = !tile_map_->fog_of_war;
                     break;
                 }
 

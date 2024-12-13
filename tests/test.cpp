@@ -1,8 +1,8 @@
 
-#include "integration_test.hpp"
+#include "render_window_test.hpp"
 
 
 int main() {
-  integration_test();
+  rendering_engine_test();
   return 0;
 }
