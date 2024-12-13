@@ -49,7 +49,7 @@ class ShopUI : public sf::Drawable {
 
         void initialize();
 
-        ShopUI(Shop shop, Renderer& renderer) : shop_(shop), renderer_(renderer), budget_(shop.get_budget()) {}
+        ShopUI(Shop& shop, Renderer& renderer) : shop_(shop), renderer_(renderer), budget_(shop.get_budget()) {}
 
         /**
          * Event handler for button actions
