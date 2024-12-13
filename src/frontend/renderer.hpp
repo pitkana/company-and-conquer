@@ -28,6 +28,7 @@ class Renderer
 
         void initialise_level( size_t level_idx );
 
+        // Methods used for loading scenarios from files
         void load_scenario();
         void start_shop();
         void initialize_scenario();

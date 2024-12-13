@@ -113,12 +113,17 @@ void Renderer::initialise_level( size_t level_idx )
 
 void Renderer::load_scenario()
 {
+    // Open system file selector
     char const * filters[1] = { "*.yaml" };
     char const * selection = tinyfd_openFileDialog("Select a scenario", "./scenarios/", 1, filters, NULL, 0);
+
     ScenarioLoader loader = ScenarioLoader(selection);
     scenario_ = std::make_shared<Scenario>(loader.load_scenario());
 }
 
+/**
+ * Create and initialize the shop UI from currently loaded scenario
+ */
 void Renderer::start_shop()
 {
     Shop& shop = scenario_->get_shop();
@@ -130,7 +135,7 @@ void Renderer::initialize_scenario()
 {
     load_scenario();
     start_shop();
-    while (!game_ready_ && render_window_->isOpen())
+    while (!game_ready_ && render_window_->isOpen()) // Render shop UI while player is shopping
     {
         sf::Event event;
         while (render_window_->pollEvent(event))
