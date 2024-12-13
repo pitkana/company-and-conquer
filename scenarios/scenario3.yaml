@@ -58,4 +58,8 @@ shop:
       price: 50
     - name: turret_barrel
       price: 100
+    - name: medic_tent_tent
+      price: 50
+    - name: medic_tent_medkit
+      price: 50
   budget: 1000
