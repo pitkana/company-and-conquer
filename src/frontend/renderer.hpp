@@ -30,7 +30,12 @@ class Renderer
         void initialise_level( size_t level_idx );
 
         // Methods used for loading scenarios from files
-        void load_scenario();
+        /**
+         * @brief
+         *
+         * @return bool false if failed loading, otherwise true
+         */
+        bool load_scenario();
         void start_shop();
         void initialize_scenario();
         void ready_game();
@@ -44,6 +49,7 @@ class Renderer
         }
 
         void start();
+        void start_main_screen();
 
         Game& get_game() const;
 

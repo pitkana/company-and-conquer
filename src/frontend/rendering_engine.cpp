@@ -2,6 +2,8 @@
 #include "renderer.hpp"
 #include "game_logs.hpp"
 
+#include <chrono>
+#include <thread>
 
 Rendering_Engine::Rendering_Engine(std::shared_ptr<Game>& game, size_t width, size_t height) : game_(game) { }
 
@@ -34,6 +36,7 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
         game_ended = game_->is_game_over();
 
         // Game is over, hide everything and announce the winner
+        // After 5 seconds, return to main menu
         if (game_ended) {
             r_aux_->hide_unit_highlight();
             r_aux_->hide_cursor_highlight();
@@ -44,7 +47,9 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
             r_aux_->show_victory_text(winning_team, window_width, window_height);
             window.draw(*r_aux_);
             window.display();
-            continue;
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+            return;
         } 
 
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
