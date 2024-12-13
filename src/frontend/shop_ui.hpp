@@ -23,6 +23,7 @@ class ShopUI : public sf::Drawable {
         std::vector<RectButton> game_button_;
         sf::Text budget_text_;
 
+        // Update methods for button groups
         void update_catalogue();
         void update_owned();
         void update_units();
@@ -50,6 +51,12 @@ class ShopUI : public sf::Drawable {
 
         ShopUI(Shop shop, Renderer& renderer) : shop_(shop), renderer_(renderer), budget_(shop.get_budget()) {}
 
+        /**
+         * Event handler for button actions
+         * @param window the window the event is contained in
+         * @param event The current event
+         * @return Whether a button action was executed
+         */
         bool execute_button_actions(sf::RenderWindow& window, sf::Event& event);
 
         void draw(sf::RenderTarget& target, sf::RenderStates states) const;

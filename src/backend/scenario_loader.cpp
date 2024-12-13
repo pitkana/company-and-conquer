@@ -35,10 +35,10 @@ Team ScenarioLoader::construct_enemy() {
 
         YAML::Node enemy_node = scenario_["enemy"];
         assert(enemy_node.IsSequence());
-        for (auto && enemy_unit : enemy_node) {
+        for (auto && enemy_unit : enemy_node) { // add each enemy (name-items pair)
             auto name = enemy_unit["name"].as<std::string>();
             Unit unit(name);
-            for (auto && enemy_item : enemy_unit["items"]) {
+            for (auto && enemy_item : enemy_unit["items"]) { // items is a sequence of item names
                 try {
                     auto item = ConstItem::item_ids[enemy_item.as<std::string>()];
                     unit.add_item(item);
@@ -63,7 +63,7 @@ Shop ScenarioLoader::construct_shop() {
         YAML::Node shop_items = shop_node["items"];
         assert(shop_items.IsSequence());
         std::map<std::shared_ptr<const Item>, int> catalogue;
-        for (auto && shop_item : shop_items) {
+        for (auto && shop_item : shop_items) { // add each item (name-price pair) to catalogue
             try {
                 auto item = ConstItem::item_ids[shop_item["name"].as<std::string>()];
                 int price = shop_item["price"].as<int>();
@@ -91,10 +91,12 @@ Map ScenarioLoader::construct_map() {
         YAML::Node map_node = scenario_["map"];
         Map map = builder.load(map_node["path"].as<std::string>());
 
+        // load enemy positions, throw error if not enough positions for all enemies
         YAML::Node enemies = map_node["enemies"];
         if (enemies.size() < scenario_["enemy"].size()) {
             throw(std::runtime_error("Not enough positions for all enemies!"));
         }
+        // ditto for players
         YAML::Node players = map_node["players"];
         if (players.size() < get_player_team_size()) {
             throw(std::runtime_error("Not enough positions for all players!"));
