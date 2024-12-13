@@ -22,12 +22,8 @@ class Inventory_UI : public Auxiliary_renderable
         // the padding of the item images from the sides of the inventory rectangle and from each other
         // the value is in pixels
         static const size_t padding = 10;
-        /**
-         * @brief Used to update which inventory to render, the std::span creates a
-         * non-owning container for the std::vector in which the items are stored in the Unit.
-         * This way passing the whole container as a parameter is efficient.
-         */
-        void update_inventory(const std::span<const std::shared_ptr<const Item>> items);
+
+
 
         /**
          * @brief A setter used for if a Unit is clicked or not, if the player does not click a Unit,
@@ -40,14 +36,6 @@ class Inventory_UI : public Auxiliary_renderable
 
         void update() override;
         
-        /**
-         * @brief Used for defining the renderable for a specific item, the renderable will be
-         * passed onto the sf::VertexArray
-         * 
-         * @param an_item 
-         * @return sf::Vector2f 
-         */
-        std::unique_ptr<sf::Sprite> render_item(const Item& an_item, size_t position_idx);
 
     private:
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override
