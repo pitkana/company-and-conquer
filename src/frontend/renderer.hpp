@@ -43,7 +43,6 @@ class Renderer
         std::shared_ptr<Render_Buildings>& get_r_buildings() { return r_buildings_; }
         std::shared_ptr<Render_Aux>& get_r_aux() { return r_aux_; }
         std::shared_ptr<Window_To_Render>& get_renderables() { return renderables_; }
-        std::shared_ptr<Inventory_UI>& get_r_inv() { return r_inv_; }
         std::shared_ptr<Game_Logs>& get_logs() { return logs_; }
 
     private:
@@ -62,7 +61,6 @@ class Renderer
         std::shared_ptr<Render_Aux> r_aux_;
         std::shared_ptr<sf::RenderWindow> render_window_; // contains the actual window into which we'll render stuff
         std::shared_ptr<Window_To_Render> renderables_;
-        std::shared_ptr<Inventory_UI> r_inv_;
         std::shared_ptr<Game_Logs> logs_;
 
         std::string map_text_path_;

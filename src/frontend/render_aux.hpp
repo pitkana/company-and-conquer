@@ -79,6 +79,8 @@ public:
      * @brief Hides highlight_cursor_ sprite.
      */
     void hide_cursor_highlight();
+    void update_movement_range(const std::vector<coordinates<size_t>>& coordinates);
+    void clear_movement_range_rects();
 
 private:
     sf::Sprite highlight_unit_; //Marks active unit in gui.
@@ -88,6 +90,8 @@ private:
     std::shared_ptr<Tile_Map> tile_map_;
     sf::Texture highlight_text;
     sf::Font text_font_;
+
+    std::vector<sf::RectangleShape> movement_range_rects_;
     
 
     /**
@@ -104,10 +108,15 @@ private:
      * @brief Used to draw drawables on a sf::RenderWindow.
      */
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
+        for (const auto& rect : movement_range_rects_) {
+            target.draw(rect);
+        }
+
         target.draw(highlight_unit_,states);
         target.draw(highlight_cursor_,states);
         target.draw(action_info_text_);
         target.draw(log_text_);
+
     }
 };
 

@@ -33,10 +33,24 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
         if (manager_->selected_valid_unit()) {
             r_aux_->show_unit_highlight(manager_->selected_unit_coords());
             r_aux_->show_cursor_highlight(mousePos.x, mousePos.y);
+            r_aux_->update_movement_range(manager_->selected_unit_possible_movements());
             coordinates<size_t> target_coord = tile_map_->get_map_coords(mousePos.x,mousePos.y);
             r_aux_->show_text = true;
+<<<<<<< HEAD
             r_aux_->show_cursor_text(mousePos.x,mousePos.y,manager_->get_action_info(target_coord,gui_.get_active_item()));
+            //Only draw the movement range if selected unit has not yet moved
+            if (!manager_->selected_unit_ptr()->has_moved)
+                r_aux_->update_movement_range(manager_->selected_unit_possible_movements());
+=======
+            r_aux_->draw_text(mousePos.x,mousePos.y,manager_->get_action_info(target_coord,gui_.get_active_item()));
+
+            //Only draw the movement range if selected unit has not yet moved
+            if (!manager_->selected_unit_ptr()->has_moved)
+                r_aux_->update_movement_range(manager_->selected_unit_possible_movements());
+
+>>>>>>> 06018ef61f7c9f0419b4e692ae58fd5cb7103221
         } else {
+            r_aux_->clear_movement_range_rects();
             r_aux_->hide_unit_highlight();
             r_aux_->hide_cursor_highlight();
             r_aux_->show_text = false;
@@ -120,62 +134,77 @@ void Rendering_Engine::events(sf::RenderWindow& target, sf::Event event, Rendere
     // If a button was pressed (aka func returns true) return, which means event is consumed by the button
     if (gui_.execute_button_actions(target, event)) return;
 
+<<<<<<< HEAD
+=======
 
-    // "close requested" event: we close the window
-    if (event.type == sf::Event::Closed)
-        target.close();
-    if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
-        sf::Vector2i mousePos = sf::Mouse::getPosition(target);
-        std::cout << "Current pixel pos: [" << mousePos.x << "," << mousePos.y << "]" << std::endl;
-        if (tile_map_->is_inside_map_pixel(mousePos.x,mousePos.y))
-        {
-
-
-            coordinates<size_t> matrix_pos = tile_map_->get_map_coords(mousePos.x,mousePos.y);
-            std::pair<int,int> tile_pixel_pos = tile_map_->get_tile_coords(matrix_pos);
-            std::cout << "Current tile pixel pos: [" << tile_pixel_pos.first << "," << tile_pixel_pos.second << "]" << std::endl;
-            std::cout << "Current tile coords:" << matrix_pos << std::endl;
-            std::cout << "Terrain: " << tile_map_->get_map().get_terrain(matrix_pos)->get_repr() << std::endl;
-
-            gui_.click_on_coords(matrix_pos.y, matrix_pos.x);
-
+>>>>>>> 06018ef61f7c9f0419b4e692ae58fd5cb7103221
+    switch(event.type) {
+        // "close requested" event: we close the window
+        case(sf::Event::Closed): {
+            target.close();
+            break;
         }
-    }
-    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Escape) {
-        gui_.deselect_unit();
-    }
-    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space) {
-        gui_.next_turn();
-    }
-    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::F) {
-        tile_map_->fog_of_war = !tile_map_->fog_of_war;
-    }
 
-    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::X) {
-        gui_.undo_action();
-    }
+        case (sf::Event::MouseButtonReleased): {
+            if (event.mouseButton.button != sf::Mouse::Left)
+                break;
 
-    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::B) {
-        renderer.get_logs()->show_logs = !renderer.get_logs()->show_logs;
-    } 
+            sf::Vector2i mousePos = sf::Mouse::getPosition(target);
+            // Check if the mouse is inside of the map
+            if (tile_map_->is_inside_map_pixel(mousePos.x,mousePos.y))
+            {
+                coordinates<size_t> matrix_pos = tile_map_->get_map_coords(mousePos.x,mousePos.y);
+                gui_.click_on_coords(matrix_pos.y, matrix_pos.x);
+            }
 
-    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Up) {
-        renderer.get_logs()->change_start(-1);
-    } 
+            break;
+        }
 
-    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Down) {
-        renderer.get_logs()->change_start(1);
-    } 
+        case (sf::Event::KeyReleased): {
+            switch (event.key.code) {
+                case (sf::Keyboard::Escape): {
+                    gui_.deselect_unit();
+                    break;
+                }
 
-    if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::R) {
-        renderer.initialise_level(1);
+                case (sf::Keyboard::Space): {
+                    gui_.next_turn();
+                    break;
+                }
 
-        // have to update these pointers right after initialising a new level so we
-        // don't try to call the old objects and get segfault
-        tile_map_ = renderer.get_tile_map();
-        r_aux_ = renderer.get_r_aux();
+                case (sf::Keyboard::F): {
+                    tile_map_->fog_of_war = !tile_map_->fog_of_war;
+                    break;
+                }
 
-        gui_ = GUI(manager_, target.getSize().x, target.getSize().y);
-        gui_.initialize();
+                case (sf::Keyboard::X): {
+                    gui_.undo_action();
+                    break;
+                }
+
+                case (sf::Keyboard::B): {
+                    renderer.get_logs()->show_logs = !renderer.get_logs()->show_logs;
+                    break;
+                }
+
+                case (sf::Keyboard::Up): {
+                    renderer.get_logs()->change_start(-1);
+                    break;
+                }
+
+                case (sf::Keyboard::Down): {
+                    renderer.get_logs()->change_start(1);
+                    break;
+                }
+
+                default:
+                    break;
+            }
+
+            break;
+        }
+
+        default:
+            break;
     }
 }

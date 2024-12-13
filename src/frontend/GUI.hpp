@@ -59,14 +59,41 @@ public:
     GUI() {};
     GUI(std::shared_ptr<Game_Manager> manager, size_t width, size_t height);
 
+    /**
+     * @brief load the font and initialize main buttons
+     *
+     */
     void initialize();
 
+    /**
+     * @brief update the drawable buttons of the GUI
+     *
+     */
     void update() override;
-    // Return true if a button was pressed and the event should be consumed
+
+
+    /**
+     * @brief handles pushing buttons and executes their associated action if pressed
+     *
+     * @param window 
+     * @param event
+     * @return bool true if a button was pushed, false if not
+     */
     bool execute_button_actions(sf::RenderWindow& window, sf::Event& event);
 
+    /**
+     * @brief tells the GUI what map coords were clicked on and handles the input accordingly
+     *
+     * @param y
+     * @param x
+     */
     void click_on_coords(size_t y, size_t x);
 
+    /**
+     * @brief returns a pointer to the active item, raw pointer since no ownership
+     *
+     * @return const Item*
+     */
     const Item* get_active_item() const;
 
     void deselect_unit();
@@ -78,10 +105,11 @@ private:
 
     bool selected_unit_in_active_team() const;
 
+    // These update/initialize the associated buttons
     void initialize_main_buttons();
     void update_inventory();
-    void initialize_movement();
 
+    // Draws all buttons in given group
     void draw_button_group(sf::RenderTarget& target, const RectButtonGroup& group) const;
 
     std::vector<RectButton*> get_all_buttons();
@@ -106,6 +134,5 @@ private:
     
 
     RectButtonGroup main_buttons_;
-    RectButtonGroup unit_buttons_;
     InventoryButtonGroup inventory_buttons_;
 };

@@ -1,13 +1,13 @@
 #include "tile_map.hpp"
 
-Tile_Map::Tile_Map(std::shared_ptr<Game>& game, int tileDim) : tileDim_(tileDim) 
-{
+Tile_Map::Tile_Map(std::shared_ptr<Game>& game, int tileDim) : tileDim_(tileDim) {
     game_ = game;
+    return;
 }
 
-Tile_Map::Tile_Map(std::shared_ptr<Game>& game, std::pair<float, float> x0y0, int tileDim) : x0y0_(x0y0), tileDim_(tileDim) 
-{
+Tile_Map::Tile_Map(std::shared_ptr<Game>& game, std::pair<float, float> x0y0, int tileDim) : x0y0_(x0y0), tileDim_(tileDim) {
     game_ = game;
+    return;
 }
 
 bool Tile_Map::is_tile_drawn(size_t x, size_t y) const {
@@ -23,16 +23,8 @@ bool Tile_Map::is_tile_drawn(const coordinates<size_t>& coords) const {
 void Tile_Map::move(float x, float y) {
     x0y0_.first = x0y0_.first + x;
     x0y0_.second = x0y0_.second + y;
+    return;
 }
-/*
-void Tile_Map::zoom(int z) {
-    tileDim_ = tileDim_ + z;
-
-    if ( tileDim_ < 0 ) {
-        tileDim_ = 0;
-    }
-}
-*/
 
 std::pair<int,int> Tile_Map::get_tile_coords(int x, int y) const {
     std::pair<int,int> crds( ( tileDim_ * x ) + x0y0_.first , ( tileDim_ * y ) + x0y0_.second );
@@ -42,7 +34,6 @@ std::pair<int,int> Tile_Map::get_tile_coords(int x, int y) const {
 std::pair<int,int> Tile_Map::get_tile_coords(const coordinates<size_t>& coords) const {
     return get_tile_coords( coords.x , coords.y );
 }
-
 
 coordinates<size_t> Tile_Map::get_map_coords(int pixel_x, int pixel_y) const {
     size_t x = std::floor(( pixel_x - x0y0_.first ) / tileDim_);
@@ -67,7 +58,7 @@ void Tile_Map::center_at(const coordinates<size_t>& coords, int window_width, in
     float window_center_x = window_width / 2;
     float window_center_y = window_height / 2;
     x0y0_ = std::pair<int,int>(window_center_x - tileDim_/2 - coords.x * tileDim_,window_center_y - tileDim_/2 - coords.y * tileDim_);
-    //x0y0_ = std::pair<int,int>(window_center_x + tileDim_/2 - coords.x * tileDim_,window_center_y + tileDim_/2 - coords.y * tileDim_);
+    return;
 }
 
 int Tile_Map::get_TileDim() const {
@@ -85,10 +76,9 @@ std::weak_ptr<Game> Tile_Map::get_game() const {
     return game_;
 }
 
-
-void Tile_Map::set_game( std::shared_ptr<Game> game )
-{
+void Tile_Map::set_game( std::shared_ptr<Game> game ) {
     game_ = game;
+    return;
 }
 
 

@@ -16,11 +16,13 @@ public:
     Tile_Map(std::shared_ptr<Game>& game, int tileDim);
     Tile_Map(std::shared_ptr<Game>& game, std::pair<float, float> x0y0, int tileDim);
 
+    /**
+     * @brief Checks of a tile in certain coords is show or hidden due to fog of war. Uses visible_coords from game.
+     */
     bool is_tile_drawn(size_t x, size_t y) const;
-
     bool is_tile_drawn(const coordinates<size_t>& coords) const;
 
-    bool fog_of_war = true;
+    bool fog_of_war = true; //Can be used to toggle fog of war. Only for developing.
 
     /**
      * @brief Moves all tiles.
@@ -46,10 +48,11 @@ public:
      */
     coordinates<size_t> get_map_coords(int pixel_x, int pixel_y) const;
 
+    /**
+     * @brief Checks if certain pixel or tile coordinates are inside or outside of game map.
+     */
     bool is_inside_map_tile(int x, int y) const;
-
     bool is_inside_map_tile(const coordinates<size_t>& coords) const;
-
     bool is_inside_map_pixel(int pixel_x, int pixel_y) const;
 
     int get_TileDim() const;
@@ -65,7 +68,7 @@ public:
 private:
     std::shared_ptr<Game> game_;
     std::pair<float, float> x0y0_; //Top right pixel coordinate of the game map.
-    int tileDim_;
+    int tileDim_; //The pixel width and height of each tile.
 };
 
 #endif

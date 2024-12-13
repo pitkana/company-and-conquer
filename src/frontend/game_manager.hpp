@@ -31,6 +31,8 @@ public:
 
     const coordinates<size_t>& selected_unit_coords() const;
 
+    const std::vector<coordinates<size_t>>& selected_unit_possible_movements() const;
+
     Unit* selected_unit_ptr();
 
     /**

@@ -162,7 +162,7 @@ bool Map::can_move_to_terrain(const coordinates<size_t> &coords) const {
 }
 
 bool Map::can_move_to_coords(size_t y, size_t x) const {
-    return can_move_to_terrain(y, x) && !has_unit(y, x);
+    return can_move_to_terrain(y, x) && (!has_unit(y, x));
 }
 bool Map::can_move_to_coords(const coordinates<size_t> coords) const {
     return can_move_to_coords(coords.y, coords.x);
@@ -372,7 +372,7 @@ std::vector< coordinates<size_t> > Map::max_visible_locations( const coordinates
 }
 
 std::vector<coordinates<size_t>> Map::tiles_can_shoot_on(const coordinates<size_t>& coords, const uint32_t range) {
-    return line_of_sight_check(coords, range, [this](int64_t y, int64_t x) -> bool {
+    return line_of_sight_check(coords, range + 1, [this](int64_t y, int64_t x) -> bool {
         const std::shared_ptr<Terrain>& terrain = this->get_terrain(y, x);
         return terrain->can_shoot_through() && terrain->can_see_through();
     });
@@ -380,7 +380,7 @@ std::vector<coordinates<size_t>> Map::tiles_can_shoot_on(const coordinates<size_
 
 std::vector< coordinates<size_t> > Map::tiles_unit_sees( const coordinates<size_t>& location, const uint32_t visibility_range )
 {
-    return line_of_sight_check(location, visibility_range, [this](int64_t y, int64_t x) -> bool {
+    return line_of_sight_check(location, visibility_range + 1, [this](int64_t y, int64_t x) -> bool {
         return this->get_terrain(y, x)->can_see_through();
     });
 }
@@ -392,7 +392,7 @@ std::vector<coordinates<size_t>> Map::get_aoe_affected_coords(const coordinates<
 }
 
 bool Map::los_check_from_A_to_B(const coordinates<size_t>& a, const coordinates<size_t>& b, const uint32_t range) {
-    auto los_tiles = line_of_sight_check(a,range,[this](int64_t y, int64_t x) -> bool {
+    auto los_tiles = line_of_sight_check(a,range + 1,[this](int64_t y, int64_t x) -> bool {
         return this->get_terrain(y, x)->can_shoot_through();
     });
     auto coord_it = std::find(los_tiles.begin(),los_tiles.end(),b);
