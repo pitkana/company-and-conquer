@@ -42,6 +42,7 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
             r_aux_->hide_cursor_highlight();
             r_aux_->clear_logs();
             r_aux_->clear_cursor_text();
+            r_aux_->clear_movement_range_rects();
 
             Team& winning_team = *game_->get_winner();
             r_aux_->show_victory_text(winning_team, window_width, window_height);

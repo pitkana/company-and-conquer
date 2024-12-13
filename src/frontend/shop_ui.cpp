@@ -225,8 +225,6 @@ void ShopUI::update_budget()
 
 void ShopUI::load_game_button()
 {
-    game_button_.clear();
-
     game_button_updated_ = true;
     std::unique_ptr<RectButton> button = std::make_unique<RectButton>(*font_, true, sf::Vector2f{30, starting_y_});
 

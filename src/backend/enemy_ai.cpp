@@ -170,7 +170,7 @@ std::shared_ptr<Action> EnemyAI::generate_building_part_action(Unit& unit, const
 
     //If there were no buildings to add a part to, just add it to an empty place
     coordinates<size_t> target = *coords_to_build_on[rand() % coords_to_build_on.size()];
-    return building_parts[rand() % coords_to_build_on.size()]->get_action(std::move(target), unit);
+    return building_parts[rand() % building_parts.size()]->get_action(std::move(target), unit);
 
 }
 
