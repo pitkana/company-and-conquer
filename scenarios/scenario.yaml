@@ -10,7 +10,7 @@ map:
 
 team_size: 3
 
-multiplayer: false
+multiplayer: true
 
 enemy:
   - name: enemy 1

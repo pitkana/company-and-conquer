@@ -7,7 +7,7 @@ int scenario_test() {
     ScenarioLoader loader = ScenarioLoader("./scenarios/scenario.yaml");
     Scenario scenario = loader.load_scenario();
 
-    Game game = scenario.generate_game();
+    std::shared_ptr<Game> game = scenario.generate_game();
 
     return 1;
 }
