@@ -1,25 +1,25 @@
 map:
-  path: "./scenarios/maps/map_1.txt"
+  path: "./scenarios/maps/map.txt"
   enemies:
-    - [3, 1]
+    - [0, 0]
     - [1, 1]
-    - [6, 1]
+    - [5, 1]
   players:
-    - [9, 9]
-    - [7, 8]
-    - [5, 9]
+    - [8, 9]
+    - [5, 8]
+    - [4, 7]
 
 team_size: 3
 
-multiplayer: true
+multiplayer: false
 
 enemy:
   - name: enemy 1
-    items: ["rifle", "bandage"]
+    items: ["rifle", "bandage", "turret_legs", "turret_barrel"]
   - name: enemy 2
-    items: ["smg", "grenade", "healing_kit"]
+    items: ["rifle", "healing_kit"]
   - name: enemy 3
-    items: ["shotgun", "turret_legs", "turret_barrel"]
+    items: ["shotgun", "grenade", "bandage"]
 
 shop:
   items:

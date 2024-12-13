@@ -715,7 +715,7 @@ coordinates<size_t> Map::get_closest_accessible_tile(const coordinates<size_t>& 
 }
 
 coordinates<size_t> Map::fastest_movement_to_target(const coordinates<size_t>& location, coordinates<size_t> target, uint8_t movement_range) {
-    Timer timer;
+    // Timer timer;
     struct Vertex {
         size_t cooldown;
         coordinates<size_t> coords;

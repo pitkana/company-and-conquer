@@ -74,6 +74,7 @@ void ShopUI::update_owned()
         
         if (item == active_item_) {
             button.button.setFillColor(sf::Color::Magenta);
+            button.toggle_updating_color();
         }
         
         
@@ -102,6 +103,7 @@ void ShopUI::update_owned()
     RectButton deselect = RectButton(*font_, true, {curr_x, starting_y0});
     deselect.setButtonLabel(20, "Deselect");
     deselect.set_activation_function([this]() {
+        this->game_button_updated_ = true;
         this->active_item_ = nullptr;
     });
     owned_buttons_.push_back(deselect);
@@ -129,6 +131,7 @@ void ShopUI::update_units()
         
         if (unit_pointer == active_unit_) {
             button.button.setFillColor(sf::Color::Magenta);
+            button.toggle_updating_color();
         }
 
         button.set_activation_function([this, unit_pointer]()
@@ -160,6 +163,7 @@ void ShopUI::update_units()
     refund_button.setButtonLabel(20, "Refund");
     refund_button.set_activation_function([this]()
     {
+        this->game_button_updated_ = true;
         if (active_item_ != nullptr)
         {
             shop_.refund_item(active_item_);
@@ -261,19 +265,19 @@ void ShopUI::update()
 
 void ShopUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    for (auto button : catalogue_buttons_)
+    for (const RectButton& button : catalogue_buttons_)
     {
         button.draw(target);
     }
-    for (auto button : owned_buttons_)
+    for (const RectButton& button : owned_buttons_)
     {
         button.draw(target);
     }
-    for (auto button : unit_buttons_)
+    for (const RectButton& button : unit_buttons_)
     {
         button.draw(target);
     }
-    for (auto button : unit_owned_buttons_)
+    for (const RectButton& button : unit_owned_buttons_)
     {
         button.draw(target);
     }
@@ -285,7 +289,7 @@ void ShopUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
 bool ShopUI::execute_button_actions(sf::RenderWindow& window, sf::Event& event) {
 
-    for (auto button : catalogue_buttons_) {
+    for (RectButton& button : catalogue_buttons_) {
         button.getButtonStatus(window, event);
         if (button.isPressed) {
 
@@ -294,7 +298,7 @@ bool ShopUI::execute_button_actions(sf::RenderWindow& window, sf::Event& event) 
         }
     }
 
-    for (auto button : owned_buttons_)
+    for (RectButton& button : owned_buttons_)
     {
         button.getButtonStatus(window, event);
         if (button.isPressed) {
@@ -303,7 +307,7 @@ bool ShopUI::execute_button_actions(sf::RenderWindow& window, sf::Event& event) 
         }
     }
 
-    for (auto button : unit_buttons_)
+    for (RectButton& button : unit_buttons_)
     {
         button.getButtonStatus(window, event);
         if (button.isPressed)
@@ -313,7 +317,7 @@ bool ShopUI::execute_button_actions(sf::RenderWindow& window, sf::Event& event) 
         }
     }
 
-    for (auto button : unit_owned_buttons_)
+    for (RectButton& button : unit_owned_buttons_)
     {
         button.getButtonStatus(window, event);
         if (button.isPressed)

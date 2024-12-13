@@ -42,6 +42,7 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
             r_aux_->hide_cursor_highlight();
             r_aux_->clear_logs();
             r_aux_->clear_cursor_text();
+            r_aux_->clear_movement_range_rects();
 
             Team& winning_team = *game_->get_winner();
             r_aux_->show_victory_text(winning_team, window_width, window_height);
@@ -112,16 +113,16 @@ std::shared_ptr<Game>& Rendering_Engine::get_game()
 void Rendering_Engine::handle_continuous_inputs(sf::RenderWindow& window) {
     //Not if else since these can be pressed at the same time
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-        tile_map_->move(-move_speed, 0);
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
-        tile_map_->move(0, -move_speed);
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
         tile_map_->move(move_speed, 0);
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
         tile_map_->move(0, move_speed);
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
+        tile_map_->move(-move_speed, 0);
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
+        tile_map_->move(0, -move_speed);
     }
 
     sf::Vector2u size = window.getSize();

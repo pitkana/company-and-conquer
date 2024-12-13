@@ -86,6 +86,9 @@ void RectButton::getButtonStatus(sf::RenderWindow& window, sf::Event& event)
 
     if (isActive)
     {
+        if (!update_color_on_hover) 
+            return;
+
         button.setFillColor(buttonColorSet.color);
         buttonLabel.setFillColor(labelColorSet.color);
         //I am not sure if it is best to implement this inside a class
@@ -177,4 +180,8 @@ void RectButton::toggle_button_disabled() {
     }
 
     button.setFillColor(buttonColorSet.color);
+}
+
+void RectButton::toggle_updating_color() {
+    update_color_on_hover = !update_color_on_hover;
 }
