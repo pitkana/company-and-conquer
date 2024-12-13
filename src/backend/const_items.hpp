@@ -19,9 +19,9 @@ const std::shared_ptr<const HealingItem> medic_tent_heal_item = std::make_shared
 
 const std::shared_ptr<const Weapon> grenade = std::make_shared<const Weapon>("grenade", 100, 50, 0, 3);
 
-const std::shared_ptr<const Weapon> rifle = std::make_shared<const Weapon>("Bolt-Action Rifle", 95, 60, 5);
-const std::shared_ptr<const Weapon> smg = std::make_shared<const Weapon>("Submachine Gun", 80, 75, 15);
-const std::shared_ptr<const Weapon> shotgun = std::make_shared<const Weapon>("Pump-Action Shotgun", 70, 90, 30);
+const std::shared_ptr<const Weapon> rifle = std::make_shared<const Weapon>("Rifle", 95, 60, 5);
+const std::shared_ptr<const Weapon> smg = std::make_shared<const Weapon>("Machine Pistol", 80, 75, 15);
+const std::shared_ptr<const Weapon> shotgun = std::make_shared<const Weapon>("Shotgun", 70, 90, 30);
 const std::shared_ptr<const Weapon> grenade_launcher = std::make_shared<const Weapon>("Grenade Launcher", 60, 70, 40, 2);
 
 const std::shared_ptr<const HealingItem> bandage = std::make_shared<const HealingItem>("Bandage", 40);

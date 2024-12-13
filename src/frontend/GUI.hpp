@@ -53,9 +53,6 @@ class Unit;
 class GUI : public Auxiliary_renderable
 {
 public:
-    static const size_t padding = 10;
-
-
     GUI() {};
     GUI(std::shared_ptr<Game_Manager> manager, size_t width, size_t height);
 

@@ -100,6 +100,9 @@ void Renderer::load_scenario()
     char const * filters[1] = { "*.yaml" };
     char const * selection = tinyfd_openFileDialog("Select a scenario", "./scenarios/", 1, filters, NULL, 0);
 
+    if (selection == nullptr)
+        exit(EXIT_FAILURE);
+
     ScenarioLoader loader = ScenarioLoader(selection);
     scenario_ = std::make_shared<Scenario>(loader.load_scenario());
 }
@@ -138,6 +141,7 @@ void Renderer::initialize_scenario()
         return;
     }
     game_ = std::make_shared<Game>(scenario_->generate_game());
+    logs_ = std::make_shared<Game_Logs>(10);
 
     // store the pointer to the new level into the <tile_map_>, and
     // add it into the renderable,
@@ -147,7 +151,6 @@ void Renderer::initialize_scenario()
     r_units_ = std::make_shared<Render_Units>( tile_map_ );
     r_buildings_ = std::make_shared<Render_Buildings>( tile_map_ );
     r_aux_ = std::make_shared<Render_Aux>( tile_map_ );
-    r_inv_ = std::make_shared<Inventory_UI>( render_window_->getSize().x, render_window_->getSize().y );
 
     // clear out the old renderables
     renderables_->clear();
@@ -157,7 +160,6 @@ void Renderer::initialize_scenario()
     renderables_->add_drawable( r_buildings_ );
     renderables_->add_drawable( r_units_ );
     renderables_->add_drawable( r_aux_ );
-    renderables_->add_drawable( r_inv_ );
 
 
     if (!r_map_->load(map_text_path_)) {
@@ -178,8 +180,6 @@ void Renderer::initialize_scenario()
     game_->init_game();
 
     window_.get_game() = game_;
-
-    manager_ = std::make_shared<Game_Manager>(game_);
 
     start();
 }
@@ -206,7 +206,7 @@ void Renderer::start()
         return;
     }
 
-    game_->init_game();
+    // game_->init_game();
 
     window_ = Rendering_Engine(game_, render_window_->getSize().x, render_window_->getSize().y);
     window_.render( width_, height_, *render_window_, *this, renderables_);

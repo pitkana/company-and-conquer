@@ -21,7 +21,7 @@ class Inventory_UI : public Auxiliary_renderable
 
         // the padding of the item images from the sides of the inventory rectangle and from each other
         // the value is in pixels
-        static const size_t padding = 50;
+        static const size_t padding = 10;
         /**
          * @brief Used to update which inventory to render, the std::span creates a
          * non-owning container for the std::vector in which the items are stored in the Unit.
@@ -68,8 +68,8 @@ class Inventory_UI : public Auxiliary_renderable
          */
         void update_background()
         {
-            float width = (2*window_width_) / 3;   // the calculation comes from 4 / 6, where 4 is the amount of items
-            float height = (window_height_ / 6);
+            float width = (padding + 150) * 4;   // the calculation comes from 4 / 6, where 4 is the amount of items
+            float height = 130;
 
             float scale_x = width / texture_.getSize().x;
             float scale_y = height / texture_.getSize().y;

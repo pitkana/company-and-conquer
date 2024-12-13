@@ -16,7 +16,7 @@ GUI::GUI(std::shared_ptr<Game_Manager> manager, size_t width, size_t height):
 }
 
 void GUI::initialize() {
-    inventory_buttons_start_pos_ = { static_cast<float>((width_ / 6) + padding / 2), static_cast<float>(height_ - (height_ / 6 - padding / 2))};
+    inventory_buttons_start_pos_ = { static_cast<float>((width_ / 6) + r_inv_->padding / 2), static_cast<float>(height_ - (height_ / 6 - r_inv_->padding / 2))};
     main_buttons_start_pos_ = inventory_buttons_start_pos_ + main_buttons_pos_relative_to_inv_buttons_;
 
     if (!font_->loadFromFile(GUI_FONT_PATH)) {
@@ -119,7 +119,7 @@ void GUI::initialize_main_buttons() {
         active_item = nullptr;
     });
 
-    pos.x += next_unit_button.button.getSize().x + padding;
+    pos.x += next_unit_button.button.getSize().x + r_inv_->padding;
 
     RectButton end_turn_button(*font_, true, pos);
     end_turn_button.setButtonLabel(20, " End turn ");
@@ -127,14 +127,14 @@ void GUI::initialize_main_buttons() {
         this->game_manager_->next_turn();
         active_item = nullptr;
     });
-    pos.x += end_turn_button.button.getSize().x + padding;
+    pos.x += end_turn_button.button.getSize().x + r_inv_->padding;
 
     RectButton undo_action_button(*font_, true, pos);
     undo_action_button.setButtonLabel(20, " Undo action ");
     undo_action_button.set_activation_function([this]() {
         this->undo_action();
     });
-    pos.x += undo_action_button.button.getSize().x + padding;
+    pos.x += undo_action_button.button.getSize().x + r_inv_->padding;
 
     RectButton deselect_unit_button(*font_, true, pos);
     deselect_unit_button.setButtonLabel(20, " Deselect unit ");
@@ -142,14 +142,14 @@ void GUI::initialize_main_buttons() {
         this->game_manager_->deselect_unit();
         active_item = nullptr;
     });
-    pos.x += deselect_unit_button.button.getSize().x + padding;
+    pos.x += deselect_unit_button.button.getSize().x + r_inv_->padding;
 
     RectButton toggle_logs_button(*font_, true, pos);
     toggle_logs_button.setButtonLabel(20, " Toggle logs ");
     toggle_logs_button.set_activation_function([this]() {
         this->are_logs_active = !this->are_logs_active;
     });
-    pos.x += toggle_logs_button.button.getSize().x + padding;
+    pos.x += toggle_logs_button.button.getSize().x + r_inv_->padding;
 
     main_buttons_.buttons.push_back(std::move(next_unit_button));
     main_buttons_.buttons.push_back(std::move(end_turn_button));
@@ -170,8 +170,8 @@ void GUI::update_inventory() {
     }
 
     // we calculate some sizes for the buttons depending on the window size
-    float button_width = width_ / 6 - padding;
-    float button_height = height_ / 6 - padding;
+    float button_width = 150;
+    float button_height = 130;
 
     // also calculate the relative position of the first item buttom
     sf::Vector2f pos = inventory_buttons_start_pos_;
@@ -190,7 +190,7 @@ void GUI::update_inventory() {
         active_item_changed_ = false;
         inventory_buttons_.clear_deactivate_button();
 
-        RectButton button(*font_, true, {active_item_pos_.x, active_item_pos_.y - 4 * padding});
+        RectButton button(*font_, true, {active_item_pos_.x, active_item_pos_.y - 4 * r_inv_->padding});
         button.setButtonLabel(20, " Deselect item ");
         button.set_activation_function([this]() {
             this->active_item = nullptr;
@@ -228,7 +228,7 @@ void GUI::update_inventory() {
             button.toggle_button_disabled();
         }
 
-        pos.x += button.button.getSize().x + padding;
+        pos.x += button.button.getSize().x + r_inv_->padding;
         inventory_buttons_.buttons.push_back(std::move(button));
     }
 
