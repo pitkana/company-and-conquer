@@ -25,3 +25,4 @@ FetchContent_MakeAvailable(yaml-cpp)
 
 # Link yaml-cpp
 target_link_libraries(backend PRIVATE yaml-cpp::yaml-cpp)
+target_include_directories(backend PRIVATE ${yaml-cpp_SOURCE_DIR})

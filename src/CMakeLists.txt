@@ -1,4 +1,4 @@
-project(gui VERSION 0.1.0)
+project(main VERSION 0.1.0)
 enable_language(CXX)
 
 add_subdirectory(backend)
@@ -17,17 +17,20 @@ set(SOURCES ${SOURCES_C} ${SOURCES_CPP} ${SOURCES_H} ${SOURCES_HPP})
 
 
 # add the executable target
-add_executable(gui)
+add_executable(main)
 
-target_sources(gui PUBLIC ${SOURCES})
-target_link_libraries(gui PUBLIC sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
-target_compile_features(gui PRIVATE cxx_std_20)
-target_link_libraries(gui PRIVATE backend)
-target_include_directories(gui PRIVATE backend)
+target_sources(main PUBLIC ${SOURCES})
+target_link_libraries(main PUBLIC sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
+target_compile_features(main PRIVATE cxx_std_20)
+target_link_libraries(main PRIVATE backend)
+target_include_directories(main PRIVATE backend)
 set_target_properties(backend PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries(gui PRIVATE frontend)
-target_include_directories(gui PRIVATE frontend)
+target_link_libraries(main PRIVATE frontend)
+target_include_directories(main PRIVATE frontend)
 set_target_properties(frontend PROPERTIES LINKER_LANGUAGE CXX)
+
+target_include_directories(main PRIVATE ../libs/tinyfiledialogs)
+target_link_libraries(main PRIVATE yaml-cpp::yaml-cpp)
 
 
 # For relative paths.
@@ -58,16 +61,16 @@ add_compile_definitions(FONT_PATH="${FONT_PATH}")
 
 # get a lot of warnings
 if(MSVC)
-    target_compile_options(gui PRIVATE -std=c++20 /Wall)
+    target_compile_options(main PRIVATE -std=c++20 /Wall)
 else()
     # gcc and clang
-    target_compile_options(gui PRIVATE -std=c++20 -Wall -Wextra -pedantic -Wno-missing-field-initializers)
+    target_compile_options(main PRIVATE -std=c++20 -Wall -Wextra -pedantic -Wno-missing-field-initializers)
 endif()
 
 if(WIN32)
     add_custom_command(
-        TARGET gui
+        TARGET main
         COMMENT "Copy OpenAL DLL"
-        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${SFML_SOURCE_DIR}/extlibs/bin/$<IF:$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>,x64,x86>/openal32.dll $<TARGET_FILE_DIR:gui>
+        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${SFML_SOURCE_DIR}/extlibs/bin/$<IF:$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>,x64,x86>/openal32.dll $<TARGET_FILE_DIR:main>
         VERBATIM)
 endif()

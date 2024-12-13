@@ -17,12 +17,12 @@ FetchContent_Declare(SFML
     SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
-fetchContent_Declare(
-        yaml-cpp
-        GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
-        GIT_TAG master
-)
-FetchContent_MakeAvailable(yaml-cpp)
+# fetchContent_Declare(
+#         yaml-cpp
+#         GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+#         GIT_TAG master
+# )
+# FetchContent_MakeAvailable(yaml-cpp)
 
 add_subdirectory(src)
 add_subdirectory(tests)
