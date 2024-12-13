@@ -7,12 +7,18 @@
 #include <algorithm>
 #include <iostream>
 
+/**
+ * @brief Keeps text logs for the game.
+ */
 class Game_Logs {
 public:
     Game_Logs(size_t msg_count) : log_count_(msg_count) {}
 
     bool show_logs = true;
 
+    /**
+     * @brief adds logs to logs_.
+     */
     void add_logs(const std::string& logs) {
         auto i = logs.begin();
         auto j = logs.begin();
@@ -27,12 +33,18 @@ public:
         return;
     }
 
+    /**
+     * @brief Changes start point from where the logs start printing.
+     */
     void change_start(int amount) {
         if (int(logs_from_) + amount < 0 || logs_from_ + amount >= int(logs_.size()) - log_count_ || logs_.size() < log_count_) return;
         logs_from_ = logs_from_ + amount;
         return;
     }
 
+    /**
+     * @brief Returns logs from logs_begin to logs_end.
+     */
     std::string get_logs() {
         std::stringstream out;
         auto start = logs_begin();
@@ -41,7 +53,6 @@ public:
             out << *start << "\n";
             start++;
         }
-        //std::cout << out.str() << std::endl;
         return out.str();
     }
 

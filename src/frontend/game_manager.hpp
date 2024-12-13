@@ -34,7 +34,7 @@ public:
     Unit* selected_unit_ptr();
 
     /**
-     * @brief Enqueues movement action for priority_unit_ from action_origin_ to target.
+     * @brief Enqueues movement action for active_unit from action_origin_ to target.
      * 
      * @returns bool based on the fact if enqueing was succesful.
      */
@@ -47,26 +47,51 @@ public:
      */
     bool enqueue_item_action(coordinates<size_t> target, const Item* action_item);
 
+    /**
+     * @brief Can be called to undo_action.
+     */
     bool undo_action();
 
+    /**
+     * @brief Can be called to advance turn.
+     */
     void next_turn();
 
+    /**
+     * @brief Used to cycle units within current active team. Moves active_unit status also.
+     */
     void cycle_units(int window_width, int window_height);
 
+    /**
+     * @brief Gives relevant information about a certain tile in a map and whether active_unit can
+     * act in that tile.
+     */
     std::string get_action_info(const coordinates<size_t>& potential_target, const Item* action_item);
 
     Map& get_map();
 
 private:
+    /**
+     * @brief Gives info about movement action to potential_target coords.
+     */
     void get_movement_action_info(std::stringstream& info_stream, const coordinates<size_t>& potential_target);
+    /**
+     * @brief Gives info about item action to potential_target coords.
+     */
     void get_item_action_info(std::stringstream& info_stream, const coordinates<size_t>& potential_target, const Item* action_item);
+    /**
+     * @brief Gives info about potential_target coords.
+     */
     void get_tile_info(std::stringstream& info_stream, const coordinates<size_t>& potential_target);
-
+    /**
+     * @brief Checks if active unit can move from selected_unit coords to potential target.
+    */
     bool can_selected_unit_move_to(const coordinates<size_t>& potential_target) const;
+    /**
+     * @brief Checks if active unit can use item from selected_unit coords to potential target.
+     */
     bool can_selected_unit_use_item_to(const coordinates<size_t>& potential_target) const;
-
     bool are_valid_coords(const coordinates<size_t>& coords) const;
-
 private:
     std::weak_ptr<Game> game_;
     std::weak_ptr<Tile_Map> tile_map_;
@@ -82,5 +107,3 @@ private:
 };
 
 #endif
-
-

@@ -11,8 +11,8 @@ bool Render_Aux::load(const std::string& aux_texture_path, const std::string& te
         return false;
     }
 
-    int tileDim = tile_map_->GetTileDim();
-    std::pair<int,int> x0y0 = tile_map_->Getx0y0();
+    int tileDim = tile_map_->get_TileDim();
+    std::pair<int,int> x0y0 = tile_map_->get_x0y0();
     double scale = tileDim / highlight_text.getSize().y;
 
     //Setting up sprite for highlight_unit_
@@ -74,8 +74,8 @@ void Render_Aux::show_highlight(const coordinates<size_t>& coords, sf::Sprite& h
         // hide_unit_highlight(); 
         return;
     }
-    int tileDim = tile_map_->GetTileDim();
-    std::pair<int,int> x0y0 = tile_map_->Getx0y0();
+    int tileDim = tile_map_->get_TileDim();
+    std::pair<int,int> x0y0 = tile_map_->get_x0y0();
     highlight_sprite.setTextureRect(sf::IntRect(highlight_text.getSize().y*texture_idx,0,highlight_text.getSize().y,highlight_text.getSize().y));
     switch (texture_idx) {
     case 1:
@@ -85,6 +85,7 @@ void Render_Aux::show_highlight(const coordinates<size_t>& coords, sf::Sprite& h
         highlight_sprite.setPosition(x0y0.first+coords.x*tileDim,x0y0.second+coords.y*tileDim);
         break;
     }
+    return;
 }
 
 void Render_Aux::show_cursor_text(int pixel_x, int pixel_y, const std::string& msg) {

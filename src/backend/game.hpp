@@ -148,7 +148,7 @@ private:
     std::shared_ptr<EnemyAI> enemy_ai_;
 
     /**
-     * @returns Increments active_team_it_. If end then jump to begin.
+     * @brief Increments active_team_idx_. If end then jump to begin.
      */
     void next_team();
 };

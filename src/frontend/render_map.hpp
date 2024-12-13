@@ -10,7 +10,7 @@
 #include "auxiliary_renderable.hpp"
 
 /**
- * A class that inherits properties from sfml:s Drawable and Transformable
+ * @brief A class that inherits properties from sfml:s Drawable and Transformable
  * classes. Render_Map object can be passed as a parameter to sf::RenderWindow::Draw
  * function. 
  */
@@ -30,19 +30,10 @@ public:
      */
     bool load(const std::string& tiles);
 
-
-    // void load_new_map(Tile_Map& tile_map);
-    
-    //void move(float x, float y);
-
-    //void zoom(int z);
-
     /**
-     * @brief Check if changes were made to Tile_Map objects tileDim or x0y0. If yes then update vertex positions.
+     * @brief Used to keep positions of all sprites and text objects up to date. This needs to be called on every tick.
      */
     void update() override;
-
-    void update_textures();
 
     std::weak_ptr<Tile_Map> get_tile_map();
     void set_tile_map(std::shared_ptr<Tile_Map>& tile_map);
@@ -53,9 +44,10 @@ private:
     std::shared_ptr<Tile_Map> tile_map_;
 
     /**
-     * Sets up the positions and textures for each vertex in g_VertexArr.
+     * @brief Sets up the positions and textures for each vertex in tile_VertexArr.
      */
     void update_tile_position_and_textures();
+
     /**
      * Inherited method from parent classes.
      */
@@ -63,6 +55,7 @@ private:
         states.transform *= getTransform();
         states.texture = &tile_texture_;
         target.draw(tile_VertexArr_,states);
+        return;
     }
 };
 

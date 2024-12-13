@@ -6,8 +6,8 @@ bool Render_Map::load(const std::string& tiles) {
     if (!tile_texture_.loadFromFile(tiles)) {
         return false;
     }
-    Map& map = tile_map_->GetMap();
-    int tileDim = tile_map_->GetTileDim();
+    Map& map = tile_map_->get_map();
+    int tileDim = tile_map_->get_TileDim();
     tile_VertexArr_.setPrimitiveType(sf::Quads);
     tile_VertexArr_.resize(4 * map.height() * map.width());
     update_tile_position_and_textures();
@@ -15,14 +15,14 @@ bool Render_Map::load(const std::string& tiles) {
 }
 
 void Render_Map::update_tile_position_and_textures() {
-    Map& map = tile_map_->GetMap();
+    Map& map = tile_map_->get_map();
     int texW = tile_texture_.getSize().y;
 
     int mapWidth = map.width();
     int mapHeight = map.height();
 
-    std::pair<float,float> x0y0 = tile_map_->Getx0y0();
-    int tileDim = tile_map_->GetTileDim();
+    std::pair<float,float> x0y0 = tile_map_->get_x0y0();
+    int tileDim = tile_map_->get_TileDim();
     float x0 = x0y0.first;
     float y0 = x0y0.second;
     //This implementation follows pretty closely sfml tutorial made with triangles instead of quads:

@@ -51,7 +51,7 @@ coordinates<size_t> Tile_Map::get_map_coords(int pixel_x, int pixel_y) const {
 }
 
 bool Tile_Map::is_inside_map_tile(int x, int y) const {
-    return GetMap().are_valid_coords(y, x);
+    return get_map().are_valid_coords(y, x);
 }
 
 bool Tile_Map::is_inside_map_tile(const coordinates<size_t>& coords) const {
@@ -59,7 +59,7 @@ bool Tile_Map::is_inside_map_tile(const coordinates<size_t>& coords) const {
 }
 
 bool Tile_Map::is_inside_map_pixel(int pixel_x, int pixel_y) const {
-    return (pixel_x >= x0y0_.first && pixel_x < (GetMap().width() * tileDim_ + x0y0_.first)) && (pixel_y >= x0y0_.second && pixel_y < (GetMap().height() * tileDim_ + x0y0_.second));
+    return (pixel_x >= x0y0_.first && pixel_x < (get_map().width() * tileDim_ + x0y0_.first)) && (pixel_y >= x0y0_.second && pixel_y < (get_map().height() * tileDim_ + x0y0_.second));
 }
 
 
@@ -70,23 +70,23 @@ void Tile_Map::center_at(const coordinates<size_t>& coords, int window_width, in
     //x0y0_ = std::pair<int,int>(window_center_x + tileDim_/2 - coords.x * tileDim_,window_center_y + tileDim_/2 - coords.y * tileDim_);
 }
 
-int Tile_Map::GetTileDim() const {
+int Tile_Map::get_TileDim() const {
     return tileDim_;
 }
-std::pair<float,float> Tile_Map::Getx0y0() const {
+std::pair<float,float> Tile_Map::get_x0y0() const {
     return x0y0_;
 }
 
-Map& Tile_Map::GetMap() const {
+Map& Tile_Map::get_map() const {
     return game_->get_map();
 }
 
-std::weak_ptr<Game> Tile_Map::GetGame() const {
+std::weak_ptr<Game> Tile_Map::get_game() const {
     return game_;
 }
 
 
-void Tile_Map::SetGame( std::shared_ptr<Game> game )
+void Tile_Map::set_game( std::shared_ptr<Game> game )
 {
     game_ = game;
 }

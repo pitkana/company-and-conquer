@@ -135,7 +135,7 @@ void Rendering_Engine::events(sf::RenderWindow& target, sf::Event event, Rendere
             std::pair<int,int> tile_pixel_pos = tile_map_->get_tile_coords(matrix_pos);
             std::cout << "Current tile pixel pos: [" << tile_pixel_pos.first << "," << tile_pixel_pos.second << "]" << std::endl;
             std::cout << "Current tile coords:" << matrix_pos << std::endl;
-            std::cout << "Terrain: " << tile_map_->GetMap().get_terrain(matrix_pos)->get_repr() << std::endl;
+            std::cout << "Terrain: " << tile_map_->get_map().get_terrain(matrix_pos)->get_repr() << std::endl;
 
             gui_.click_on_coords(matrix_pos.y, matrix_pos.x);
 

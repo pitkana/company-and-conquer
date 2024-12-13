@@ -15,10 +15,11 @@ bool Render_Buildings::load(const std::string& buildings_texture_path) {
 void Render_Buildings::update() {
     update_sprite_map();
     update_building_positions_and_textures();
+    return;
 }
 
 void Render_Buildings::update_sprite_map() {
-    Map& map = tile_map_->GetMap();
+    Map& map = tile_map_->get_map();
     std::vector<std::shared_ptr<Building>> all_buildings = map.get_all_buildings();
     //If no new buildings have appeared then return.
     if (all_buildings.size() == building_sprite_map_.size()) return;
@@ -26,7 +27,7 @@ void Render_Buildings::update_sprite_map() {
     //Otherwise initialize sprites for every building in map.
     building_sprite_map_.clear();
     int textW = buildings_text.getSize().y;
-    double scale = tile_map_->GetTileDim() / textW;
+    double scale = tile_map_->get_TileDim() / textW;
     
     for (auto& building : all_buildings) {
         building_sprite_map_[building] = sf::Sprite();
@@ -34,12 +35,13 @@ void Render_Buildings::update_sprite_map() {
         sprite.setTexture(buildings_text);
         sprite.setScale(scale,scale);
     }
+    return;
 }
 
 void Render_Buildings::update_building_positions_and_textures() {
-    std::pair<int,int> x0y0 = tile_map_->Getx0y0();
-    int tileDim = tile_map_->GetTileDim();
-    Map& map = tile_map_->GetMap();
+    std::pair<int,int> x0y0 = tile_map_->get_x0y0();
+    int tileDim = tile_map_->get_TileDim();
+    Map& map = tile_map_->get_map();
     int textW = buildings_text.getSize().y;
 
     for (auto& building_spr : building_sprite_map_) {
@@ -53,8 +55,9 @@ void Render_Buildings::update_building_positions_and_textures() {
         //Make sure that building sprite is up to date.
         building_spr.second.setTextureRect(sf::IntRect(textW*text_idx,0,textW,textW));
     }
+    return;
 }
 
 std::weak_ptr<Tile_Map> Render_Buildings::get_tile_map() { return tile_map_; }
 
-void Render_Buildings::set_tile_map(std::shared_ptr<Tile_Map>& tile_map) { tile_map_ = tile_map; }
+void Render_Buildings::set_tile_map(std::shared_ptr<Tile_Map>& tile_map) { tile_map_ = tile_map; return; }

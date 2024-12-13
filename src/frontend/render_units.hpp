@@ -60,6 +60,7 @@ private:
         for (auto spr : unit_sprite_map_) {
             target.draw(spr.second,states);
         }
+        return;
     }
 };
 

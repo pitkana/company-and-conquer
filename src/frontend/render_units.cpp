@@ -8,9 +8,9 @@ bool Render_Units::load(const std::string& unit_texture_path) {
         return false;
     }
 
-    Game& game = *tile_map_->GetGame().lock();
-    std::pair<int,int> x0y0 = tile_map_->Getx0y0();
-    int tileDim = tile_map_->GetTileDim();
+    Game& game = *tile_map_->get_game().lock();
+    std::pair<int,int> x0y0 = tile_map_->get_x0y0();
+    int tileDim = tile_map_->get_TileDim();
     int text_idx = 1;
     int textW = unit_text.getSize().y;
     double scale = tileDim / textW;
@@ -33,12 +33,13 @@ bool Render_Units::load(const std::string& unit_texture_path) {
 
 void Render_Units::update() {
     update_unit_positions_and_textures();
+    return;
 }
 
 void Render_Units::update_unit_positions_and_textures() {
-    Map& map = tile_map_->GetMap();
-    std::pair<int,int> x0y0 = tile_map_->Getx0y0();
-    int tileDim = tile_map_->GetTileDim();
+    Map& map = tile_map_->get_map();
+    std::pair<int,int> x0y0 = tile_map_->get_x0y0();
+    int tileDim = tile_map_->get_TileDim();
 
     for (auto& unit_spr : unit_sprite_map_) {
         //Update postion.
@@ -51,19 +52,21 @@ void Render_Units::update_unit_positions_and_textures() {
         int text_idx = 0;
         int textW = unit_text.getSize().y;
         if (tile_map_->is_tile_drawn(coords)) {
-            int unit_team_id = tile_map_->GetGame().lock()->get_unit_team_id(unit_spr.first->get_id());
+            int unit_team_id = tile_map_->get_game().lock()->get_unit_team_id(unit_spr.first->get_id());
             text_idx = (unit_spr.first->is_dead()) ? 3 : team_id_text_idx_map_[unit_team_id];
         }
         unit_spr.second.setTextureRect(sf::IntRect(textW*text_idx,0,textW,textW));
     }
+    return;
 }
 
 void Render_Units::clear() {
     unit_sprite_map_.clear();
     tile_map_.reset();
     team_id_text_idx_map_.clear();
+    return;
 }
 
 std::weak_ptr<Tile_Map> Render_Units::get_tile_map() { return tile_map_; }
 
-void Render_Units::set_tile_map(std::shared_ptr<Tile_Map>& tile_map) { tile_map_ = tile_map; }
+void Render_Units::set_tile_map(std::shared_ptr<Tile_Map>& tile_map) { tile_map_ = tile_map; return; }
