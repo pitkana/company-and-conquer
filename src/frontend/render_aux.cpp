@@ -113,13 +113,9 @@ void Render_Aux::update_movement_range(const std::vector<coordinates<size_t>>& c
     clear_movement_range_rects();
     movement_range_rects_.reserve(coordinates.size());
 
-<<<<<<< HEAD
     std::pair<float, float> x0y0 = tile_map_->get_x0y0();
     int tileDim = tile_map_->get_TileDim();
-=======
-    std::pair<float, float> x0y0 = tile_map_->Getx0y0();
-    int tileDim = tile_map_->GetTileDim();
->>>>>>> 06018ef61f7c9f0419b4e692ae58fd5cb7103221
+
     for (const auto& coord : coordinates) {
         sf::RectangleShape rect(sf::Vector2f(tileDim, tileDim));
         std::pair<int, int> pixel_coords = tile_map_->get_tile_coords(coord.x, coord.y);

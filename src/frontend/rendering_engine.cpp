@@ -36,20 +36,18 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
             r_aux_->update_movement_range(manager_->selected_unit_possible_movements());
             coordinates<size_t> target_coord = tile_map_->get_map_coords(mousePos.x,mousePos.y);
             r_aux_->show_text = true;
-<<<<<<< HEAD
             r_aux_->show_cursor_text(mousePos.x,mousePos.y,manager_->get_action_info(target_coord,gui_.get_active_item()));
             //Only draw the movement range if selected unit has not yet moved
             if (!manager_->selected_unit_ptr()->has_moved)
                 r_aux_->update_movement_range(manager_->selected_unit_possible_movements());
-=======
-            r_aux_->draw_text(mousePos.x,mousePos.y,manager_->get_action_info(target_coord,gui_.get_active_item()));
+            r_aux_->show_cursor_text(mousePos.x,mousePos.y,manager_->get_action_info(target_coord,gui_.get_active_item()));
 
             //Only draw the movement range if selected unit has not yet moved
             if (!manager_->selected_unit_ptr()->has_moved)
                 r_aux_->update_movement_range(manager_->selected_unit_possible_movements());
 
->>>>>>> 06018ef61f7c9f0419b4e692ae58fd5cb7103221
         } else {
+            r_aux_->clear_movement_range_rects();
             r_aux_->clear_movement_range_rects();
             r_aux_->hide_unit_highlight();
             r_aux_->hide_cursor_highlight();
@@ -109,35 +107,12 @@ void Rendering_Engine::handle_continuous_inputs(float moveSpeed, float zoom, Ren
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
         tile_map_->move(0,moveSpeed);
     }
-/*
-    if (!(mouse_pos.x >= 0 && mouse_pos.x < renderer.width() &&
-        mouse_pos.y >= 0 && mouse_pos.y < renderer.height())) 
-        return;
-
-    if (mouse_pos.x >= renderer.width() * (1 - screen_area_to_move_screen_)) {
-        tile_map_->move(-moveSpeed / 2, 0);
-    }
-    if (mouse_pos.x <= renderer.width() * screen_area_to_move_screen_) {
-        tile_map_->move(moveSpeed / 2, 0);
-    }
-
-    if (mouse_pos.y >= renderer.width() * (1 - screen_area_to_move_screen_)) {
-        tile_map_->move(0, -moveSpeed / 2);
-    }
-    if (mouse_pos.y <= renderer.height() * screen_area_to_move_screen_) {
-        tile_map_->move(0, moveSpeed / 2);
-    }
-*/
 }
 
 void Rendering_Engine::events(sf::RenderWindow& target, sf::Event event, Renderer& renderer) {
     // If a button was pressed (aka func returns true) return, which means event is consumed by the button
     if (gui_.execute_button_actions(target, event)) return;
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 06018ef61f7c9f0419b4e692ae58fd5cb7103221
     switch(event.type) {
         // "close requested" event: we close the window
         case(sf::Event::Closed): {
@@ -182,6 +157,7 @@ void Rendering_Engine::events(sf::RenderWindow& target, sf::Event event, Rendere
                     break;
                 }
 
+
                 case (sf::Keyboard::B): {
                     renderer.get_logs()->show_logs = !renderer.get_logs()->show_logs;
                     break;
@@ -203,8 +179,5 @@ void Rendering_Engine::events(sf::RenderWindow& target, sf::Event event, Rendere
 
             break;
         }
-
-        default:
-            break;
     }
 }
