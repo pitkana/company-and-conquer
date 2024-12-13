@@ -16,15 +16,18 @@ GUI::GUI(std::shared_ptr<Game_Manager> manager, size_t width, size_t height):
 }
 
 void GUI::initialize() {
+    inventory_buttons_start_pos_ = { static_cast<float>((width_ / 6) + padding / 2), static_cast<float>(height_ - (height_ / 6 - padding / 2))};
+    main_buttons_start_pos_ = inventory_buttons_start_pos_ + main_buttons_pos_relative_to_inv_buttons_;
+
     if (!font_->loadFromFile(GUI_FONT_PATH)) {
         assert(false && "Loading font failed");
     }
 
-    initialize_main_buttons();
-
     if ( !r_inv_->load( INVENTORY_TEXTURE_PATH ) ) {
         assert(false && "Loading inventory image failed");
     }
+
+    initialize_main_buttons();
 
 }
 
@@ -47,9 +50,15 @@ void GUI::update() {
 
 bool GUI::execute_button_actions(sf::RenderWindow& window, sf::Event& event) {
 
+    // Check if hovering a button and update variable accordingly
+    is_hovering_a_button_ = false;
+
     for (RectButton* button : get_all_buttons()) {
         button->getButtonStatus(window, event);
 
+        if (!button->isHover) continue;
+
+        is_hovering_a_button_ = true;
         // If the button is pressed but not active, still consume the event aka return true
         if (button->isPressed) {
 
@@ -62,6 +71,7 @@ bool GUI::execute_button_actions(sf::RenderWindow& window, sf::Event& event) {
 
     return false;
 }
+
 
 void GUI::click_on_coords(size_t y, size_t x) {
     coordinates<size_t> clicked_coords(x, y);
@@ -99,9 +109,9 @@ void GUI::next_turn() {
 }
 
 void GUI::initialize_main_buttons() {
+    sf::Vector2f pos = main_buttons_start_pos_;
 
-    float curr_x = 50;
-    RectButton next_unit_button(*font_, true, {curr_x, 600});
+    RectButton next_unit_button(*font_, true, pos);
     next_unit_button.setButtonLabel(20, " Next unit ");
     next_unit_button.set_activation_function([this]() {
         this->game_manager_->cycle_units(width_, width_);
@@ -109,35 +119,43 @@ void GUI::initialize_main_buttons() {
         active_item = nullptr;
     });
 
-    curr_x += next_unit_button.button.getSize().x + 20;
+    pos.x += next_unit_button.button.getSize().x + padding;
 
-    RectButton end_turn_button(*font_, true, {curr_x, 600});
+    RectButton end_turn_button(*font_, true, pos);
     end_turn_button.setButtonLabel(20, " End turn ");
     end_turn_button.set_activation_function([this]() {
         this->game_manager_->next_turn();
         active_item = nullptr;
     });
+    pos.x += end_turn_button.button.getSize().x + padding;
 
-    curr_x += end_turn_button.button.getSize().x + 20;
-
-    RectButton undo_action_button(*font_, true, {curr_x, 600});
+    RectButton undo_action_button(*font_, true, pos);
     undo_action_button.setButtonLabel(20, " Undo action ");
     undo_action_button.set_activation_function([this]() {
         this->undo_action();
     });
-    curr_x += undo_action_button.button.getSize().x + 20;
+    pos.x += undo_action_button.button.getSize().x + padding;
 
-    RectButton deselect_unit_button(*font_, true, {curr_x, 600});
+    RectButton deselect_unit_button(*font_, true, pos);
     deselect_unit_button.setButtonLabel(20, " Deselect unit ");
     deselect_unit_button.set_activation_function([this]() {
         this->game_manager_->deselect_unit();
         active_item = nullptr;
     });
+    pos.x += deselect_unit_button.button.getSize().x + padding;
+
+    RectButton toggle_logs_button(*font_, true, pos);
+    toggle_logs_button.setButtonLabel(20, " Toggle logs ");
+    toggle_logs_button.set_activation_function([this]() {
+        this->are_logs_active = !this->are_logs_active;
+    });
+    pos.x += toggle_logs_button.button.getSize().x + padding;
 
     main_buttons_.buttons.push_back(std::move(next_unit_button));
     main_buttons_.buttons.push_back(std::move(end_turn_button));
     main_buttons_.buttons.push_back(std::move(undo_action_button));
     main_buttons_.buttons.push_back(std::move(deselect_unit_button));
+    main_buttons_.buttons.push_back(std::move(toggle_logs_button));
 
 
     main_buttons_.isActive = true;
@@ -156,7 +174,7 @@ void GUI::update_inventory() {
     float button_height = height_ / 6 - padding;
 
     // also calculate the relative position of the first item buttom
-    sf::Vector2f pos = { static_cast<float>((width_ / 6) + padding / 2), static_cast<float>(height_ - (height_ / 6 - padding / 2))};
+    sf::Vector2f pos = inventory_buttons_start_pos_;
 
     if (!selected_unit_changed_) {
         // If no active item 

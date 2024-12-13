@@ -153,7 +153,7 @@ void Game_Manager::get_tile_info(std::stringstream& info_stream, const coordinat
     } else {
         info_stream << "Friendly ";
     }
-    info_stream << target_unit_ptr->get_id() << " " << target_unit_ptr->get_hp() << "hp\n";
+    info_stream << target_unit_ptr->get_name() << ", HP: " << target_unit_ptr->get_hp() << "\n";
 }
 
 bool Game_Manager::can_selected_unit_move_to(const coordinates<size_t>& potential_target) const {

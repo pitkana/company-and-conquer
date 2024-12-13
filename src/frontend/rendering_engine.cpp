@@ -25,10 +25,10 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
         {
             events(window, event, renderer);
         }
+        handle_continuous_inputs(window);
 
         window.clear(sf::Color::Black);
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-        handle_continuous_inputs(1, 1, renderer, mousePos);
 
         if (manager_->selected_valid_unit()) {
             r_aux_->show_unit_highlight(manager_->selected_unit_coords());
@@ -53,6 +53,7 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
 
 
 
+        logs->show_logs = gui_.are_logs_active;
         std::string output = game_->get_output();
         if (output.size() > 0) {
             std::cout << output << std::endl;
@@ -87,22 +88,43 @@ std::shared_ptr<Game>& Rendering_Engine::get_game()
 }
 
 
-/**
- * sf::Transformable apparently has a move method. Maybe we should use that.  
- */
-void Rendering_Engine::handle_continuous_inputs(float moveSpeed, float zoom, Renderer& renderer, const sf::Vector2i& mouse_pos) {
+void Rendering_Engine::handle_continuous_inputs(sf::RenderWindow& window) {
+    //Not if else since these can be pressed at the same time
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-        tile_map_->move(-moveSpeed,0);
+        tile_map_->move(-move_speed, 0);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
-        tile_map_->move(0,-moveSpeed);
+        tile_map_->move(0, -move_speed);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-        tile_map_->move(moveSpeed,0);
+        tile_map_->move(move_speed, 0);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
-        tile_map_->move(0,moveSpeed);
+        tile_map_->move(0, move_speed);
     }
+
+    sf::Vector2u size = window.getSize();
+    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+
+    // If mouse is outside window, return and dont move map
+    if (!(mousePos.x >= 0 && mousePos.x < size.x &&
+        mousePos.y >= 0 && mousePos.y < size.y)) return;
+
+    // If a button is being hovered, don't move screen since it might be annoying
+    if (gui_.is_hovering_button()) return;
+
+    if (mousePos.x >= size.x * (1.0f - screen_area_to_move_screen_)) {
+        tile_map_->move(-move_speed, 0);
+    } else if (mousePos.x <= size.x * screen_area_to_move_screen_) {
+        tile_map_->move(move_speed, 0);
+    }
+
+    if (mousePos.y >= size.y * (1.0f - screen_area_to_move_screen_)) {
+        tile_map_->move(0, -move_speed);
+    } else if (mousePos.y <= size.y * screen_area_to_move_screen_) {
+        tile_map_->move(0, move_speed);
+    }
+
 }
 
 void Rendering_Engine::events(sf::RenderWindow& target, sf::Event event, Renderer& renderer) {
@@ -155,7 +177,7 @@ void Rendering_Engine::events(sf::RenderWindow& target, sf::Event event, Rendere
 
 
                 case (sf::Keyboard::B): {
-                    renderer.get_logs()->show_logs = !renderer.get_logs()->show_logs;
+                    gui_.are_logs_active = !gui_.are_logs_active;
                     break;
                 }
 
@@ -175,5 +197,8 @@ void Rendering_Engine::events(sf::RenderWindow& target, sf::Event event, Rendere
 
             break;
         }
+
+        default:
+            break;
     }
 }

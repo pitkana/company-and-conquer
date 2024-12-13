@@ -81,6 +81,8 @@ public:
      */
     bool execute_button_actions(sf::RenderWindow& window, sf::Event& event);
 
+    inline bool is_hovering_button() const { return is_hovering_a_button_; }
+
     /**
      * @brief tells the GUI what map coords were clicked on and handles the input accordingly
      *
@@ -114,6 +116,9 @@ private:
 
     std::vector<RectButton*> get_all_buttons();
 
+
+public:
+    bool are_logs_active = true;
 private:
     std::shared_ptr<Game_Manager> game_manager_;
     Map* map_;
@@ -125,6 +130,9 @@ private:
     sf::Vector2f active_item_pos_;
 
     std::unique_ptr<sf::Font> font_ = std::make_unique<sf::Font>();
+    sf::Vector2f inventory_buttons_start_pos_;
+    sf::Vector2f main_buttons_start_pos_;
+    sf::Vector2f main_buttons_pos_relative_to_inv_buttons_ = {-30, -80};
 
     // the inventory backround
     std::shared_ptr<Inventory_UI> r_inv_;
@@ -132,6 +140,7 @@ private:
     size_t width_ = 0;
     size_t height_ = 0;
     
+    bool is_hovering_a_button_ = false;
 
     RectButtonGroup main_buttons_;
     InventoryButtonGroup inventory_buttons_;
