@@ -24,12 +24,8 @@ class ShopUI : public Auxiliary_renderable {
         std::vector<RectButton> game_button_;
         sf::Text budget_text_;  // the text for displaying how much money you have left after buying some items
 
-<<<<<<< HEAD
         // methods that are used inside update() for updating the graphics for different buttons
         // and the budget text
-=======
-        // Update methods for button groups
->>>>>>> e2ad08a289e93d4a9b4d2f25c81504ef4b8bfd24
         void update_catalogue();
         void update_owned();
         void update_units();
