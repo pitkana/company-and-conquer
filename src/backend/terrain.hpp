@@ -13,6 +13,7 @@
 
 #include "helper_tools.hpp"
 #include "coordinates.hpp"
+#include "const_terrains.hpp"
 
 
 
@@ -27,24 +28,13 @@ class Terrain
 
         char character_repr_;
        
-        int32_t texture_idx_ = 0;
         size_t movement_cost_ = 1;
         std::bitset<4> terrain_properties_ = std::bitset<4>{}.set(); // special version of std::vector that should be implemented as a bitset
 
 
     public:
 
-        Terrain(char repr = '.') : character_repr_(repr) { 
-            switch (repr) {
-            case '.':
-                texture_idx_ = 1;
-                break;
-            case '#':
-                texture_idx_ = 2;
-                break;
-            }
-
-        }
+        Terrain(char repr = '.') : character_repr_(repr) {}
 
         Terrain(char repr, bool can_shoot, bool can_see, bool can_walk, bool can_build) : character_repr_(repr) 
         { 
@@ -52,14 +42,6 @@ class Terrain
             terrain_properties_[can_see_through_] = can_see;
             terrain_properties_[can_walk_through_] = can_walk;
             terrain_properties_[can_build_in_] = can_build;
-            switch (repr) {
-            case '.':
-                texture_idx_ = 1;
-                break;
-            case '#':
-                texture_idx_ = 2;
-                break;
-            }
         }
 
         Terrain( char repr, bool can_shoot, bool can_see, bool can_walk, bool can_build, size_t movement_cost ) : character_repr_( repr ), movement_cost_( movement_cost ) 
@@ -68,31 +50,16 @@ class Terrain
             terrain_properties_[can_see_through_] = can_see;
             terrain_properties_[can_walk_through_] = can_walk;
             terrain_properties_[can_build_in_] = can_build;
-
-            switch (repr) {
-            case '.':
-                texture_idx_ = 1;
-                break;
-            case '#':
-                texture_idx_ = 2;
-                break;
-            }
         }
         Terrain( char repr, size_t movement_cost ) {
             character_repr_ = repr;
             movement_cost_ = movement_cost;
-            switch (repr) {
-            case '.':
-                texture_idx_ = 1;
-                break;
-            case '#':
-                texture_idx_ = 2;
-                break;
-            }
          }
 
 
-        constexpr int32_t texture() const { return texture_idx_; }
+        int32_t texture() const {
+            return ConstTerrain::get_texture_idx_from_char(character_repr_);
+        }
 
         constexpr size_t movement_cost() const { return movement_cost_; }
 

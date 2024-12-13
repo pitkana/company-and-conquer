@@ -7,6 +7,7 @@
 #include <unordered_map>
 
 
+#include "const_terrains.hpp"
 #include "unit.hpp"
 #include "terrain.hpp"
 #include "matrix.hpp"
@@ -22,29 +23,13 @@
 class Map
 {
     private:
-        // base tiles
-        // here we use normal initialisation because if we use std::make_shared the objects
-        // wont be deleted until all the weak pointers go out of scope.
-        // Because I use std::weak_ptr's in Terrain, I cannot use std::make_shared
-        const std::shared_ptr< Terrain > background_ = std::shared_ptr< Terrain>( new Terrain('.') );
-        const std::shared_ptr< Terrain > wall_ = std::shared_ptr< Terrain>( new Terrain('#', false, false, false, false) );
-        const std::shared_ptr< Terrain > swamp_ = std::shared_ptr< Terrain>( new Terrain('-', 3) );
-        const std::shared_ptr< Terrain> window_ = std::make_shared<Terrain>('O', false, true, false, false);
-
-        std::unordered_map<char, std::shared_ptr<Terrain> > all_tile_types_ = { 
-            {'.', this->background_ }, 
-            {'#', this->wall_ }, 
-            {'-', this->swamp_ },
-            {'O', this->window_}
-        };
-
 
         /*
         * We will create a board into this container ( NOTE: you can specify a custom board size ).
         * The size_t in the Terrain template is used to define the template type for coordinates,
         * so basically the maximum coordinate value. 
         */
-        Matrix< std::shared_ptr< Terrain >> all_terrains_;
+        Matrix< std::shared_ptr< const Terrain >> all_terrains_;
         //Raw pointer since the map doesn't have ownership of units
         Matrix< Unit* > all_units_;
         Matrix< std::shared_ptr< Building >> all_buildings_;
@@ -96,11 +81,11 @@ class Map
 
         void update_terrain(char terrain, size_t y, size_t x);
 
-        std::shared_ptr<Terrain> get_terrain(size_t y, size_t x);
+        std::shared_ptr<const Terrain> get_terrain(size_t y, size_t x);
 
         void update_terrain(char terrain, const coordinates<size_t>& coords);
 
-        std::shared_ptr<Terrain> get_terrain(const coordinates<size_t>& coords);
+        std::shared_ptr<const Terrain> get_terrain(const coordinates<size_t>& coords);
 
 
         bool are_valid_coords(size_t y, size_t x) const;
@@ -181,7 +166,7 @@ class Map
          * @param direction given direction
          * @return std::shared_ptr<Terrain>
          */
-        std::shared_ptr<Terrain> get_neighbor( const coordinates<size_t>& location, const Helper::Directions direction );
+        std::shared_ptr<const Terrain> get_neighbor( const coordinates<size_t>& location, const Helper::Directions direction );
 
 
         /**
@@ -190,7 +175,7 @@ class Map
          * @param location location of whose adjacent Terrains to return
          * @return std::vector< std::shared_ptr<Terrain> > 
          */
-        std::vector< std::shared_ptr<Terrain> > get_neighbors( const coordinates<size_t>& location );
+        std::vector< std::shared_ptr<const Terrain> > get_neighbors( const coordinates<size_t>& location );
 
         /**
          * @brief Get the neighbouring coordinates of a given location from all the main directions

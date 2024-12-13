@@ -12,6 +12,7 @@
 #include <list>
 #include <cmath>
 
+#include "const_terrains.hpp"
 #include "map.hpp"
 #include "helper_tools.hpp"
 
@@ -32,12 +33,12 @@ void Map::update_terrain(char terrain, size_t y, size_t x)
     // thought about using switch statement, but IMO
     // it can become tedious if we keep adding 
     // different terrains so I used unordered_map for now.
-    if ( all_tile_types_.count( terrain ) ) {
-        all_terrains_(y, x) = all_tile_types_[terrain];
-    }
-    else {
-        all_terrains_(y, x) = background_;
-    }
+
+    std::shared_ptr<const Terrain> terrain_ptr = ConstTerrain::get_terrain_from_char(terrain);
+    if (terrain_ptr == nullptr)
+        return;
+
+    all_terrains_(y, x) = terrain_ptr;
 }
 
 
@@ -49,13 +50,13 @@ void Map::update_terrain(char terrain, const coordinates<size_t>& coords) {
 
 
 
-std::shared_ptr<Terrain> Map::get_terrain(size_t y, size_t x) 
+std::shared_ptr<const Terrain> Map::get_terrain(size_t y, size_t x) 
 {
     return all_terrains_(y, x);
 }
 
 
-std::shared_ptr<Terrain> Map::get_terrain(const coordinates<size_t>& coords) {
+std::shared_ptr<const Terrain> Map::get_terrain(const coordinates<size_t>& coords) {
     return get_terrain(coords.y, coords.x);
 }
 
@@ -268,7 +269,7 @@ constexpr inline void Map::create_board() noexcept
             // here we use normal initialisation because if we use std::make_shared the objects
             // wont be deleted until all the weak pointers go out of scope.
             // Because I use std::weak_ptr's in Terrain, I cannot use std::make_shared
-            all_terrains_(y, x) = this->background_;
+            all_terrains_(y, x) = ConstTerrain::background;
 
         }
     }
@@ -277,11 +278,11 @@ constexpr inline void Map::create_board() noexcept
 }
 
 
-std::shared_ptr<Terrain> Map::get_neighbor( const coordinates<size_t>& location, const Helper::Directions direction )
+std::shared_ptr<const Terrain> Map::get_neighbor( const coordinates<size_t>& location, const Helper::Directions direction )
 {
     coordinates<int64_t> new_location;
 
-    std::shared_ptr< Terrain > possible_location = nullptr;
+    std::shared_ptr< const Terrain > possible_location = nullptr;
 
     switch ( direction ) {
         case Helper::Directions::North:
@@ -313,12 +314,12 @@ std::shared_ptr<Terrain> Map::get_neighbor( const coordinates<size_t>& location,
 }
 
 
-std::vector< std::shared_ptr<Terrain> > Map::get_neighbors( const coordinates<size_t>& location )
+std::vector< std::shared_ptr<const Terrain> > Map::get_neighbors( const coordinates<size_t>& location )
 {
 
-    std::vector< std::shared_ptr<Terrain >> possible_locations;
+    std::vector< std::shared_ptr<const Terrain >> possible_locations;
 
-    std::shared_ptr<Terrain> a_neighbor;
+    std::shared_ptr<const Terrain> a_neighbor;
 
     for ( Helper::Directions a_direction : directions_ ) {
         a_neighbor = get_neighbor( location, a_direction );
@@ -373,7 +374,7 @@ std::vector< coordinates<size_t> > Map::max_visible_locations( const coordinates
 
 std::vector<coordinates<size_t>> Map::tiles_can_shoot_on(const coordinates<size_t>& coords, const uint32_t range) {
     return line_of_sight_check(coords, range + 1, [this](int64_t y, int64_t x) -> bool {
-        const std::shared_ptr<Terrain>& terrain = this->get_terrain(y, x);
+        const std::shared_ptr<const Terrain>& terrain = this->get_terrain(y, x);
         return terrain->can_shoot_through() && terrain->can_see_through();
     });
 }
@@ -655,7 +656,7 @@ std::vector< coordinates< size_t > > Map::possible_tiles_to_move_to3( const coor
             for (const auto& neighbour : neighbours) {
                 // Get this neighbour's terrain, check if the neighbour was already visited or if you can move to it.
                 // If visited or can't move, skip it, otherwise visit it and mark it as visited
-                const std::shared_ptr<Terrain>& neighbour_terrain = all_terrains_[neighbour];
+                const std::shared_ptr<const Terrain>& neighbour_terrain = all_terrains_[neighbour];
                 if (visited[neighbour.y * width() + neighbour.x]|| !can_move_to_coords(neighbour)) continue;
                 visited[neighbour.y * width() + neighbour.x] = true;
 
@@ -749,7 +750,7 @@ coordinates<size_t> Map::fastest_movement_to_target(const coordinates<size_t>& l
             for (const auto& neighbour : neighbours) {
                 // Get this neighbour's terrain, check if the neighbour was already visited or if you can move to it.
                 // If visited or can't move, skip it, otherwise visit it and mark it as visited
-                const std::shared_ptr<Terrain>& neighbour_terrain = all_terrains_[neighbour];
+                const std::shared_ptr<const Terrain>& neighbour_terrain = all_terrains_[neighbour];
                 if (visited[neighbour.y * width() + neighbour.x]|| !can_move_to_coords(neighbour)) continue;
                 visited[neighbour.y * width() + neighbour.x] = true;
                 parents(neighbour) = current_vertex.coords;
