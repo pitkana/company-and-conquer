@@ -68,6 +68,7 @@ int Game::get_unit_team_id(int unit_id) const {
     }
 
     assert(false && "Unit with specified ID does not exist in this game");
+    return 0;
 }
 
 coordinates<size_t> Game::get_unit_location(int id) {

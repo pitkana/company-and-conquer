@@ -39,6 +39,10 @@ coordinates<size_t> EnemyAI::generate_movement(Unit& unit, const coordinates<siz
     coordinates<size_t> chosen_movement;
     std::vector<coordinates<size_t>> movement_locations = map_.possible_tiles_to_move_to3(unit_loc, unit_consts.move_range);
 
+    //if no possible movements
+    if (movement_locations.empty()) 
+        return unit_loc;
+
     std::vector<coordinates<size_t>> vision_coords = map_.tiles_unit_sees(unit_loc, unit_consts.visual_range);
     std::vector<coordinates<size_t>> visible_enemy_coords;
     get_visible_unit_coords(vision_coords, &visible_enemy_coords, nullptr);
@@ -49,6 +53,7 @@ coordinates<size_t> EnemyAI::generate_movement(Unit& unit, const coordinates<siz
         if (is_in_units_patrol_range(unit_loc, unit.get_id())) {
             // Take random movement till it's inside of the patrol range
             while (true) {
+
                 chosen_movement = movement_locations[rand() % movement_locations.size()];
 
                 // Break if it's in the range
@@ -167,6 +172,9 @@ std::shared_ptr<Action> EnemyAI::generate_building_part_action(Unit& unit, const
         }
 
     }
+
+    if (coords_to_build_on.empty())
+        return nullptr;
 
     //If there were no buildings to add a part to, just add it to an empty place
     coordinates<size_t> target = *coords_to_build_on[rand() % coords_to_build_on.size()];
