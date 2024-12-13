@@ -55,6 +55,7 @@ class RectButton: public Button
         void setButtonLabel(float charSize);
 
         void toggle_button_disabled();
+        void toggle_updating_color();
 
         sf::RectangleShape button;
 
@@ -62,6 +63,7 @@ class RectButton: public Button
 
     private:
 
+        bool update_color_on_hover = true;
         sf::FloatRect buttonRect;
 
     //end of private

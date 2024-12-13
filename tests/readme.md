@@ -77,3 +77,8 @@ cannot be undone since it's only executed when the whole turn ends). Works as ex
 
 **Results:** Loading scenarios from YAML files works as intended. Gives sensible error messages pertaining to which part
 of the YAML was invalid.
+
+## Test of everything
+Tested pretty much everything once the GUI and rendering was done with exploratory testing
+
+Result: Some stuff was broken but we fixed it
