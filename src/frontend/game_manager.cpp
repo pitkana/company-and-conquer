@@ -40,6 +40,10 @@ bool Game_Manager::select_unit_on_coords(const coordinates<size_t>& origin) {
 
 const coordinates<size_t>& Game_Manager::selected_unit_coords() const { return selected_unit_coords_; }
 
+const std::vector<coordinates<size_t>>& Game_Manager::selected_unit_possible_movements() const {
+    return coords_selected_unit_can_move_to_;
+}
+
 Unit* Game_Manager::selected_unit_ptr() {
     return selected_unit_ptr_;
 }

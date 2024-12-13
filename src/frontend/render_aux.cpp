@@ -102,6 +102,26 @@ void Render_Aux::draw_logs(const std::string& logs) {
 }
 
 
+void Render_Aux::clear_movement_range_rects() {
+    movement_range_rects_.clear();
+}
+
+void Render_Aux::update_movement_range(const std::vector<coordinates<size_t>>& coordinates) {
+    clear_movement_range_rects();
+    movement_range_rects_.reserve(coordinates.size());
+
+    std::pair<float, float> x0y0 = tile_map_->Getx0y0();
+    int tileDim = tile_map_->GetTileDim();
+    for (const auto& coord : coordinates) {
+        sf::RectangleShape rect(sf::Vector2f(tileDim, tileDim));
+        std::pair<int, int> pixel_coords = tile_map_->get_tile_coords(coord.x, coord.y);
+        rect.setPosition(pixel_coords.first, pixel_coords.second);
+        rect.setFillColor({0, 255, 0, 128});
+
+        movement_range_rects_.push_back(std::move(rect));
+    }
+}
+
 void Render_Aux::clear_cursor_text() {
     action_info_text_.setString("");
     return;

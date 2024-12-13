@@ -30,6 +30,8 @@ public:
     void draw_cursor_highlight(const coordinates<size_t>& coords);
     void hide_unit_highlight();
     void hide_cursor_highlight();
+    void update_movement_range(const std::vector<coordinates<size_t>>& coordinates);
+    void clear_movement_range_rects();
 
 private:
     sf::Sprite highlight_unit_;
@@ -41,15 +43,22 @@ private:
     int tileDim_;
     sf::Texture highlight_text;
     sf::Font text_font_;
+
+    std::vector<sf::RectangleShape> movement_range_rects_;
     
     void draw_highlight(const coordinates<size_t>& coords, sf::Sprite& highlight_sprite, size_t texture_idx);
     void hide_highlight(sf::Sprite& highlight_sprite);
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
+        for (const auto& rect : movement_range_rects_) {
+            target.draw(rect);
+        }
+
         target.draw(highlight_unit_,states);
         target.draw(highlight_cursor_,states);
         target.draw(action_info_text_);
         target.draw(log_text_);
+
     }
 };
 
