@@ -130,7 +130,6 @@ bool Game::add_action(std::shared_ptr<Action> action, int team_id) {
     }
     team.enqueue_action(std::move(action));
     update_visible_tiles();
-    std::cout << "Action added" << std::endl;
     return true;
 }
 

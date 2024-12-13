@@ -130,7 +130,12 @@ void Game_Manager::get_item_action_info(std::stringstream& info_stream, const co
     if (!selected_valid_unit()) return;
     if (selected_unit_ptr_->has_added_action) { info_stream << "item action already queued\n"; return; }
     if (action_item == nullptr) { return; }
+<<<<<<< HEAD
 
+=======
+    info_stream << "Using item: " << action_item->get_name() << "\n";
+    info_stream << action_item->get_info(selected_unit_coords_,potential_target) << "\n";
+>>>>>>> aa89d45 (Added more logs.)
     bool can_use = can_selected_unit_use_item_to(potential_target); 
     if (can_use) { info_stream << action_item->get_info(selected_unit_coords_, potential_target); }
     else { info_stream << "Can not use item here"; }

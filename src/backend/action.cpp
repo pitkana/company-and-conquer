@@ -80,8 +80,8 @@ void HealingAction::execute(Game &game, coordinates<size_t> unit_location) {
         if (healing_item_.get_aoe() == 0) { // Single target healing
             Unit* target_unit = game.get_map().get_unit(target_.y, target_.x);
             if (target_unit == nullptr) return;
-
             int healed_amount = target_unit->heal(healing_item_);
+            game.get_output_stream() << "Healed " << target_unit->get_name() << " for " << healed_amount << ".\n";
             healed_amounts_.emplace_back(target_unit, healed_amount);
 
         } else { // AoE healing
@@ -89,9 +89,9 @@ void HealingAction::execute(Game &game, coordinates<size_t> unit_location) {
             std::vector<coordinates<size_t>> affected_coords = map.get_aoe_affected_coords(target_, healing_item_.get_aoe());
             for (const auto& coords : affected_coords) {
                 Unit* target_unit = map.get_unit(coords);
-                if (target_unit == nullptr) continue;
-
+                if (target_unit == nullptr) continue; 
                 int healed_amount = target_unit->heal(healing_item_);
+                game.get_output_stream() << "Healed " << target_unit->get_name() << " for " << healed_amount << ".\n";
                 healed_amounts_.emplace_back(target_unit, healed_amount);
             }
         }
@@ -131,16 +131,16 @@ void BuildingAction::execute(Game &game, coordinates<size_t> unit_location) {
         if (map.has_building(target())) {
             // Try to add part, fails if part is wrong for the building or this part is already added to building
             if (map.get_building(target())->add_part(building_part_))  { //success
-                std::cout << "Added " << building_part_.get_name() << " to building that was already at " << target().toString() << std::endl;
+                game.get_output_stream() << "Added " << building_part_.get_name() << " to building that was already at " << target().toString() << "\n";
             } else {
-                std::cout << "Part " << building_part_.get_name() << " is wrong for the building at " << target() << " or already added to it" << std::endl;
+                game.get_output_stream() << "Part " << building_part_.get_name() << " is wrong for the building at " << target() << " or already added to it" << "\n";
             }
 
         } else if (map.can_build_on(target())) {
             map.add_building(building_part_.get_building(), target());
-            std::cout << "Built building using " << building_part_.get_name() << " at " << target() << std::endl;
+            game.get_output_stream() << "Built building using " << building_part_.get_name() << " at " << target() << "\n";
         } else {
-            std::cout << "No building to add to or build at " << target() << std::endl;
+            game.get_output_stream() << "No building to add to or build at " << target() << "\n";
         }
     }
 

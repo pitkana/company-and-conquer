@@ -34,7 +34,7 @@ bool Render_Aux::load(const std::string& aux_texture_path, const std::string& te
 
     //Setting up log text.
     log_text_.setFont(text_font_);
-    log_text_.setFillColor(sf::Color::Blue);
+    log_text_.setFillColor(sf::Color::White);
     log_text_.setCharacterSize(16);
     log_text_.setOrigin(-10,-10);
 
