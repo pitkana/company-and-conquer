@@ -33,21 +33,17 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
         if (manager_->selected_valid_unit()) {
             r_aux_->show_unit_highlight(manager_->selected_unit_coords());
             r_aux_->show_cursor_highlight(mousePos.x, mousePos.y);
-            r_aux_->update_movement_range(manager_->selected_unit_possible_movements());
             coordinates<size_t> target_coord = tile_map_->get_map_coords(mousePos.x,mousePos.y);
             r_aux_->show_text = true;
             r_aux_->show_cursor_text(mousePos.x,mousePos.y,manager_->get_action_info(target_coord,gui_.get_active_item()));
-            //Only draw the movement range if selected unit has not yet moved
-            if (!manager_->selected_unit_ptr()->has_moved)
-                r_aux_->update_movement_range(manager_->selected_unit_possible_movements());
-            r_aux_->show_cursor_text(mousePos.x,mousePos.y,manager_->get_action_info(target_coord,gui_.get_active_item()));
 
             //Only draw the movement range if selected unit has not yet moved
             if (!manager_->selected_unit_ptr()->has_moved)
                 r_aux_->update_movement_range(manager_->selected_unit_possible_movements());
+            else
+                r_aux_->clear_movement_range_rects();
 
         } else {
-            r_aux_->clear_movement_range_rects();
             r_aux_->clear_movement_range_rects();
             r_aux_->hide_unit_highlight();
             r_aux_->hide_cursor_highlight();

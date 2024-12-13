@@ -55,7 +55,7 @@ std::shared_ptr<Action> HealingItem::get_action(coordinates<size_t> target, Unit
 }
 
 std::string HealingItem::get_info(const coordinates<size_t> &from_coords, const coordinates<size_t> &target_coords) const {
-    return "Will heal: " + std::to_string(heal_amount_);
+    return name_ + ": will heal " + std::to_string(heal_amount_);
 }
 
 // BuildingPart derived class

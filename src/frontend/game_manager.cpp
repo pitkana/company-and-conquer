@@ -105,7 +105,7 @@ std::string Game_Manager::get_action_info(const coordinates<size_t>& potential_t
 
     std::stringstream ss;
     get_tile_info(ss,potential_target);
-    ss << "Current Unit " << selected_unit_ptr_->get_name() << "\n";
+    ss << selected_unit_ptr_->get_name() << "\n";
     get_movement_action_info(ss,potential_target);
     get_item_action_info(ss,potential_target,action_item);
     return ss.str();
@@ -113,11 +113,12 @@ std::string Game_Manager::get_action_info(const coordinates<size_t>& potential_t
 
 void Game_Manager::get_movement_action_info(std::stringstream& info_stream, const coordinates<size_t>& potential_target) {
     if (!selected_valid_unit()) return;
-    Map& map = game_.lock()->get_map();
     if (selected_unit_ptr_->has_moved) {
         info_stream << "has already moved\n";
+
     } else if (can_selected_unit_move_to(potential_target)) {
         info_stream << "can move here\n";
+
     } else {
         info_stream << "cannot move here\n";
     }
@@ -129,20 +130,10 @@ void Game_Manager::get_item_action_info(std::stringstream& info_stream, const co
     if (!selected_valid_unit()) return;
     if (selected_unit_ptr_->has_added_action) { info_stream << "item action already queued\n"; return; }
     if (action_item == nullptr) { return; }
-    info_stream << "Using item: " << action_item->get_name() << "\n";
+
     bool can_use = can_selected_unit_use_item_to(potential_target); 
-    if (action_item->is_weapon()) {
-        if (can_use) { info_stream << "Can attack here"; }
-        else { info_stream << "Can not attack here"; }
-    } else if (action_item->is_healing_item()) {
-        if (can_use) { info_stream << "Can heal here"; }
-        else { info_stream << "Can not heal here"; }
-    } else if (action_item->is_building_part()) {
-        if (can_use) { info_stream << "Can buil here"; }
-        else { info_stream << "Can not build here"; }
-    } else {
-        info_stream << "Unknown item";
-    }
+    if (can_use) { info_stream << action_item->get_info(selected_unit_coords_, potential_target); }
+    else { info_stream << "Can not use item here"; }
     return;
 }
 

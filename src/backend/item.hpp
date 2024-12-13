@@ -150,7 +150,7 @@ public:
 
     [[nodiscard]]
     virtual std::string get_info([[maybe_unused]] const coordinates<size_t>& from_coords, [[maybe_unused]] const coordinates<size_t>& taret_coords) const {
-        return get_description();
+        return name_ + ": " + get_description();
     }
 
     virtual inline constexpr bool is_weapon() const { return false; }
