@@ -466,6 +466,7 @@ std::vector< coordinates<size_t> > Map::line_of_sight_check( const coordinates<s
             }
             // check that you can see through the tile, if not, then we stop looping since we also cant see the following tiles
             if (predicate(y0, x0) == false) {
+                visible_coords.emplace(x0, y0);
                 break;
             }
             // this is for the special case that if there's a corner in which the absolute corner tile is visible but the ones next to it are not,
