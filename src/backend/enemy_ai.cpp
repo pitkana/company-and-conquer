@@ -52,7 +52,14 @@ coordinates<size_t> EnemyAI::generate_movement(Unit& unit, const coordinates<siz
         // If unit is already inside its patrol range and has no visible enemy, just move inside the patrol range
         if (is_in_units_patrol_range(unit_loc, unit.get_id())) {
             // Take random movement till it's inside of the patrol range
+            int checks_done = 0;
             while (true) {
+                checks_done++;
+                // After 20 checks, there is probably not a movement available, return starting location
+                if (checks_done > 20) {
+                    chosen_movement = unit_loc;
+                    break;
+                }
 
                 chosen_movement = movement_locations[rand() % movement_locations.size()];
 
