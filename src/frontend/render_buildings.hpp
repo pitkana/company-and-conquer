@@ -22,11 +22,10 @@ public:
     /**
      * @brief Initializes all drawable objects in this class. Nothing can be drawn before this method is called.
      * 
-     * @param buildings_texture_path Path to .png file that contains textures for aux sprites.
+     * @param buildings_texture_path Path to .png file that contains textures for building sprites.
 
      * @returns bool. Will return false if invalid paths are given as parameters.
      */
-
     bool load(const std::string& buildings_texture_path);
 
     /**
