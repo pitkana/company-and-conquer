@@ -4,6 +4,7 @@
 #include "shop.hpp"
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <cstdint>
 #include <../../libs/SFMLButton/include/sfmlbutton.hpp>
 
 #include "renderer.hpp"
@@ -20,12 +21,14 @@ class ShopUI : public sf::Drawable {
         std::vector<RectButton> unit_buttons_;
         std::vector<RectButton> unit_owned_buttons_;
         std::vector<RectButton> game_button_;
+        sf::Text budget_text_;
 
         void update_catalogue();
         void update_owned();
         void update_units();
         void update_unit_inventory();
         void load_game_button();
+        void update_budget();
 
         Unit* active_unit_ = nullptr;
         std::shared_ptr<const Item> active_item_;
@@ -39,11 +42,13 @@ class ShopUI : public sf::Drawable {
         bool unit_changed_ = false;
         bool game_button_loaded_ = false;
 
+        int budget_ = 0;
+
     public:
 
         void initialize();
 
-        ShopUI(Shop shop, Renderer& renderer) : shop_(shop), renderer_(renderer) {}
+        ShopUI(Shop shop, Renderer& renderer) : shop_(shop), renderer_(renderer), budget_(shop.get_budget()) {}
 
         bool execute_button_actions(sf::RenderWindow& window, sf::Event& event);
 

@@ -26,10 +26,10 @@ class Map
         // here we use normal initialisation because if we use std::make_shared the objects
         // wont be deleted until all the weak pointers go out of scope.
         // Because I use std::weak_ptr's in Terrain, I cannot use std::make_shared
-        const std::shared_ptr< Terrain > background_ = std::shared_ptr< Terrain>( new Terrain('.') );
-        const std::shared_ptr< Terrain > wall_ = std::shared_ptr< Terrain>( new Terrain('#', false, false, false, false) );
-        const std::shared_ptr< Terrain > swamp_ = std::shared_ptr< Terrain>( new Terrain('-', 3) );
-        const std::shared_ptr< Terrain> window_ = std::make_shared<Terrain>('O', false, true, false, false);
+        const std::shared_ptr< Terrain > background_ = std::shared_ptr< Terrain >( new Terrain('.') );
+        const std::shared_ptr< Terrain > wall_ = std::shared_ptr< Terrain >( new Terrain('#', false, false, false, false) );
+        const std::shared_ptr< Terrain > swamp_ = std::shared_ptr< Terrain >( new Terrain('-', 3) );
+        const std::shared_ptr< Terrain > window_ = std::make_shared<Terrain >('O', false, true, false, false);
 
         std::unordered_map<char, std::shared_ptr<Terrain> > all_tile_types_ = { 
             {'.', this->background_ }, 

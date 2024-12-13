@@ -1,3 +1,5 @@
+#include <string>
+
 #include "shop_ui.hpp"
 
 #include <cassert>
@@ -6,8 +8,12 @@ void ShopUI::initialize() {
     if (!font_->loadFromFile(GUI_FONT_PATH)) {
         assert(false && "Loading font failed");
     }
-
+    budget_text_.setFont( *font_ );
+    budget_text_.setFillColor( sf::Color::White );
+    budget_text_.setCharacterSize(20);
+    budget_text_.setPosition(30, 0);
 }
+
 
 void ShopUI::update_catalogue()
 {
@@ -49,10 +55,17 @@ void ShopUI::update_owned()
 
         button.setButtonLabel(20,  label);
 
-        button.set_activation_function([this, item]()
+        
+        if (item == active_item_) {
+            button.button.setFillColor(sf::Color::Magenta);
+        }
+        
+
+        button.set_activation_function([&, this, item, button]()
         {
             this->active_item_ = item;
             this->units_loaded_ = false;
+            this->new_items_ = true;
         });
 
         owned_buttons_.push_back(button);
@@ -60,8 +73,14 @@ void ShopUI::update_owned()
         curr_x += button.button.getSize().x + 20;
     }
 
-
+    RectButton deselect = RectButton(*font_, true, {curr_x, 80});
+    deselect.setButtonLabel(20, "Deselect");
+    deselect.set_activation_function([this]() {
+        this->active_item_ = nullptr;
+    });
+    owned_buttons_.push_back(deselect);
 }
+
 
 void ShopUI::update_units()
 {
@@ -77,9 +96,16 @@ void ShopUI::update_units()
         Unit* unit_pointer = &unit;
         std::string label = unit.get_name();
         button.setButtonLabel(20,  label);
+
+        
+        if (unit_pointer == active_unit_) {
+            button.button.setFillColor(sf::Color::Magenta);
+        }
+
         button.set_activation_function([this, unit_pointer]()
         {
             this->unit_changed_ = true;
+            this->units_loaded_ = false;
             this->active_unit_ = unit_pointer;
             if (active_item_ != nullptr)
             {
@@ -132,6 +158,15 @@ void ShopUI::update_unit_inventory()
     }
 }
 
+
+void ShopUI::update_budget()
+{
+    std::string aux = "budget left: ";
+    budget_ = shop_.get_budget();
+    budget_text_.setString( aux + std::to_string(budget_) );
+}
+
+
 void ShopUI::load_game_button()
 {
     game_button_loaded_ = true;
@@ -167,6 +202,7 @@ void ShopUI::update()
     {
         load_game_button();
     }
+    update_budget();
 }
 
 void ShopUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -191,6 +227,7 @@ void ShopUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         button.draw(target);
     }
+    target.draw(budget_text_);
 }
 
 bool ShopUI::execute_button_actions(sf::RenderWindow& window, sf::Event& event) {

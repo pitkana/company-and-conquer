@@ -10,8 +10,8 @@ Game Scenario::generate_game() {
     game.add_team(player_team);
     game.add_team(enemy_team_);
 
-    std::vector<Unit> player_units = game.get_team_by_id(player_team.get_id()).get_units();
-    std::vector<Unit> enemy_units = game.get_team_by_id(enemy_team_.get_id()).get_units();
+    std::vector<Unit>& player_units = game.get_team_by_id(player_team.get_id()).get_units();
+    std::vector<Unit>& enemy_units = game.get_team_by_id(enemy_team_.get_id()).get_units();
 
 
     for (unsigned int i = 0; i < player_units.size(); i++) {
