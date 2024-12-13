@@ -42,6 +42,7 @@ Team ScenarioLoader::construct_enemy() {
             for (auto && enemy_item : enemy_unit["items"]) { // items is a sequence of item names
                 try {
                     auto item = ConstItem::item_ids[enemy_item.as<std::string>()];
+                    if (item == nullptr) throw(std::runtime_error(enemy_item.as<std::string>()));
                     unit.add_item(item);
                 } catch (const std::exception &e) {
                     throw std::runtime_error("Invalid item name: " + std::string(e.what()));
