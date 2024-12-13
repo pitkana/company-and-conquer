@@ -113,16 +113,16 @@ std::shared_ptr<Game>& Rendering_Engine::get_game()
 void Rendering_Engine::handle_continuous_inputs(sf::RenderWindow& window) {
     //Not if else since these can be pressed at the same time
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-        tile_map_->move(-move_speed, 0);
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
-        tile_map_->move(0, -move_speed);
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
         tile_map_->move(move_speed, 0);
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
         tile_map_->move(0, move_speed);
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
+        tile_map_->move(-move_speed, 0);
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
+        tile_map_->move(0, -move_speed);
     }
 
     sf::Vector2u size = window.getSize();
