@@ -101,6 +101,7 @@ void GUI::deselect_unit() {
 
 void GUI::undo_action() {
     game_manager_->undo_action();
+    active_item = nullptr;
 }
 
 void GUI::next_turn() {

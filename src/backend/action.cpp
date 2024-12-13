@@ -10,7 +10,7 @@ const coordinates<size_t>& Action::target() const {
 void MovementAction::execute(Game& game, coordinates<size_t> unit_location [[maybe_unused]]) {
     if (has_been_executed_) return;
 
-    game.get_output_stream() << "Unit: " << this->get_unit().get_id() << " movement result: ";
+    game.get_output_stream() << "Unit: " << this->get_unit().get_name() << " movement result: ";
     if (game.get_map().move_unit(source_location_, target_)) {
         game.get_output_stream() << " Success!\n";
     } else {
@@ -29,7 +29,7 @@ void MovementAction::undo(Game &game) {
 void WeaponAction::execute(Game &game, coordinates<size_t> unit_location) {
     if (!has_been_executed_) { 
         if (executing_unit_.is_dead()) return;
-        game.get_output_stream() << "Unit: " << executing_unit_.get_id() << " attacks with weapon: " << weapon_.get_name() << " result: ";
+        game.get_output_stream() << "Unit: " << executing_unit_.get_name() << " attacks with weapon: " << weapon_.get_name() << " result: ";
 
         if (weapon_.get_aoe() == 0) { //Single target attack
             Unit* target_unit = game.get_map().get_unit(target_.y, target_.x);
@@ -43,7 +43,7 @@ void WeaponAction::execute(Game &game, coordinates<size_t> unit_location) {
 
             // Hit enemy
             if (target_unit->deal_damage(weapon_.calculate_damage_dealt(distance), weapon_.get_accuracy())) {
-                game.get_output_stream() << "success, dealt " << weapon_.get_damage() << " damage to enemy unit " << target_unit->get_id() <<
+                game.get_output_stream() << "success, dealt " << weapon_.get_damage() << " damage to enemy unit " << target_unit->get_name() <<
                 " enemy has " << target_unit->get_hp() << " hp.\n";
             } else {
                 game.get_output_stream() << executing_unit_.get_name() << " missed!\n";
@@ -59,7 +59,7 @@ void WeaponAction::execute(Game &game, coordinates<size_t> unit_location) {
                 // Distance is calculated from the origin of the AoE (aka target), not from the unit that executes this action
                 int distance = target_.distance_to(coords);
                 if (target_unit->deal_damage(weapon_.calculate_damage_dealt(distance), weapon_.get_accuracy())) {
-                    game.get_output_stream() << "success, dealt " << weapon_.get_damage() << " damage to enemy unit " << target_unit->get_id() <<
+                    game.get_output_stream() << "success, dealt " << weapon_.get_damage() << " damage to enemy unit " << target_unit->get_name() <<
                         " enemy has " << target_unit->get_hp() << " hp.\n";
                 } else {
                     game.get_output_stream() << executing_unit_.get_name() << " missed!\n";
