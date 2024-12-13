@@ -1,6 +1,6 @@
 #include "render_aux.hpp"
 
-Render_Aux::Render_Aux(std::shared_ptr<Tile_Map>& tile_map) : tile_map_(tile_map), x0y0_(tile_map->Getx0y0()), tileDim_(tile_map->GetTileDim()) {}
+Render_Aux::Render_Aux(std::shared_ptr<Tile_Map>& tile_map) : tile_map_(tile_map) {}
 
 
 bool Render_Aux::load(const std::string& aux_texture_path, const std::string& text_font_path) {
@@ -10,15 +10,18 @@ bool Render_Aux::load(const std::string& aux_texture_path, const std::string& te
     if (!text_font_.loadFromFile(text_font_path)) {
         return false;
     }
-    double scale = tileDim_ / highlight_text.getSize().y;
+
+    int tileDim = tile_map_->GetTileDim();
+    std::pair<int,int> x0y0 = tile_map_->Getx0y0();
+    double scale = tileDim / highlight_text.getSize().y;
 
     //Setting up sprite for highlight_unit_
-    highlight_unit_.setOrigin(x0y0_.first,x0y0_.second);
+    highlight_unit_.setOrigin(x0y0.first,x0y0.second);
     highlight_unit_.setTexture(highlight_text);
     highlight_unit_.setScale(scale,scale);
 
     //Setting up sprite for highlight_cursor_
-    highlight_cursor_.setOrigin(x0y0_.first,x0y0_.second);
+    highlight_cursor_.setOrigin(x0y0.first,x0y0.second);
     highlight_cursor_.setTexture(highlight_text);
     highlight_cursor_.setScale(scale,scale);
 
@@ -41,10 +44,7 @@ bool Render_Aux::load(const std::string& aux_texture_path, const std::string& te
 }
 
 void Render_Aux::update() {
-    std::pair<int,int> map_x0y0 = tile_map_->Getx0y0();
-    int map_tile_dim = tile_map_->GetTileDim();
-    x0y0_ = map_x0y0;
-    tileDim_ = map_tile_dim;
+    return; //Does nothing in case of this class. Just required in the parent class.
 }
 
 void Render_Aux::draw_unit_highlight(const coordinates<size_t>& coords) {
@@ -74,13 +74,15 @@ void Render_Aux::draw_highlight(const coordinates<size_t>& coords, sf::Sprite& h
         // hide_unit_highlight(); 
         return;
     }
+    int tileDim = tile_map_->GetTileDim();
+    std::pair<int,int> x0y0 = tile_map_->Getx0y0();
     highlight_sprite.setTextureRect(sf::IntRect(highlight_text.getSize().y*texture_idx,0,highlight_text.getSize().y,highlight_text.getSize().y));
     switch (texture_idx) {
     case 1:
-        highlight_sprite.setPosition(x0y0_.first+coords.x*tileDim_,x0y0_.second+coords.y*tileDim_-tileDim_/2);
+        highlight_sprite.setPosition(x0y0.first+coords.x*tileDim,x0y0.second+coords.y*tileDim-tileDim/2);
         break;
     case 2:
-        highlight_sprite.setPosition(x0y0_.first+coords.x*tileDim_,x0y0_.second+coords.y*tileDim_);
+        highlight_sprite.setPosition(x0y0.first+coords.x*tileDim,x0y0.second+coords.y*tileDim);
         break;
     }
 }
@@ -116,12 +118,6 @@ void Render_Aux::hide_highlight(sf::Sprite& highlight_sprite) {
     highlight_sprite.setTextureRect(sf::IntRect(highlight_text.getSize().y*0,0,highlight_text.getSize().y,highlight_text.getSize().y));
 }
 
-std::weak_ptr<Tile_Map> Render_Aux::get_tile_map()
-{
-    return tile_map_;
-}
+std::weak_ptr<Tile_Map> Render_Aux::get_tile_map() { return tile_map_; }
 
-void Render_Aux::set_tile_map(std::shared_ptr<Tile_Map>& tile_map)
-{
-    tile_map_ = tile_map;
-}
+void Render_Aux::set_tile_map(std::shared_ptr<Tile_Map>& tile_map) { tile_map_ = tile_map; }

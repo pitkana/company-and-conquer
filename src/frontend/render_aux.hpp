@@ -10,41 +10,99 @@
 #include <string>
 #include <unordered_map>
 
+
+/**
+ * @brief A rendering class used to render everything else other than units,tiles,buildings.
+ */
 class Render_Aux: public Auxiliary_renderable {
 public:
     Render_Aux(std::shared_ptr<Tile_Map>& tile_map);
     bool show_text = false;
+
+    /**
+     * @brief Initializes all drawable objects in this class. Nothing can be drawn before this method is called.
+     * 
+     * @param aux_texture_path Path to .png file that contains textures for aux sprites.
+     * @param text_font_path Path to a .tff font file used in rendering text.
+     * 
+     * @returns bool. Will return false if invalid paths are given as parameters.
+     */
     bool load(const std::string& aux_texture_path, const std::string& text_font_path);
+
+    /**
+     * @brief Used to keep positions of all sprites and text objects up to date. This needs to be called on every tick.
+     */
     void update() override;
-    //TODO: Implement. This could be used to update unit texture when it dies.
-    //void update_textures();
+
     std::weak_ptr<Tile_Map> get_tile_map();
     void set_tile_map(std::shared_ptr<Tile_Map>& tile_map);
 
+    /**
+     * @brief Makes highlight_unit_ sprite appear around desired location.
+     * 
+     * @param coords The desired location.
+     */
     void draw_unit_highlight(const coordinates<size_t>& coords);
+
+    /**
+     * @brief Makes action_info_text_ show msg string around desired location. Usually mouse pixel coordinates in this case.
+     */
     void draw_text(int pixel_x, int pixel_y, const std::string& msg);
+
+    /**
+     * @brief Makes log_text_ show logs string in the top left corner of the screen.
+     */
     void draw_logs(const std::string& logs);
+
+    /**
+     * @brief Hides logs.
+     */
     void clear_logs();
+
+    /**
+     * @brief Hides cursor text.
+     */
     void clear_cursor_text();
+
+    /**
+     * @brief Makes highlight_cursor_ sprite appear around desired location. Pixel coordinates in this case.
+     */
     void draw_cursor_highlight(int pixel_x, int pixel_y);
     void draw_cursor_highlight(const coordinates<size_t>& coords);
+
+    /**
+     * @brief Hides highlight_unit_ sprite.
+     */
     void hide_unit_highlight();
+
+    /**
+     * @brief Hides highlight_cursor_ sprite.
+     */
     void hide_cursor_highlight();
 
 private:
-    sf::Sprite highlight_unit_;
-    sf::Sprite highlight_cursor_;
-    sf::Text action_info_text_;
-    sf::Text log_text_;
+    sf::Sprite highlight_unit_; //Marks active unit in gui.
+    sf::Sprite highlight_cursor_; //Marks the tile below cursor in gui.
+    sf::Text action_info_text_; //Text that appears next cursor and gives some information to the player.
+    sf::Text log_text_; //Shows executed game actions to the user.
     std::shared_ptr<Tile_Map> tile_map_;
-    std::pair<int,int> x0y0_;
-    int tileDim_;
     sf::Texture highlight_text;
     sf::Font text_font_;
     
+
+    /**
+     * @brief A generalized method used to show a sprite in certain map coords.
+     */
     void draw_highlight(const coordinates<size_t>& coords, sf::Sprite& highlight_sprite, size_t texture_idx);
+
+    /**
+     * @brief A generalized method used to hide a sprite.
+     */
     void hide_highlight(sf::Sprite& highlight_sprite);
 
+    /**
+     * @brief Used to draw drawables on a sf::RenderWindow.
+     */
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
         target.draw(highlight_unit_,states);
         target.draw(highlight_cursor_,states);
