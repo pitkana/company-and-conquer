@@ -18,7 +18,7 @@ class Scenario {
 
     Scenario(Team enemy_team, Map map, Shop shop, std::vector<coordinates<size_t>> enemy_positions, std::vector<coordinates<size_t>> player_positions) : enemy_team_(enemy_team), shop_(shop), map_(map), enemy_positions_(enemy_positions), player_positions_(player_positions) {}
 
-    Shop get_shop() { return shop_; }
+    Shop& get_shop() { return shop_; }
 
     Game generate_game();
 
