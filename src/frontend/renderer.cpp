@@ -2,6 +2,7 @@
 #include "rendering_engine.hpp"
 #include "shop_ui.hpp"
 #include "tinyfiledialogs.h"
+#include "main_screen.hpp"
 
 
 /**
@@ -47,10 +48,6 @@ void Renderer::initialise_level( size_t level_idx )
     // create the new Game object with the new level
     game_ = std::make_shared<Game>( test_map_width, test_map_height );
     logs_ = std::make_shared<Game_Logs>(10);
-    // Unit* jack = new Unit("Jack");
-    //
-    // jack->add_item(ConstItem::medic_tent_tent);
-    // game_->get_map().add_unit(1, 1, jack);
 
 
     // store the pointer to the new level into the <tile_map_>, and
@@ -94,19 +91,26 @@ void Renderer::initialise_level( size_t level_idx )
     window_.get_game() = game_;
 }
 
-void Renderer::load_scenario()
+bool Renderer::load_scenario()
 {
     // Open system file selector
     char const * filters[1] = { "*.yaml" };
     char const * selection = tinyfd_openFileDialog("Select a scenario", SCENARIOS_PATH, 1, filters, NULL, 0);
 
     if (selection == nullptr){
-        std::cout << "No scenario was selected" << std::endl;
-        exit(EXIT_FAILURE);
+        std::cout << "No scenario was selected, returning to main menu" << std::endl;
+        return false;
     }
 
-    ScenarioLoader loader = ScenarioLoader(selection);
-    scenario_ = std::make_shared<Scenario>(loader.load_scenario());
+    try {
+        ScenarioLoader loader = ScenarioLoader(selection);
+        scenario_ = std::make_shared<Scenario>(loader.load_scenario());
+    } catch (std::runtime_error error) {
+        std::cout << error.what() << "\n" << "Returning to main menu" << std::endl;
+        return false;
+    }
+
+    return true;
 }
 
 /**
@@ -121,7 +125,10 @@ void Renderer::start_shop()
 
 void Renderer::initialize_scenario()
 {
-    load_scenario();
+    //If a file wasn't selected, return to main menu
+    if (!load_scenario())
+        return;
+
     start_shop();
     while (!game_ready_ && render_window_->isOpen()) // Render shop UI while player is shopping
     {
@@ -189,6 +196,11 @@ void Renderer::initialize_scenario()
 void Renderer::ready_game()
 {
     game_ready_ = true;
+}
+
+void Renderer::start_main_screen() {
+    MainScreen main_screen(*this, width_, height_);
+    main_screen.start(*render_window_);
 }
 
 void Renderer::start()
