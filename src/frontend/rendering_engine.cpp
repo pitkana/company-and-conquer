@@ -31,17 +31,21 @@ void Rendering_Engine::render(size_t window_width, size_t window_height, sf::Ren
 
         window.clear(sf::Color::Black);
 
-        /*
-        game_ended = game_->get_winner() != nullptr;
-        //Victory screen
+        game_ended = game_->is_game_over();
+
+        // Game is over, hide everything and announce the winner
         if (game_ended) {
-            Team winning_team = *game_->get_winner();
-            r_aux_->show_victory_text(winning_team);
+            r_aux_->hide_unit_highlight();
+            r_aux_->hide_cursor_highlight();
+            r_aux_->clear_logs();
+            r_aux_->clear_cursor_text();
+
+            Team& winning_team = *game_->get_winner();
+            r_aux_->show_victory_text(winning_team, window_width, window_height);
             window.draw(*r_aux_);
             window.display();
             continue;
         } 
-        */
 
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
         coordinates<size_t> target_coord = tile_map_->get_map_coords(mousePos.x,mousePos.y);

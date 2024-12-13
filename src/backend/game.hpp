@@ -138,6 +138,8 @@ public:
 
     Team* get_winner();
 
+    bool is_game_over();
+
 private:
     std::vector<Team> teams_;
     Map map_;

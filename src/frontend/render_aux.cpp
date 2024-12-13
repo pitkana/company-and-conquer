@@ -41,7 +41,7 @@ bool Render_Aux::load(const std::string& aux_texture_path, const std::string& te
     //Setting up victory text.
     victory_text_.setFont(text_font_);
     victory_text_.setFillColor(sf::Color::White);
-    victory_text_.setCharacterSize(30);
+    victory_text_.setCharacterSize(50);
     victory_text_.setOrigin(-20,-200);
 
     hide_cursor_highlight();
@@ -150,8 +150,14 @@ std::weak_ptr<Tile_Map> Render_Aux::get_tile_map() { return tile_map_; }
 
 void Render_Aux::set_tile_map(std::shared_ptr<Tile_Map>& tile_map) { tile_map_ = tile_map; }
 
-void Render_Aux::show_victory_text(Team& team) {
+void Render_Aux::show_victory_text(Team& team, int window_width, int window_height) {
+
     std::stringstream msg;
     msg << "Team " << team.get_id() << " won!!!!!!!!";
-    return;
+    victory_text_.setString(msg.str());
+    
+    int x = window_width / 2 - victory_text_.getLocalBounds().width / 2;
+    int y = window_height / 2 - victory_text_.getLocalBounds().height / 2;
+
+    victory_text_.setOrigin(-x, -y);
 }

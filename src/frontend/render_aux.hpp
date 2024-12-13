@@ -90,7 +90,7 @@ public:
     /**
      * @brief Updates victory text to show which team won.
      */
-    void show_victory_text(Team& team);
+    void show_victory_text(Team& team, int window_width, int window_height);
 
 private:
     sf::Sprite highlight_unit_; //Marks active unit in gui.
