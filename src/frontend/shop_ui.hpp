@@ -13,7 +13,7 @@ class Renderer;
 
 class ShopUI : public sf::Drawable {
     private:
-        Shop shop_;
+        Shop& shop_;
         Renderer& renderer_;
 
         std::vector<RectButton> catalogue_buttons_;

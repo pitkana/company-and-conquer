@@ -121,7 +121,7 @@ void Renderer::load_scenario()
 
 void Renderer::start_shop()
 {
-    Shop shop = scenario_->get_shop();
+    Shop& shop = scenario_->get_shop();
     shop_ui_ = std::make_shared<ShopUI>(shop, *this);
     shop_ui_->initialize();
 }
@@ -130,7 +130,7 @@ void Renderer::initialize_scenario()
 {
     load_scenario();
     start_shop();
-    while (!game_ready_)
+    while (!game_ready_ && render_window_->isOpen())
     {
         sf::Event event;
         while (render_window_->pollEvent(event))
@@ -145,6 +145,9 @@ void Renderer::initialize_scenario()
         shop_ui_->update();
         render_window_->draw(*shop_ui_);
         render_window_->display();
+    }
+    if (!render_window_->isOpen()) {
+        return;
     }
     game_ = std::make_shared<Game>(scenario_->generate_game());
 
