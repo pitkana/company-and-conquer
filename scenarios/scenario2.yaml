@@ -1,21 +1,14 @@
 map:
-  path: "./scenarios/maps/map.txt"
+  path: "./scenarios/maps/map_2.txt"
   enemies:
-    - [0, 0]
     - [1, 1]
   players:
-    - [9, 9]
-    - [7, 8]
-    - [6, 9]
+    - [2, 2]
 
-team_size: 3
-
-multiplayer: false
+team_size: 1
 
 enemy:
   - name: enemy 1
-    items: ["rifle", "bandage"]
-  - name: enemy 2
     items: ["rifle", "bandage"]
 
 shop:

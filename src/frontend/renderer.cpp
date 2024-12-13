@@ -98,10 +98,12 @@ void Renderer::load_scenario()
 {
     // Open system file selector
     char const * filters[1] = { "*.yaml" };
-    char const * selection = tinyfd_openFileDialog("Select a scenario", "./scenarios/", 1, filters, NULL, 0);
+    char const * selection = tinyfd_openFileDialog("Select a scenario", SCENARIOS_PATH, 1, filters, NULL, 0);
 
-    if (selection == nullptr)
+    if (selection == nullptr){
+        std::cout << "No scenario was selected" << std::endl;
         exit(EXIT_FAILURE);
+    }
 
     ScenarioLoader loader = ScenarioLoader(selection);
     scenario_ = std::make_shared<Scenario>(loader.load_scenario());
