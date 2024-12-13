@@ -3,29 +3,46 @@ map:
   enemies:
     - [0, 0]
     - [1, 1]
+    - [5, 1]
   players:
-    - [9, 9]
-    - [7, 8]
-    - [6, 9]
+    - [8, 9]
+    - [5, 8]
+    - [4, 7]
 
 team_size: 3
 
-multiplayer: true
+multiplayer: false
 
 enemy:
   - name: enemy 1
-    items: ["rifle", "bandage"]
+    items: ["rifle", "bandage", "turret_legs", "turret_barrel"]
   - name: enemy 2
-    items: ["rifle", "bandage"]
+    items: ["rifle", "healing_kit"]
+  - name: enemy 3
+    items: ["shotgun", "grenade", "bandage"]
 
 shop:
   items:
     - name: rifle
-      price: 75
+      price: 250
     - name: smg
-      price: 50
+      price: 200
     - name: shotgun
+      price: 100
+    - name: grenade
+      price: 400
+    - name: grenade_launcher
+      price: 450
+    - name: turret_legs
+      price: 50
+    - name: turret_barrel
       price: 100
     - name: bandage
       price: 30
+    - name: healing_kit
+      price: 120
+    - name: medic_tent_tent
+      price: 50
+    - name: medic_tent_medkit
+      price: 100
   budget: 1000

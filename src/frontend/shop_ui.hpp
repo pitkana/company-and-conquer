@@ -5,6 +5,8 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <cstdint>
+#include <memory>
+
 #include <../../libs/SFMLButton/include/sfmlbutton.hpp>
 
 #include "renderer.hpp"
@@ -21,7 +23,7 @@ class ShopUI : public Auxiliary_renderable {
         std::vector<RectButton> owned_buttons_;
         std::vector<RectButton> unit_buttons_;  // shows the units names in the buttons
         std::vector<RectButton> unit_owned_buttons_;  // shows the items that are owned by some unit
-        std::vector<RectButton> game_button_;
+        std::unique_ptr<RectButton> game_button_;
         sf::Text budget_text_;  // the text for displaying how much money you have left after buying some items
 
         // methods that are used inside update() for updating the graphics for different buttons
@@ -41,7 +43,7 @@ class ShopUI : public Auxiliary_renderable {
         std::unique_ptr<sf::Font> font_ = std::make_unique<sf::Font>();
 
 
-        bool game_button_updated_ = false;
+        bool game_button_updated_ = true;
 
         int budget_ = 0;
         // the y position of where the top most button will be placed, will be

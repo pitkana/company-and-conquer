@@ -81,7 +81,6 @@ void ShopUI::update_owned()
         button.set_activation_function([this, item]()
         {
             this->active_item_ = item;
-            this->game_button_updated_ = false;
             this->game_button_updated_ = true;
         });
 
@@ -223,19 +222,21 @@ void ShopUI::update_budget()
 void ShopUI::load_game_button()
 {
     game_button_updated_ = true;
-    RectButton button = RectButton(*font_, true, {30, starting_y_});
-    button.setButtonLabel(20, "Start Game");
-    button.set_activation_function([this]()
+    std::unique_ptr<RectButton> button = std::make_unique<RectButton>(*font_, true, sf::Vector2f{30, starting_y_});
+
+    button->setButtonLabel(20, "Start Game");
+    button->set_activation_function([this]()
     {
         Team team = shop_.form_team();
         renderer_.ready_game();
     });
-    game_button_.push_back(button);
+
+    game_button_ = std::move(button);
 }
 
 void ShopUI::update()
 {
-    if ( !game_button_updated_ ) {
+    if ( game_button_updated_ ) {
         update_catalogue();
         starting_y_ += 50;
 
@@ -276,10 +277,9 @@ void ShopUI::draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         button.draw(target);
     }
-    for (auto button : game_button_)
-    {
-        button.draw(target);
-    }
+
+    game_button_->draw(target);
+    
     target.draw(budget_text_);
 }
 
@@ -323,13 +323,17 @@ bool ShopUI::execute_button_actions(sf::RenderWindow& window, sf::Event& event) 
         }
     }
 
-    for (auto button : game_button_) {
-        button.getButtonStatus(window, event);
-        if (button.isPressed) {
-            button.activate();
+    
+    if ( game_button_ ) {
+        game_button_->getButtonStatus(window, event);
+        if (game_button_->isPressed) {
+            game_button_->activate();
             return true;
         }
-    }
+    } 
+
+
+    
 
     return false;
 }

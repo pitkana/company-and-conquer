@@ -61,3 +61,5 @@ dkms.conf
 
 # Build directory
 build
+
+profile_project
