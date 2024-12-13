@@ -19,7 +19,8 @@ Renderer::Renderer( size_t width, size_t height ) : width_(width), height_(heigh
     // we initialise the objects for the game, window, and the renderables
     game_ = std::make_shared<Game>( height, width );
     
-    render_window_ = std::make_shared<sf::RenderWindow>(sf::VideoMode(width, height), "Game");
+    //Disallow resizing
+    render_window_ = std::make_shared<sf::RenderWindow>(sf::VideoMode(width, height), "Game", sf::Style::Close | sf::Style::Titlebar);
     renderables_ = std::make_shared<Window_To_Render>();
 
 }

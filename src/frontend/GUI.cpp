@@ -31,10 +31,6 @@ void GUI::initialize() {
 void GUI::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     draw_button_group(target, main_buttons_);
 
-    if (unit_buttons_.isActive) {
-        draw_button_group(target, unit_buttons_);
-    }
-
     if (inventory_buttons_.isActive) {
         target.draw( *r_inv_ );
         draw_button_group(target, inventory_buttons_);
@@ -44,7 +40,8 @@ void GUI::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 void GUI::update() {
     update_inventory();
     r_inv_->update();
-    // Set it to false after update so dont keep updating
+
+    // Set this to false so that the GUI is not updated unnecessarily
     selected_unit_changed_ = false;
 }
 
@@ -52,6 +49,8 @@ bool GUI::execute_button_actions(sf::RenderWindow& window, sf::Event& event) {
 
     for (RectButton* button : get_all_buttons()) {
         button->getButtonStatus(window, event);
+
+        // If the button is pressed but not active, still consume the event aka return true
         if (button->isPressed) {
 
             if (button->isActive) {
@@ -67,7 +66,6 @@ bool GUI::execute_button_actions(sf::RenderWindow& window, sf::Event& event) {
 void GUI::click_on_coords(size_t y, size_t x) {
     coordinates<size_t> clicked_coords(x, y);
 
-    // if (use_active_item_on_coords(clicked_coords)) return;
     if (active_item != nullptr) {
         //If action succeeded, deselect the active item
         if (game_manager_->enqueue_item_action(clicked_coords, active_item.get()))
@@ -167,7 +165,7 @@ void GUI::update_inventory() {
             return;
         }
 
-        // If active item has changed, redraw the deactivate button on top of currently active item
+        // If active item has changed, redraw the deactivate button on top of currently active item, if not, return
         if (!active_item_changed_)
             return;
 
@@ -194,8 +192,8 @@ void GUI::update_inventory() {
     float curr_x = 30;
     const std::vector<std::shared_ptr<const Item>>& inventory = game_manager_->selected_unit_ptr()->get_inventory();
 
-    // r_inv_->update_inventory( std::span<const std::shared_ptr<const Item>>{inventory} );
 
+    // Draw the buttons for items in the inventory
     for (unsigned int i = 0; i < unit_consts.inventory_size; i++) {
         RectButton button(*font_, {button_width, button_height}, pos);
         if (i < inventory.size()) {
@@ -207,7 +205,7 @@ void GUI::update_inventory() {
                 this->active_item_changed_ = true;
             });
 
-        } else {
+        } else { // this means no item in that slot
             button.setButtonLabel(20, "No item");
             button.toggle_button_disabled();
         }
@@ -216,6 +214,8 @@ void GUI::update_inventory() {
         inventory_buttons_.buttons.push_back(std::move(button));
     }
 
+
+    // If there is a fully built building under the unit, add a button so that it can be used as well
     if (Building* building = map_->get_building(game_manager_->selected_unit_coords()).get();
         building != nullptr && building->is_ready()) 
     {
@@ -252,7 +252,6 @@ std::vector<RectButton*> GUI::get_all_buttons() {
 
     add_ptrs_to_vec(buttons, main_buttons_.buttons);
     add_ptrs_to_vec(buttons, inventory_buttons_.buttons);
-    add_ptrs_to_vec(buttons, unit_buttons_.buttons);
 
     return buttons;
 }
