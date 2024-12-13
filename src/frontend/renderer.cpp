@@ -142,7 +142,7 @@ void Renderer::initialize_scenario()
     if (!render_window_->isOpen()) {
         return;
     }
-    game_ = std::make_shared<Game>(scenario_->generate_game());
+    game_ = scenario_->generate_game();
     logs_ = std::make_shared<Game_Logs>(10);
 
     // store the pointer to the new level into the <tile_map_>, and
