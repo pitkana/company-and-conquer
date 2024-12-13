@@ -1,0 +1,29 @@
+map:
+  path: "./scenarios/map.txt"
+  enemies:
+    - [0, 0]
+    - [1, 1]
+  players:
+    - [9, 9]
+    - [7, 8]
+    - [6, 9]
+
+team_size: 3
+
+enemy:
+  - name: enemy 1
+    items: ["rifle", "bandage"]
+  - name: enemy 2
+    items: ["rifle", "bandage"]
+
+shop:
+  items:
+    - name: rifle
+      price: 75
+    - name: smg
+      price: 50
+    - name: shotgun
+      price: 100
+    - name: bandage
+      price: 30
+  budget: 1000
