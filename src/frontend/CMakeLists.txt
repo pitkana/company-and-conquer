@@ -12,9 +12,15 @@ target_link_libraries(frontend PRIVATE backend)
 
 target_link_libraries(frontend PRIVATE sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
 target_link_libraries(frontend PRIVATE SFMLButton)
+target_link_libraries(frontend PRIVATE yaml-cpp::yaml-cpp)
 
 target_include_directories(frontend PRIVATE ${SFML_SOURCE_DIR}/include)
 target_include_directories(frontend PRIVATE ${CMAKE_SOURCE_DIR}/libs/SFMLButton/include)
+target_include_directories(frontend PRIVATE ${CMAKE_SOURCE_DIR}/libs/tinyfiledialogs)
+
+target_sources(frontend PRIVATE ${CMAKE_SOURCE_DIR}/libs/tinyfiledialogs/tinyfiledialogs.c)
+
+
 
 # For relative paths.
     # Maps

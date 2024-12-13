@@ -17,6 +17,10 @@
 #include "inventory_ui.hpp"
 #include "game_manager.hpp"
 #include "game_logs.hpp"
+#include "scenario_loader.hpp"
+
+
+class ShopUI;
 
 class Renderer
 {
@@ -24,6 +28,12 @@ class Renderer
         Renderer( size_t width, size_t height );
 
         void initialise_level( size_t level_idx );
+
+        // Methods used for loading scenarios from files
+        void load_scenario();
+        void start_shop();
+        void initialize_scenario();
+        void ready_game();
 
         inline size_t width() const {
             return width_;
@@ -46,6 +56,10 @@ class Renderer
         std::shared_ptr<Game_Logs>& get_logs() { return logs_; }
 
     private:
+        bool game_ready_ = false;
+        std::shared_ptr<Scenario> scenario_;
+        std::shared_ptr<ShopUI> shop_ui_;
+
         size_t width_ = 0;
         size_t height_ = 0;
         size_t level_idx_ = 0; // will be used to identify the level to be loaded

@@ -16,6 +16,12 @@
  */
 class Render_Aux: public Auxiliary_renderable {
 public:
+    /**
+     * @brief Construct a new Render_Aux object
+     * 
+     * @param tile_map a std::shared_ptr to the Tile_Map object which will be used to handle the logic for 
+     * rendering. The tile_map should be the one used with the other renderables.
+     */
     Render_Aux(std::shared_ptr<Tile_Map>& tile_map);
 
     /**

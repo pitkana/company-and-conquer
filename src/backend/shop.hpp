@@ -31,8 +31,7 @@ public:
         return purchased_items_;
     }
 
-    [[nodiscard]]
-    const std::vector<Unit>& get_units() const
+    std::vector<Unit>& get_units()
     {
         return units_;
     }

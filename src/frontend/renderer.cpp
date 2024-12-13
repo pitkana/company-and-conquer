@@ -1,5 +1,7 @@
 #include "renderer.hpp"
 #include "rendering_engine.hpp"
+#include "shop_ui.hpp"
+#include "tinyfiledialogs.h"
 
 
 /**
@@ -28,7 +30,7 @@ Renderer::Renderer( size_t width, size_t height ) : width_(width), height_(heigh
 
 void Renderer::initialise_level( size_t level_idx )
 {
-    // used for storing the tiles corresponding character in the level map 
+    // used for storing the tiles corresponding character in the level map
     std::vector<std::vector<char>> terrain_vec;
 
     if ( level_idx == 0 ) {
@@ -37,7 +39,7 @@ void Renderer::initialise_level( size_t level_idx )
     if ( level_idx == 1 ) {
         terrain_vec = builder_.read_map_file(TESTMAP_PATH1);
     }
-    
+
 
     size_t test_map_height = terrain_vec.size();
     size_t test_map_width = terrain_vec[0].size();
@@ -90,6 +92,101 @@ void Renderer::initialise_level( size_t level_idx )
     game_->init_game();
 
     window_.get_game() = game_;
+}
+
+void Renderer::load_scenario()
+{
+    // Open system file selector
+    char const * filters[1] = { "*.yaml" };
+    char const * selection = tinyfd_openFileDialog("Select a scenario", "./scenarios/", 1, filters, NULL, 0);
+
+    ScenarioLoader loader = ScenarioLoader(selection);
+    scenario_ = std::make_shared<Scenario>(loader.load_scenario());
+}
+
+/**
+ * Create and initialize the shop UI from currently loaded scenario
+ */
+void Renderer::start_shop()
+{
+    Shop& shop = scenario_->get_shop();
+    shop_ui_ = std::make_shared<ShopUI>(shop, *this);
+    shop_ui_->initialize();
+}
+
+void Renderer::initialize_scenario()
+{
+    load_scenario();
+    start_shop();
+    while (!game_ready_ && render_window_->isOpen()) // Render shop UI while player is shopping
+    {
+        sf::Event event;
+        while (render_window_->pollEvent(event))
+        {
+            shop_ui_->execute_button_actions(*render_window_, event);
+            if (event.type == sf::Event::Closed)
+            {
+                render_window_->close();
+            }
+        }
+        render_window_->clear();
+        shop_ui_->update();
+        render_window_->draw(*shop_ui_);
+        render_window_->display();
+    }
+    if (!render_window_->isOpen()) {
+        return;
+    }
+    game_ = std::make_shared<Game>(scenario_->generate_game());
+
+    // store the pointer to the new level into the <tile_map_>, and
+    // add it into the renderable,
+    // also do this for every other object
+    tile_map_ = std::make_shared<Tile_Map>( game_, 100 );
+    r_map_ = std::make_shared<Render_Map>( tile_map_ );
+    r_units_ = std::make_shared<Render_Units>( tile_map_ );
+    r_buildings_ = std::make_shared<Render_Buildings>( tile_map_ );
+    r_aux_ = std::make_shared<Render_Aux>( tile_map_ );
+    r_inv_ = std::make_shared<Inventory_UI>( render_window_->getSize().x, render_window_->getSize().y );
+
+    // clear out the old renderables
+    renderables_->clear();
+
+    // add all the new renderables
+    renderables_->add_drawable( r_map_ );
+    renderables_->add_drawable( r_buildings_ );
+    renderables_->add_drawable( r_units_ );
+    renderables_->add_drawable( r_aux_ );
+    renderables_->add_drawable( r_inv_ );
+
+
+    if (!r_map_->load(map_text_path_)) {
+        return;
+    }
+    if (!r_units_->load(unit_text_path_)) {
+        return;
+    }
+
+    if (!r_buildings_->load(building_text_path_)) {
+        return;
+    }
+
+    if (!r_aux_->load(aux_text_path_, text_font_path_)) {
+        return;
+    }
+
+    game_->init_game();
+
+    window_.get_game() = game_;
+
+    manager_ = std::make_shared<Game_Manager>(game_);
+
+    start();
+}
+
+void Renderer::ready_game()
+{
+    game_ready_ = true;
 }
 
 void Renderer::start()
