@@ -101,13 +101,15 @@ void Game_Manager::cycle_units(int window_width, int window_height) {
 }
 
 std::string Game_Manager::get_action_info(const coordinates<size_t>& potential_target, const Item* action_item) {
-    if (!selected_valid_unit()) return "";
 
     std::stringstream ss;
     get_tile_info(ss,potential_target);
-    ss << selected_unit_ptr_->get_name() << "\n";
-    get_movement_action_info(ss,potential_target);
-    get_item_action_info(ss,potential_target,action_item);
+    //Only add the following if a unit is selected
+    if (selected_valid_unit()) {
+        ss << selected_unit_ptr_->get_name() << "\n";
+        get_movement_action_info(ss,potential_target);
+        get_item_action_info(ss,potential_target,action_item);
+    }
     return ss.str();
 }
 

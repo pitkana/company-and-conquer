@@ -17,7 +17,6 @@
 class Render_Aux: public Auxiliary_renderable {
 public:
     Render_Aux(std::shared_ptr<Tile_Map>& tile_map);
-    bool show_text = false;
 
     /**
      * @brief Initializes all drawable objects in this class. Nothing can be drawn before this method is called.

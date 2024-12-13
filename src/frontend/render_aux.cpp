@@ -91,7 +91,7 @@ void Render_Aux::show_highlight(const coordinates<size_t>& coords, sf::Sprite& h
 void Render_Aux::show_cursor_text(int pixel_x, int pixel_y, const std::string& msg) {
     bool cursor_inside_map = tile_map_->is_inside_map_pixel(pixel_x,pixel_y);
     bool tile_visible = tile_map_->is_tile_drawn(tile_map_->get_map_coords(pixel_x,pixel_y));
-    if (show_text && cursor_inside_map && tile_visible) {
+    if (cursor_inside_map && tile_visible) {
         action_info_text_.setString(msg);
         action_info_text_.setPosition(pixel_x+50,pixel_y);
     } else {
