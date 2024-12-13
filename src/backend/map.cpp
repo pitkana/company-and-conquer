@@ -201,7 +201,7 @@ coordinates<size_t> Map::get_unit_location(Unit *unit_ptr) const {
 
     for (size_t y = 0; y < height(); ++y) {
         for (size_t x = 0; x < width(); ++x) {
-            if (all_units_(y, x) != nullptr && all_units_(y, x)->get_id() == unit_ptr->get_id()) {
+            if (all_units_(y, x) == unit_ptr) {
                 return {x, y};
             }
         }
