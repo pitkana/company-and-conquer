@@ -1,4 +1,5 @@
 #include <string>
+#include <cstdint>
 
 #include "shop_ui.hpp"
 
@@ -17,28 +18,40 @@ void ShopUI::initialize() {
 
 void ShopUI::update_catalogue()
 {
-    catalogue_loaded_ = true;
+    game_button_updated_ = true;
     catalogue_buttons_.clear();
 
     float curr_x = 30;
+    float starting_y0 = starting_y_;
+
+    uint8_t count = 0;
 
     for (auto item : shop_.get_catalogue())
     {
-        RectButton button = RectButton(*font_, true, {curr_x, 30});
+        RectButton button = RectButton(*font_, true, {curr_x, starting_y0});
 
         std::string label = item.first->get_name() + ": " + std::to_string(item.second);
 
         button.setButtonLabel(20,  label);
         button.set_activation_function([this, item]()
         {
-            this->new_items_ = true;
+            this->game_button_updated_ = true;
             this->shop_.buy_item(item.first);
         });
 
         catalogue_buttons_.push_back(button);
 
         curr_x += button.button.getSize().x + 20;
+        count++;
+
+        if ( count > 5 ) {
+            starting_y0 += 50;
+            count = 0;
+            curr_x = 30;
+            starting_y_ = starting_y0 + 50;
+        }
     }
+    
 }
 
 void ShopUI::update_owned()
@@ -46,10 +59,13 @@ void ShopUI::update_owned()
     owned_buttons_.clear();
 
     float curr_x = 30;
+    float starting_y0 = starting_y_;
+
+    uint8_t count = 0;
 
     for (auto item : shop_.get_owned())
     {
-        RectButton button = RectButton(*font_, true, {curr_x, 80});
+        RectButton button = RectButton(*font_, true, {curr_x, starting_y0});
 
         std::string label = item->get_name();
 
@@ -65,16 +81,26 @@ void ShopUI::update_owned()
         button.set_activation_function([this, item]()
         {
             this->active_item_ = item;
-            this->units_loaded_ = false;
-            this->new_items_ = true;
+            this->game_button_updated_ = false;
+            this->game_button_updated_ = true;
         });
 
         owned_buttons_.push_back(button);
 
         curr_x += button.button.getSize().x + 20;
+        count++;
+
+        if ( count > 5 ) {
+            starting_y0 += 50;
+            count = 0;
+            curr_x = 30;
+            starting_y_ = starting_y0 + 50;
+        }
     }
 
-    RectButton deselect = RectButton(*font_, true, {curr_x, 80});
+    // starting_y_ = starting_y0 + 50;
+
+    RectButton deselect = RectButton(*font_, true, {curr_x, starting_y0});
     deselect.setButtonLabel(20, "Deselect");
     deselect.set_activation_function([this]() {
         this->active_item_ = nullptr;
@@ -85,14 +111,17 @@ void ShopUI::update_owned()
 
 void ShopUI::update_units()
 {
-    units_loaded_ = true;
+    game_button_updated_ = true;
     unit_buttons_.clear();
 
     float curr_x = 30;
+    float starting_y0 = starting_y_;
+
+    uint8_t count = 0;
 
     for (auto& unit : shop_.get_units())
     {
-        RectButton button = RectButton(*font_, true, {curr_x, 130});
+        RectButton button = RectButton(*font_, true, {curr_x, starting_y0});
 
         Unit* unit_pointer = &unit;
         std::string label = unit.get_name();
@@ -105,8 +134,7 @@ void ShopUI::update_units()
 
         button.set_activation_function([this, unit_pointer]()
         {
-            this->unit_changed_ = true;
-            this->units_loaded_ = false;
+            this->game_button_updated_ = true;
             this->active_unit_ = unit_pointer;
             if (active_item_ != nullptr)
             {
@@ -116,8 +144,20 @@ void ShopUI::update_units()
         });
         unit_buttons_.push_back(button);
         curr_x += button.button.getSize().x + 20;
+        count++;
+
+        if ( count > 5 ) {
+            starting_y0 += 50;
+            count = 0;
+            curr_x = 30;
+            starting_y_ = starting_y0 + 50;
+        }
     }
-    RectButton refund_button = RectButton(*font_, true, {curr_x, 130});
+
+    // starting_y_ = starting_y0 + 50;
+
+
+    RectButton refund_button = RectButton(*font_, true, {curr_x, starting_y0});
     refund_button.setButtonLabel(20, "Refund");
     refund_button.set_activation_function([this]()
     {
@@ -137,10 +177,13 @@ void ShopUI::update_unit_inventory()
     if (active_unit_ != nullptr)
     {
         float curr_x = 30;
+        float starting_y0 = starting_y_;
+
+        uint8_t count = 0;
 
         for (auto item : active_unit_->get_inventory())
         {
-            RectButton button = RectButton(*font_, true, {curr_x, 180});
+            RectButton button = RectButton(*font_, true, {curr_x, starting_y0});
 
             std::string label = item->get_name();
 
@@ -148,14 +191,23 @@ void ShopUI::update_unit_inventory()
 
             button.set_activation_function([this, item]()
             {
-                this->unit_changed_ = true;
+                this->game_button_updated_ = true;
                 this->shop_.retrieve_from_unit(item, active_unit_);
             });
 
             unit_owned_buttons_.push_back(button);
 
             curr_x += button.button.getSize().x + 20;
+            count++;
+
+            if ( count > 5 ) {
+                starting_y0 += 50;
+                count = 0;
+                curr_x = 30;
+                starting_y_ = starting_y0 + 50;
+            }
         }
+        
     }
 }
 
@@ -170,8 +222,8 @@ void ShopUI::update_budget()
 
 void ShopUI::load_game_button()
 {
-    game_button_loaded_ = true;
-    RectButton button = RectButton(*font_, true, {30, 230});
+    game_button_updated_ = true;
+    RectButton button = RectButton(*font_, true, {30, starting_y_});
     button.setButtonLabel(20, "Start Game");
     button.set_activation_function([this]()
     {
@@ -183,27 +235,27 @@ void ShopUI::load_game_button()
 
 void ShopUI::update()
 {
-    if (!catalogue_loaded_)
-    {
+    if ( !game_button_updated_ ) {
         update_catalogue();
-    }
-    if (new_items_)
-    {
+        starting_y_ += 50;
+
         update_owned();
-    }
-    if (!units_loaded_)
-    {
+        starting_y_ += 50;
+
         update_units();
-    }
-    if (unit_changed_)
-    {
+        starting_y_ += 50;
+
         update_unit_inventory();
-    }
-    if (!game_button_loaded_)
-    {
+        starting_y_ += 50;
+
         load_game_button();
+        update_budget();
     }
-    update_budget();
+    
+    game_button_updated_ = false;
+
+    //reset the starting y position for the buttons again at the original position
+    starting_y_ = 30;
 }
 
 void ShopUI::draw(sf::RenderTarget& target, sf::RenderStates states) const

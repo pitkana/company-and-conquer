@@ -40,13 +40,13 @@ class ShopUI : public Auxiliary_renderable {
         // font that will be used for the buttons and the budget text
         std::unique_ptr<sf::Font> font_ = std::make_unique<sf::Font>();
 
-        bool catalogue_loaded_ = false;
-        bool units_loaded_ = false;
-        bool new_items_ = false;
-        bool unit_changed_ = false;
-        bool game_button_loaded_ = false;
+
+        bool game_button_updated_ = false;
 
         int budget_ = 0;
+        // the y position of where the top most button will be placed, will be
+        // updated to be larger if a category of buttons goes out of the screen
+        float starting_y_ = 30; 
 
     public:
 

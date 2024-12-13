@@ -1,0 +1,48 @@
+map:
+  path: "./scenarios/maps/map_1.txt"
+  enemies:
+    - [3, 1]
+    - [1, 1]
+    - [6, 1]
+  players:
+    - [9, 9]
+    - [7, 8]
+    - [5, 9]
+
+team_size: 3
+
+multiplayer: true
+
+enemy:
+  - name: enemy 1
+    items: ["rifle", "bandage"]
+  - name: enemy 2
+    items: ["smg", "grenade", "healing_kit"]
+  - name: enemy 3
+    items: ["shotgun", "turret_legs", "turret_barrel"]
+
+shop:
+  items:
+    - name: rifle
+      price: 250
+    - name: smg
+      price: 200
+    - name: shotgun
+      price: 100
+    - name: grenade
+      price: 400
+    - name: grenade_launcher
+      price: 450
+    - name: turret_legs
+      price: 50
+    - name: turret_barrel
+      price: 100
+    - name: bandage
+      price: 30
+    - name: healing_kit
+      price: 120
+    - name: medic_tent_tent
+      price: 50
+    - name: medic_tent_medkit
+      price: 100
+  budget: 1000
