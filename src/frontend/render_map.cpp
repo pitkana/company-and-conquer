@@ -1,64 +1,58 @@
 #include "render_map.hpp"
 
-Render_Map::Render_Map(std::shared_ptr<Tile_Map>& tile_map) : tile_map_(tile_map), tileDim_(tile_map->GetTileDim()) { }
+Render_Map::Render_Map(std::shared_ptr<Tile_Map>& tile_map) : tile_map_(tile_map) { }
 
 bool Render_Map::load(const std::string& tiles) {
-    if (!g_texture.loadFromFile(tiles)) {
+    if (!tile_texture_.loadFromFile(tiles)) {
         return false;
     }
     Map& map = tile_map_->GetMap();
-    tileDim_ = tile_map_->GetTileDim();
-    g_VertexArr.setPrimitiveType(sf::Quads);
-    g_VertexArr.resize(4 * map.height() * map.width());
-    draw_map();
+    int tileDim = tile_map_->GetTileDim();
+    tile_VertexArr_.setPrimitiveType(sf::Quads);
+    tile_VertexArr_.resize(4 * map.height() * map.width());
+    update_tile_position_and_textures();
     return true;
 }
 
-void Render_Map::draw_map() {
+void Render_Map::update_tile_position_and_textures() {
     Map& map = tile_map_->GetMap();
-    int texW = g_texture.getSize().y;
-    
+    int texW = tile_texture_.getSize().y;
+
     int mapWidth = map.width();
     int mapHeight = map.height();
 
-    float x0 = x0y0_.first;
-    float y0 = x0y0_.second;
+    std::pair<float,float> x0y0 = tile_map_->Getx0y0();
+    int tileDim = tile_map_->GetTileDim();
+    float x0 = x0y0.first;
+    float y0 = x0y0.second;
+    //This implementation follows pretty closely sfml tutorial made with triangles instead of quads:
+    //https://www.sfml-dev.org/tutorials/2.6/graphics-vertex-array.php
     for (int i = 0; i <  mapWidth; i++) {
         for (int j = 0; j < mapHeight; j++) {
             int32_t tile = (tile_map_->is_tile_drawn(i, j)) ? map.get_terrain(j,i)->texture() : 0;
-            int tu = tile % (g_texture.getSize().x / g_texture.getSize().y);
-            int tv = tile / (g_texture.getSize().x / g_texture.getSize().y);
+            int texture_x = tile % (tile_texture_.getSize().x / tile_texture_.getSize().y);
+            int texture_y = tile / (tile_texture_.getSize().x / tile_texture_.getSize().y);
             int tile_idx = (i*mapHeight+j)*4;
             //Setting up vertex positions.
-            g_VertexArr[tile_idx + 0].position = sf::Vector2f(x0 + tileDim_ * i,y0 + tileDim_ * j);
-            g_VertexArr[tile_idx + 1].position = sf::Vector2f(x0 + tileDim_ * (i+1),y0 + tileDim_ * j);
-            g_VertexArr[tile_idx + 2].position = sf::Vector2f(x0 + tileDim_ * (i+1),y0 + tileDim_ * (j+1));
-            g_VertexArr[tile_idx + 3].position = sf::Vector2f(x0 + tileDim_ * i,y0 + tileDim_ * (j+1));                
+            tile_VertexArr_[tile_idx + 0].position = sf::Vector2f(x0 + tileDim * i,y0 + tileDim * j);
+            tile_VertexArr_[tile_idx + 1].position = sf::Vector2f(x0 + tileDim * (i+1),y0 + tileDim * j);
+            tile_VertexArr_[tile_idx + 2].position = sf::Vector2f(x0 + tileDim * (i+1),y0 + tileDim * (j+1));
+            tile_VertexArr_[tile_idx + 3].position = sf::Vector2f(x0 + tileDim * i,y0 + tileDim * (j+1));                
             //Setting up textures.
-            g_VertexArr[tile_idx + 0].texCoords = sf::Vector2f(texW * tu,texW * tv);
-            g_VertexArr[tile_idx + 1].texCoords = sf::Vector2f(texW * (tu+1),texW * tv);
-            g_VertexArr[tile_idx + 2].texCoords = sf::Vector2f(texW * (tu+1),texW * (tv+1));
-            g_VertexArr[tile_idx + 3].texCoords = sf::Vector2f(texW * tu,texW * (tv+1));
+            tile_VertexArr_[tile_idx + 0].texCoords = sf::Vector2f(texW * texture_x,texW * texture_y);
+            tile_VertexArr_[tile_idx + 1].texCoords = sf::Vector2f(texW * (texture_x+1),texW * texture_y);
+            tile_VertexArr_[tile_idx + 2].texCoords = sf::Vector2f(texW * (texture_x+1),texW * (texture_y+1));
+            tile_VertexArr_[tile_idx + 3].texCoords = sf::Vector2f(texW * texture_x,texW * (texture_y+1));
         }
     }
+    return;
 }
 
 void Render_Map::update() {
-    std::pair<int,int> map_x0y0 = tile_map_->Getx0y0();
-    int map_tile_dim = tile_map_->GetTileDim();
-    if (x0y0_.first != map_x0y0.first || x0y0_.second != map_x0y0.second || tileDim_ != map_tile_dim) {
-        x0y0_ = map_x0y0;
-        tileDim_ = map_tile_dim;
-    }
-    draw_map();
+    update_tile_position_and_textures();
+    return;
 }
 
-std::weak_ptr<Tile_Map> Render_Map::get_tile_map()
-{
-    return tile_map_;
-}
+std::weak_ptr<Tile_Map> Render_Map::get_tile_map() { return tile_map_; }
 
-void Render_Map::set_tile_map(std::shared_ptr<Tile_Map>& tile_map)
-{
-    tile_map_ = tile_map;
-}
+void Render_Map::set_tile_map(std::shared_ptr<Tile_Map>& tile_map) { tile_map_ = tile_map; return; }

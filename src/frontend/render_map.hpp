@@ -48,23 +48,21 @@ public:
     void set_tile_map(std::shared_ptr<Tile_Map>& tile_map);
 
 private:
-    sf::VertexArray g_VertexArr; //VertexArray that will be drawn.
-    sf::Texture g_texture; //Contains the texture,
+    sf::VertexArray tile_VertexArr_; //VertexArray that will be drawn.
+    sf::Texture tile_texture_; //Contains the texture,
     std::shared_ptr<Tile_Map> tile_map_;
-    int tileDim_; //
-    std::pair<float,float> x0y0_;
 
     /**
      * Sets up the positions and textures for each vertex in g_VertexArr.
      */
-    void draw_map();
+    void update_tile_position_and_textures();
     /**
      * Inherited method from parent classes.
      */
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
         states.transform *= getTransform();
-        states.texture = &g_texture;
-        target.draw(g_VertexArr,states);
+        states.texture = &tile_texture_;
+        target.draw(tile_VertexArr_,states);
     }
 };
 
