@@ -60,8 +60,9 @@ void ShopUI::update_owned()
             button.button.setFillColor(sf::Color::Magenta);
         }
         
+        
 
-        button.set_activation_function([&, this, item, button]()
+        button.set_activation_function([this, item]()
         {
             this->active_item_ = item;
             this->units_loaded_ = false;
