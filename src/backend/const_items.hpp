@@ -14,10 +14,10 @@ const std::shared_ptr<const BuildingPart> medic_tent_tent = std::make_shared<con
 const std::shared_ptr<const BuildingPart> medic_tent_medkit = std::make_shared<const BuildingPart>(BuildingPartType::MedicTentMedkit);
 
 // Items that are used when using a building
-const std::shared_ptr<const Weapon> turret_weapon = std::make_shared<const Weapon>("turret", 80, 30, 10, 0);
+const std::shared_ptr<const Weapon> turret_weapon = std::make_shared<const Weapon>("turret", 90, 60, 5, 0);
 const std::shared_ptr<const HealingItem> medic_tent_heal_item = std::make_shared<const HealingItem>("medic tent", 50, 0);
 
-const std::shared_ptr<const Weapon> grenade = std::make_shared<const Weapon>("grenade", 100, 50, 0, 3);
+const std::shared_ptr<const Weapon> grenade = std::make_shared<const Weapon>("grenade", 100, 50, 0, 2);
 
 const std::shared_ptr<const Weapon> rifle = std::make_shared<const Weapon>("Rifle", 95, 60, 5);
 const std::shared_ptr<const Weapon> smg = std::make_shared<const Weapon>("Machine Pistol", 80, 75, 15);

@@ -23,4 +23,9 @@ shop:
       price: 100
     - name: bandage
       price: 30
+    - name: turret_legs
+      price: 50
+    - name: turret_barrel
+      price: 50
+
   budget: 1000

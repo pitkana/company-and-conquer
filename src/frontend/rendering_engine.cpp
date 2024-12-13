@@ -162,11 +162,6 @@ void Rendering_Engine::events(sf::RenderWindow& target, sf::Event event, Rendere
                     break;
                 }
 
-                case (sf::Keyboard::F): {
-                    tile_map_->fog_of_war = !tile_map_->fog_of_war;
-                    break;
-                }
-
                 case (sf::Keyboard::X): {
                     gui_.undo_action();
                     break;
