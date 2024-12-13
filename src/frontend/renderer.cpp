@@ -22,8 +22,6 @@ Renderer::Renderer( size_t width, size_t height ) : width_(width), height_(heigh
     render_window_ = std::make_shared<sf::RenderWindow>(sf::VideoMode(width, height), "Game");
     renderables_ = std::make_shared<Window_To_Render>();
 
-
-    
 }
 
 
