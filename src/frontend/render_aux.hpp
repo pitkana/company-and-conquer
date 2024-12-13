@@ -87,11 +87,17 @@ public:
     void update_movement_range(const std::vector<coordinates<size_t>>& coordinates);
     void clear_movement_range_rects();
 
+    /**
+     * @brief Updates victory text to show which team won.
+     */
+    void show_victory_text(Team& team);
+
 private:
     sf::Sprite highlight_unit_; //Marks active unit in gui.
     sf::Sprite highlight_cursor_; //Marks the tile below cursor in gui.
     sf::Text action_info_text_; //Text that appears next cursor and gives some information to the player.
     sf::Text log_text_; //Shows executed game actions to the user.
+    sf::Text victory_text_;
     std::shared_ptr<Tile_Map> tile_map_;
     sf::Texture highlight_text;
     sf::Font text_font_;
@@ -116,12 +122,11 @@ private:
         for (const auto& rect : movement_range_rects_) {
             target.draw(rect);
         }
-
         target.draw(highlight_unit_,states);
         target.draw(highlight_cursor_,states);
         target.draw(action_info_text_);
         target.draw(log_text_);
-
+        target.draw(victory_text_);
     }
 };
 
