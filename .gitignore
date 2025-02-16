@@ -22,12 +22,7 @@
 *.gch
 *.pch
 
-# Libraries
-
-
-# Shared objects (inc. Windows DLLs)
-
-# Vscode shit
+# Vscode
 .vscode/
 
 # Cmake stuff
@@ -63,3 +58,8 @@ dkms.conf
 build
 
 profile_project
+
+# Direnv/devenv
+.envrc
+.direnv/
+.devenv/
