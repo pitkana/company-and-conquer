@@ -20,6 +20,3 @@ make -C build
 ```
 
 which generates the executable `main` in build/src/
-
-## Playing the game
-Instructions and further documentation on the project are in docs/
